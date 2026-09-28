@@ -1,0 +1,435 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#173b34" />
+  <title>Quire — Thesis Workspace</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Caslon+Text:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">Q</div>
+        <div>
+          <div class="brand-name">quire</div>
+          <div class="brand-subtitle">thesis workspace</div>
+        </div>
+      </div>
+
+      <nav class="nav" aria-label="Primary">
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-item" data-view="library"><span>▤</span> Research Library</button>
+        <button class="nav-item" data-view="reader"><span>◫</span> Article Reader</button>
+        <button class="nav-item" data-view="map"><span>⌘</span> Thesis Map</button>
+        <button class="nav-item" data-view="chapters"><span>¶</span> Chapters</button>
+        <button class="nav-item" data-view="brainstorm"><span>✦</span> Brainstorm</button>
+        <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
+      </nav>
+
+      <div class="sidebar-spacer"></div>
+
+      <div class="thesis-mini">
+        <span class="eyebrow">CURRENT THESIS</span>
+        <strong>Patient education and stoma self-management</strong>
+        <div class="progress-line"><span style="width: 38%"></span></div>
+        <small>38% structured</small>
+      </div>
+
+      <button class="profile">
+        <div class="avatar">JF</div>
+        <div>
+          <strong>Jason</strong>
+          <small>Master's researcher</small>
+        </div>
+        <span class="chevron">›</span>
+      </button>
+    </aside>
+
+    <main class="main">
+      <header class="topbar">
+        <div class="mobile-brand">quire</div>
+        <div class="search">
+          <span>⌕</span>
+          <input id="globalSearch" type="search" placeholder="Search articles, notes, chapters…" />
+          <kbd>⌘ K</kbd>
+        </div>
+        <div class="top-actions">
+          <button class="icon-btn" title="Notifications">○</button>
+          <button class="primary-btn" id="newItemBtn">＋ New</button>
+        </div>
+      </header>
+
+      <section id="dashboard" class="view active">
+        <div class="page-heading">
+          <div>
+            <span class="eyebrow">GOOD EVENING</span>
+            <h1>Keep the thesis moving.</h1>
+            <p>Bring articles, ideas, evidence and chapters into one connected workspace.</p>
+          </div>
+          <button class="ghost-btn" data-go="map">Open thesis map →</button>
+        </div>
+
+        <div class="hero-grid">
+          <article class="hero-card">
+            <div>
+              <span class="eyebrow light">THESIS FOCUS</span>
+              <h2>How can patient education support self-management after stoma formation?</h2>
+              <p>3 objectives · 6 themes · 24 articles linked</p>
+            </div>
+            <button class="hero-action" data-go="chapters">Continue writing →</button>
+          </article>
+
+          <article class="copilot-card">
+            <div class="copilot-orb">✦</div>
+            <div>
+              <span class="eyebrow">QUIRE COPILOT</span>
+              <h3>What would you like to work through?</h3>
+            </div>
+            <div class="prompt-row">
+              <button class="prompt-chip">Structure my literature review</button>
+              <button class="prompt-chip">Compare two papers</button>
+              <button class="prompt-chip">Brainstorm a research gap</button>
+            </div>
+            <div class="copilot-input">
+              <input id="dashboardPrompt" placeholder="Ask Quire…" />
+              <button id="dashboardAsk">↑</button>
+            </div>
+          </article>
+        </div>
+
+        <div class="section-title">
+          <div><span class="eyebrow">TODAY</span><h2>Your research desk</h2></div>
+          <button class="text-btn">Customize</button>
+        </div>
+
+        <div class="desk-grid">
+          <article class="panel continue-panel">
+            <div class="panel-head">
+              <div><span class="eyebrow">CONTINUE</span><h3>Recent work</h3></div>
+              <button class="text-btn">View all</button>
+            </div>
+            <div class="recent-list">
+              <button class="recent-item" data-go="reader">
+                <div class="file-icon">PDF</div>
+                <div><strong>Living with a stoma: self-management needs</strong><small>Highlighted 6 passages · 18 min ago</small></div>
+                <span>›</span>
+              </button>
+              <button class="recent-item" data-go="chapters">
+                <div class="file-icon chapter">§2</div>
+                <div><strong>Literature Review — Patient education</strong><small>842 words · Yesterday</small></div>
+                <span>›</span>
+              </button>
+              <button class="recent-item" data-go="brainstorm">
+                <div class="file-icon note">✦</div>
+                <div><strong>Theme: confidence after discharge</strong><small>4 linked ideas · Yesterday</small></div>
+                <span>›</span>
+              </button>
+            </div>
+          </article>
+
+          <article class="panel stat-panel">
+            <div class="panel-head"><div><span class="eyebrow">LIBRARY</span><h3>Research at a glance</h3></div></div>
+            <div class="stats">
+              <div><strong>24</strong><span>Articles</span></div>
+              <div><strong>67</strong><span>Highlights</span></div>
+              <div><strong>31</strong><span>Notes</span></div>
+              <div><strong>6</strong><span>Themes</span></div>
+            </div>
+            <button class="soft-btn" data-go="library">Open research library</button>
+          </article>
+
+          <article class="panel milestones-panel">
+            <div class="panel-head"><div><span class="eyebrow">MILESTONES</span><h3>Next steps</h3></div></div>
+            <label class="task done"><input type="checkbox" checked><span>Refine research question</span></label>
+            <label class="task done"><input type="checkbox" checked><span>Define literature search strategy</span></label>
+            <label class="task"><input type="checkbox"><span>Complete thematic matrix</span><small>Oct 08</small></label>
+            <label class="task"><input type="checkbox"><span>Literature review first draft</span><small>Oct 24</small></label>
+          </article>
+        </div>
+      </section>
+
+      <section id="library" class="view">
+        <div class="page-heading compact">
+          <div>
+            <span class="eyebrow">RESEARCH LIBRARY</span>
+            <h1>Your evidence, organised.</h1>
+            <p>Upload papers, capture what matters and connect evidence to your thesis.</p>
+          </div>
+          <button class="primary-btn" id="uploadArticleBtn">＋ Add article</button>
+        </div>
+
+        <div class="toolbar">
+          <div class="filter-tabs">
+            <button class="active">All <span>24</span></button>
+            <button>Unread <span>5</span></button>
+            <button>Highlighted <span>14</span></button>
+            <button>Linked to thesis <span>18</span></button>
+          </div>
+          <select><option>Recently added</option><option>Author A–Z</option><option>Year</option></select>
+        </div>
+
+        <div class="library-layout">
+          <aside class="collection-panel">
+            <span class="eyebrow">COLLECTIONS</span>
+            <button class="collection active">All research <span>24</span></button>
+            <button class="collection">Patient education <span>8</span></button>
+            <button class="collection">Self-management <span>6</span></button>
+            <button class="collection">Quality of life <span>5</span></button>
+            <button class="collection">Peristomal complications <span>5</span></button>
+            <button class="collection add">＋ New collection</button>
+          </aside>
+
+          <div class="article-list">
+            <article class="article-card" data-open-reader>
+              <div class="article-main">
+                <div class="pdf-thumb">PDF</div>
+                <div>
+                  <div class="tags"><span>Patient education</span><span>2025</span></div>
+                  <h3>Living with a stoma: self-management needs and educational priorities</h3>
+                  <p>Andersson, P. · Clarke, M. · Journal of Clinical Nursing</p>
+                  <div class="meta-row"><span>◫ 6 highlights</span><span>▱ 3 notes</span><span>§ Linked to Chapter 2</span></div>
+                </div>
+              </div>
+              <div class="article-score"><strong>Highly relevant</strong><span>AI assessed</span></div>
+            </article>
+
+            <article class="article-card">
+              <div class="article-main">
+                <div class="pdf-thumb">PDF</div>
+                <div>
+                  <div class="tags"><span>Self-management</span><span>2024</span></div>
+                  <h3>Supporting adaptation following ostomy surgery: a qualitative synthesis</h3>
+                  <p>Reed, J. et al. · International Journal of Nursing Studies</p>
+                  <div class="meta-row"><span>◫ 9 highlights</span><span>▱ 5 notes</span><span>§ Linked to Chapter 2</span></div>
+                </div>
+              </div>
+              <div class="article-score"><strong>Core paper</strong><span>Manually tagged</span></div>
+            </article>
+
+            <article class="article-card">
+              <div class="article-main">
+                <div class="pdf-thumb muted">PDF</div>
+                <div>
+                  <div class="tags"><span>Quality of life</span><span>2023</span></div>
+                  <h3>Quality of life outcomes in adults after stoma formation</h3>
+                  <p>Bianchi, L. et al. · Colorectal Disease</p>
+                  <div class="meta-row"><span>Not reviewed yet</span></div>
+                </div>
+              </div>
+              <button class="soft-btn small">Summarise with AI</button>
+            </article>
+          </div>
+        </div>
+      </section>
+
+      <section id="reader" class="view reader-view">
+        <div class="reader-top">
+          <button class="back-btn" data-go="library">← Library</button>
+          <div class="reader-title"><strong>Living with a stoma: self-management needs…</strong><small>Andersson et al., 2025</small></div>
+          <div class="reader-actions"><button class="soft-btn small">Cite</button><button class="soft-btn small">⋯</button></div>
+        </div>
+
+        <div class="reader-layout">
+          <aside class="reader-left">
+            <button class="reader-tab active">Pages</button>
+            <button class="reader-tab">Highlights</button>
+            <div class="page-thumb active"><span>1</span><div></div></div>
+            <div class="page-thumb"><span>2</span><div></div></div>
+            <div class="page-thumb"><span>3</span><div></div></div>
+          </aside>
+
+          <div class="pdf-stage">
+            <div class="pdf-toolbar">
+              <span>Page 4 / 12</span>
+              <div><button>−</button><span>110%</span><button>＋</button></div>
+              <button>⛶</button>
+            </div>
+            <article class="paper">
+              <span class="journal">JOURNAL OF CLINICAL NURSING</span>
+              <h1>Living with a stoma: self-management needs and educational priorities</h1>
+              <p class="authors">P. Andersson, M. Clarke, R. Patel</p>
+              <h4>Abstract</h4>
+              <p>Individuals adapting to a newly formed stoma require practical knowledge, confidence and access to timely specialist support. This qualitative study explored the educational priorities described by adults during the first six months following discharge.</p>
+              <h4>Results</h4>
+              <p>Participants described a transition from dependence to self-management. <mark class="highlight" id="sampleHighlight">Confidence increased when education was repeated, practical and tailored to the person's changing needs.</mark> Participants particularly valued opportunities to rehearse appliance changes and discuss complications before discharge.</p>
+              <p>Uncertainty was most pronounced when written information differed from advice received verbally. Follow-up contact with a stoma care nurse was described as an important source of reassurance and problem solving.</p>
+              <div class="highlight-note">
+                <span>My note</span>
+                <p>This could support the argument that education should be staged rather than delivered only once before discharge.</p>
+                <small>Linked to: Chapter 2 › Patient education</small>
+              </div>
+            </article>
+          </div>
+
+          <aside class="copilot-panel">
+            <div class="copilot-panel-head"><div class="copilot-orb small">✦</div><div><strong>Quire Copilot</strong><small>Working with this article</small></div></div>
+            <div class="quick-actions">
+              <button data-ai="summary">Summarise</button>
+              <button data-ai="methods">Methods</button>
+              <button data-ai="findings">Key findings</button>
+              <button data-ai="critique">Critique</button>
+            </div>
+            <div id="aiResponse" class="ai-response">
+              <span class="eyebrow">ARTICLE OVERVIEW</span>
+              <p>This paper explores educational needs after stoma formation, with a particular emphasis on how repeated, practical teaching supports confidence and self-management.</p>
+              <div class="evidence-callout"><strong>Useful for your thesis</strong><p>It directly supports your theme on <em>patient education and confidence after discharge</em>.</p></div>
+              <small>AI-generated. Check against the original paper.</small>
+            </div>
+            <div class="copilot-input docked">
+              <input id="readerPrompt" placeholder="Ask about this paper…" />
+              <button id="readerAsk">↑</button>
+            </div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="map" class="view">
+        <div class="page-heading compact">
+          <div><span class="eyebrow">THESIS MAP</span><h1>See how the argument connects.</h1><p>Trace your research question through objectives, themes, evidence and chapters.</p></div>
+          <button class="primary-btn">＋ Add connection</button>
+        </div>
+        <div class="map-canvas">
+          <div class="map-node root"><span>RESEARCH QUESTION</span><strong>How can patient education support self-management after stoma formation?</strong></div>
+          <div class="map-line vertical"></div>
+          <div class="map-row objectives">
+            <div class="map-node"><span>OBJECTIVE 1</span><strong>Explore educational needs</strong><small>11 papers</small></div>
+            <div class="map-node"><span>OBJECTIVE 2</span><strong>Identify barriers to self-management</strong><small>9 papers</small></div>
+            <div class="map-node"><span>OBJECTIVE 3</span><strong>Evaluate specialist support</strong><small>8 papers</small></div>
+          </div>
+          <div class="map-row themes">
+            <div class="theme-node">Patient education <span>8</span></div>
+            <div class="theme-node">Confidence <span>6</span></div>
+            <div class="theme-node">Follow-up <span>5</span></div>
+            <div class="theme-node">Quality of life <span>5</span></div>
+          </div>
+          <div class="map-row chapters-map">
+            <div class="chapter-node"><span>CHAPTER 2</span><strong>Literature Review</strong><small>18 linked sources</small></div>
+            <div class="chapter-node"><span>CHAPTER 5</span><strong>Discussion</strong><small>12 linked sources</small></div>
+          </div>
+        </div>
+      </section>
+
+      <section id="chapters" class="view">
+        <div class="page-heading compact">
+          <div><span class="eyebrow">CHAPTERS</span><h1>Build the thesis, section by section.</h1><p>Outline arguments first, then write with your evidence beside you.</p></div>
+          <button class="primary-btn">＋ New section</button>
+        </div>
+        <div class="chapter-layout">
+          <aside class="chapter-tree">
+            <div class="chapter-tree-head"><strong>Thesis outline</strong><button>＋</button></div>
+            <button><span>1</span> Introduction</button>
+            <button class="active"><span>2</span> Literature Review</button>
+            <div class="subsections">
+              <button>2.1 Background</button>
+              <button class="active">2.2 Patient education</button>
+              <button>2.3 Self-management</button>
+              <button>2.4 Quality of life</button>
+              <button>2.5 Gaps in literature</button>
+            </div>
+            <button><span>3</span> Methodology</button>
+            <button><span>4</span> Results</button>
+            <button><span>5</span> Discussion</button>
+            <button><span>6</span> Conclusion</button>
+          </aside>
+
+          <div class="editor-panel">
+            <div class="editor-meta"><span>Chapter 2 · Literature Review</span><span>842 words</span></div>
+            <input class="editor-title" value="2.2 Patient education" />
+            <div class="editor-toolbar"><button>B</button><button><em>I</em></button><button>U</button><span></span><button>H1</button><button>H2</button><button>“</button><button>🔗</button></div>
+            <div class="editor" contenteditable="true">
+              <p>Education is a central component of adjustment following stoma formation. Patients are expected to acquire practical skills while simultaneously adapting to significant physical and psychological change.</p>
+              <p>Recent literature suggests that education is most effective when it is <u class="suggestion">repeated, practical and responsive to the person's changing needs</u>, rather than concentrated into a single pre-discharge teaching episode.</p>
+              <p class="placeholder-paragraph">Continue writing here…</p>
+            </div>
+          </div>
+
+          <aside class="evidence-panel">
+            <div class="evidence-head"><strong>Evidence for this section</strong><span>8 sources</span></div>
+            <div class="evidence-card"><span class="source-tag">Andersson et al., 2025</span><p>“Confidence increased when education was repeated, practical…”</p><small>Highlight · p.4</small><button>Insert note</button></div>
+            <div class="evidence-card"><span class="source-tag">Reed et al., 2024</span><p>Education needs changed substantially following discharge.</p><small>AI summary · verified</small><button>Insert note</button></div>
+            <button class="soft-btn">✦ Ask Copilot about this section</button>
+          </aside>
+        </div>
+      </section>
+
+      <section id="brainstorm" class="view">
+        <div class="page-heading compact">
+          <div><span class="eyebrow">BRAINSTORM</span><h1>Think freely. Structure later.</h1><p>Capture rough thoughts, then let Quire help turn them into themes, questions and sections.</p></div>
+          <button class="primary-btn" id="newIdeaBtn">＋ New idea</button>
+        </div>
+        <div class="brainstorm-layout">
+          <div class="idea-board">
+            <div class="idea-column">
+              <div class="column-head"><strong>Inbox</strong><span>3</span></div>
+              <article class="idea-card"><small>ROUGH THOUGHT</small><p>Does too much information before discharge overwhelm patients?</p><div class="idea-tags"><span>education</span></div></article>
+              <article class="idea-card"><small>QUESTION</small><p>Difference between being technically competent and feeling confident?</p><div class="idea-tags"><span>self-management</span></div></article>
+            </div>
+            <div class="idea-column">
+              <div class="column-head"><strong>Developing themes</strong><span>2</span></div>
+              <article class="idea-card strong"><small>THEME</small><p>Confidence develops through supported practice, not information alone.</p><div class="idea-tags"><span>6 sources</span><span>chapter 2</span></div></article>
+            </div>
+            <div class="idea-column">
+              <div class="column-head"><strong>Ready for thesis</strong><span>2</span></div>
+              <article class="idea-card ready"><small>ARGUMENT</small><p>Education should be staged across the transition from hospital to home.</p><div class="idea-tags"><span>8 sources</span><span>discussion</span></div></article>
+            </div>
+          </div>
+          <aside class="brainstorm-ai">
+            <div class="copilot-orb">✦</div>
+            <span class="eyebrow">BRAINSTORM WITH COPILOT</span>
+            <h3>Develop the idea without losing your own voice.</h3>
+            <p>Ask questions, challenge assumptions, find opposing interpretations or turn a rough idea into a chapter structure.</p>
+            <div class="prompt-stack">
+              <button>Challenge this argument</button>
+              <button>Suggest alternative themes</button>
+              <button>What evidence am I missing?</button>
+              <button>Turn these ideas into an outline</button>
+            </div>
+            <div class="copilot-input"><input placeholder="Explore an idea…"><button>↑</button></div>
+          </aside>
+        </div>
+      </section>
+
+      <section id="review" class="view">
+        <div class="page-heading compact">
+          <div><span class="eyebrow">WRITING REVIEW</span><h1>Polish without losing your voice.</h1><p>Review grammar, clarity, academic tone, structure and evidence — suggestion by suggestion.</p></div>
+          <button class="primary-btn">Review chapter</button>
+        </div>
+        <div class="review-layout">
+          <div class="review-doc">
+            <div class="review-doc-head"><strong>2.2 Patient education</strong><span>3 suggestions</span></div>
+            <p>Education is a central component of adjustment following stoma formation. Patients are expected to acquire practical skills while simultaneously adapting to significant physical and psychological change.</p>
+            <p>Recent literature <span class="issue clarity">shows that</span> education is most effective when it is repeated, practical and responsive to the person's changing needs.</p>
+            <p><span class="issue evidence">This clearly improves outcomes for all patients.</span> Follow-up teaching may therefore be an important component of continuity of care.</p>
+          </div>
+          <aside class="review-sidebar">
+            <div class="review-tabs"><button class="active">Suggestions</button><button>Structure</button></div>
+            <article class="suggestion-card"><span class="suggestion-type">CLARITY</span><p><strong>“shows that”</strong> may sound overly definitive for the evidence described.</p><div class="replacement">Consider: “suggests that”</div><div class="suggestion-actions"><button>Accept</button><button>Dismiss</button></div></article>
+            <article class="suggestion-card"><span class="suggestion-type warning">EVIDENCE</span><p>The statement <strong>“improves outcomes for all patients”</strong> is broader than the evidence currently linked to this section.</p><div class="replacement">Narrow the claim or add supporting evidence.</div><div class="suggestion-actions"><button>Find evidence</button><button>Dismiss</button></div></article>
+            <article class="suggestion-card"><span class="suggestion-type">STRUCTURE</span><p>Consider introducing the concept of staged education before discussing follow-up teaching.</p><div class="suggestion-actions"><button>Show outline</button><button>Dismiss</button></div></article>
+          </aside>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div id="modal" class="modal-backdrop" hidden>
+    <div class="modal">
+      <div class="modal-head"><div><span class="eyebrow">ADD TO QUIRE</span><h2>Bring in a new source or idea</h2></div><button id="closeModal">×</button></div>
+      <div class="new-grid">
+        <button class="new-card" data-action="upload"><span>PDF</span><strong>Upload article</strong><small>Add a paper from your device</small></button>
+        <button class="new-card"><span>DOI</span><strong>Add by DOI or link</strong><small>Import article metadata</small></button>
+        <button class="new-card" data-go-modal="brainstorm"><span>✦</span><strong>Capture an idea</strong><small>Save a thought before it disappears</small></button>
+        <button class="new-card" data-go-modal="chapters"><span>§</span><strong>New thesis section</strong><small>Add to your chapter structure</small></button>
+      </div>
+    </div>
+  </div>
+
+  <input id="fileInput" type="file" accept=".pdf" hidden />
+  <script src="app.js"></script>
+</body>
+</html>
