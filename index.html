@@ -29,6 +29,7 @@
         <button class="nav-item" data-view="chapters"><span>¶</span> Chapters</button>
         <button class="nav-item" data-view="brainstorm"><span>✦</span> Brainstorm</button>
         <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
+        <button class="nav-item" data-view="setup"><span>⚙</span> Study Setup</button>
       </nav>
 
       <div class="sidebar-spacer"></div>
@@ -414,6 +415,241 @@
           </aside>
         </div>
       </section>
+
+      <section id="setup" class="view">
+        <div class="page-heading compact">
+          <div>
+            <span class="eyebrow">STUDY SETUP</span>
+            <h1>Define the shape of your research.</h1>
+            <p>Tell Quire what kind of thesis you are building. These choices will later tailor your chapter structure, milestones, methodology prompts, analysis guidance and AI support.</p>
+          </div>
+          <button class="primary-btn" id="saveStudySetup">Save setup</button>
+        </div>
+
+        <div class="setup-status">
+          <div>
+            <span class="eyebrow">RESEARCH PROFILE</span>
+            <strong id="setupSummaryTitle">Not configured yet</strong>
+            <small id="setupSummaryMeta">Choose your study design, target word count and key dates.</small>
+          </div>
+          <div class="setup-completion">
+            <span id="setupPercent">0%</span>
+            <div class="setup-progress"><i id="setupProgressBar"></i></div>
+          </div>
+        </div>
+
+        <div class="setup-layout">
+          <aside class="setup-index">
+            <span class="eyebrow">SETUP SECTIONS</span>
+            <button class="setup-index-item active" data-setup-jump="study-design">01 · Study design</button>
+            <button class="setup-index-item" data-setup-jump="scope-targets">02 · Scope & targets</button>
+            <button class="setup-index-item" data-setup-jump="deadlines">03 · Deadlines</button>
+            <button class="setup-index-item" data-setup-jump="methodology">04 · Methodology</button>
+            <button class="setup-index-item" data-setup-jump="analysis">05 · Data analysis</button>
+            <button class="setup-index-item" data-setup-jump="proposal">06 · Proposal</button>
+            <button class="setup-index-item" data-setup-jump="ai-preferences">07 · Quire Copilot</button>
+          </aside>
+
+          <div class="setup-main">
+            <article class="setup-card" id="study-design">
+              <div class="setup-card-head">
+                <div><span class="setup-number">01</span><div><h2>Study design</h2><p>Select the overall research approach. You can change this later.</p></div></div>
+              </div>
+              <div class="design-grid" id="studyTypeChoices">
+                <label class="design-choice">
+                  <input type="radio" name="studyType" value="qualitative">
+                  <span class="design-icon">Qₗ</span>
+                  <strong>Qualitative</strong>
+                  <small>Interviews, focus groups, observations, lived experience and meaning.</small>
+                </label>
+                <label class="design-choice">
+                  <input type="radio" name="studyType" value="quantitative">
+                  <span class="design-icon">Qₙ</span>
+                  <strong>Quantitative</strong>
+                  <small>Numerical data, measurement, associations, comparisons and hypothesis testing.</small>
+                </label>
+                <label class="design-choice">
+                  <input type="radio" name="studyType" value="mixed">
+                  <span class="design-icon">Qₘ</span>
+                  <strong>Mixed methods</strong>
+                  <small>Combine qualitative and quantitative strands in one study.</small>
+                </label>
+                <label class="design-choice">
+                  <input type="radio" name="studyType" value="meta">
+                  <span class="design-icon">Σ</span>
+                  <strong>Systematic review / Meta-analysis</strong>
+                  <small>Structured evidence synthesis, with optional statistical pooling.</small>
+                </label>
+              </div>
+            </article>
+
+            <article class="setup-card" id="scope-targets">
+              <div class="setup-card-head">
+                <div><span class="setup-number">02</span><div><h2>Scope & writing targets</h2><p>Set the academic boundaries Quire should work within.</p></div></div>
+              </div>
+              <div class="form-grid">
+                <label class="field wide"><span>Working thesis title</span><input id="thesisTitle" type="text" placeholder="Enter your working title"></label>
+                <label class="field"><span>Total thesis word count</span><input id="wordCount" type="number" min="1000" step="500" placeholder="e.g. 20,000"></label>
+                <label class="field"><span>Proposal word count</span><input id="proposalWordCount" type="number" min="0" step="250" placeholder="e.g. 2,500"></label>
+                <label class="field"><span>Programme / degree</span><input id="degreeName" type="text" placeholder="e.g. MSc Advanced Nursing"></label>
+                <label class="field"><span>Institution</span><input id="institutionName" type="text" placeholder="University or institution"></label>
+                <label class="field wide"><span>Main research question</span><textarea id="researchQuestion" rows="3" placeholder="What is the central question your thesis will answer?"></textarea></label>
+              </div>
+            </article>
+
+            <article class="setup-card" id="deadlines">
+              <div class="setup-card-head">
+                <div><span class="setup-number">03</span><div><h2>Deadlines & milestones</h2><p>Quire can use these dates to build your research timeline.</p></div></div>
+              </div>
+              <div class="form-grid dates-grid">
+                <label class="field"><span>Proposal submission</span><input id="proposalDeadline" type="date"></label>
+                <label class="field"><span>Ethics submission</span><input id="ethicsDeadline" type="date"></label>
+                <label class="field"><span>Data collection begins</span><input id="dataStart" type="date"></label>
+                <label class="field"><span>Data collection ends</span><input id="dataEnd" type="date"></label>
+                <label class="field"><span>First full draft</span><input id="draftDeadline" type="date"></label>
+                <label class="field"><span>Final submission</span><input id="finalDeadline" type="date"></label>
+              </div>
+              <button class="soft-btn setup-action" id="generateTimeline">Generate suggested milestones</button>
+              <div class="generated-timeline" id="generatedTimeline" hidden></div>
+            </article>
+
+            <article class="setup-card" id="methodology">
+              <div class="setup-card-head">
+                <div><span class="setup-number">04</span><div><h2>Methodology</h2><p>Build the methodological profile Quire should use when helping you write.</p></div></div>
+              </div>
+
+              <div class="method-panel" data-method-panel="qualitative" hidden>
+                <div class="form-grid">
+                  <label class="field"><span>Qualitative design</span><select id="qualDesign"><option value="">Select…</option><option>Phenomenology</option><option>Interpretative phenomenological analysis</option><option>Grounded theory</option><option>Ethnography</option><option>Case study</option><option>Qualitative descriptive study</option><option>Narrative inquiry</option><option>Other</option></select></label>
+                  <label class="field"><span>Sampling strategy</span><select id="qualSampling"><option value="">Select…</option><option>Purposive</option><option>Convenience</option><option>Snowball</option><option>Theoretical</option><option>Maximum variation</option><option>Criterion</option><option>Other</option></select></label>
+                  <label class="field"><span>Data collection</span><select id="qualCollection"><option value="">Select…</option><option>Semi-structured interviews</option><option>Structured interviews</option><option>Focus groups</option><option>Observation</option><option>Documents / records</option><option>Open-ended survey responses</option><option>Other</option></select></label>
+                  <label class="field"><span>Target sample size</span><input id="qualSampleSize" type="number" min="1" placeholder="e.g. 15"></label>
+                </div>
+              </div>
+
+              <div class="method-panel" data-method-panel="quantitative" hidden>
+                <div class="form-grid">
+                  <label class="field"><span>Quantitative design</span><select id="quantDesign"><option value="">Select…</option><option>Cross-sectional</option><option>Cohort</option><option>Case-control</option><option>Randomised controlled trial</option><option>Quasi-experimental</option><option>Pre/post study</option><option>Survey study</option><option>Other</option></select></label>
+                  <label class="field"><span>Sampling strategy</span><select id="quantSampling"><option value="">Select…</option><option>Simple random</option><option>Stratified random</option><option>Cluster</option><option>Systematic</option><option>Convenience</option><option>Consecutive</option><option>Other</option></select></label>
+                  <label class="field"><span>Primary data source</span><select id="quantCollection"><option value="">Select…</option><option>Questionnaire</option><option>Clinical measurements</option><option>Routine / registry data</option><option>Experimental measurement</option><option>Audit data</option><option>Other</option></select></label>
+                  <label class="field"><span>Target sample size</span><input id="quantSampleSize" type="number" min="1" placeholder="e.g. 120"></label>
+                </div>
+              </div>
+
+              <div class="method-panel" data-method-panel="mixed" hidden>
+                <div class="form-grid">
+                  <label class="field"><span>Mixed-methods design</span><select id="mixedDesign"><option value="">Select…</option><option>Convergent parallel</option><option>Explanatory sequential</option><option>Exploratory sequential</option><option>Embedded design</option><option>Multiphase design</option><option>Other</option></select></label>
+                  <label class="field"><span>Priority</span><select id="mixedPriority"><option value="">Select…</option><option>Equal priority</option><option>Qualitative priority</option><option>Quantitative priority</option></select></label>
+                  <label class="field wide"><span>Integration point</span><textarea id="mixedIntegration" rows="3" placeholder="How and when will the qualitative and quantitative strands be integrated?"></textarea></label>
+                </div>
+              </div>
+
+              <div class="method-panel" data-method-panel="meta" hidden>
+                <div class="form-grid">
+                  <label class="field"><span>Review type</span><select id="reviewType"><option value="">Select…</option><option>Systematic review</option><option>Systematic review with meta-analysis</option><option>Scoping review</option><option>Integrative review</option><option>Rapid review</option><option>Other</option></select></label>
+                  <label class="field"><span>Reporting framework</span><select id="reportingFramework"><option value="">Select…</option><option>PRISMA 2020</option><option>PRISMA-ScR</option><option>JBI guidance</option><option>Cochrane guidance</option><option>Other</option></select></label>
+                  <label class="field wide"><span>Databases planned</span><input id="databases" type="text" placeholder="e.g. MEDLINE, CINAHL, Embase, Scopus"></label>
+                  <label class="field wide"><span>Eligibility framework</span><textarea id="eligibilityFramework" rows="3" placeholder="e.g. PICO, PICOS, SPIDER, PCC and your main inclusion criteria"></textarea></label>
+                </div>
+              </div>
+
+              <div class="form-grid methodology-common">
+                <label class="field wide"><span>Population / participants</span><textarea id="population" rows="2" placeholder="Who or what is being studied?"></textarea></label>
+                <label class="field wide"><span>Setting / context</span><textarea id="studySetting" rows="2" placeholder="Where will the study take place, or what context does it cover?"></textarea></label>
+                <label class="field wide"><span>Methodological notes</span><textarea id="methodNotes" rows="3" placeholder="Record supervisor decisions, rationale, assumptions or methodological constraints."></textarea></label>
+              </div>
+            </article>
+
+            <article class="setup-card" id="analysis">
+              <div class="setup-card-head">
+                <div><span class="setup-number">05</span><div><h2>Data analysis</h2><p>Select the analytical approach Quire should expect when helping with your methods, results and discussion.</p></div></div>
+              </div>
+
+              <div class="analysis-options" data-analysis-panel="qualitative" hidden>
+                <label><input type="checkbox" value="Reflexive thematic analysis"> Reflexive thematic analysis</label>
+                <label><input type="checkbox" value="Framework analysis"> Framework analysis</label>
+                <label><input type="checkbox" value="Content analysis"> Content analysis</label>
+                <label><input type="checkbox" value="IPA"> Interpretative phenomenological analysis</label>
+                <label><input type="checkbox" value="Grounded theory coding"> Grounded theory coding</label>
+                <label><input type="checkbox" value="Narrative analysis"> Narrative analysis</label>
+              </div>
+
+              <div class="analysis-options" data-analysis-panel="quantitative" hidden>
+                <label><input type="checkbox" value="Descriptive statistics"> Descriptive statistics</label>
+                <label><input type="checkbox" value="t-test"> t-test</label>
+                <label><input type="checkbox" value="ANOVA"> ANOVA</label>
+                <label><input type="checkbox" value="Chi-square"> Chi-square</label>
+                <label><input type="checkbox" value="Correlation"> Correlation</label>
+                <label><input type="checkbox" value="Regression"> Regression</label>
+              </div>
+
+              <div class="analysis-options" data-analysis-panel="mixed" hidden>
+                <label><input type="checkbox" value="Qualitative thematic analysis"> Qualitative thematic analysis</label>
+                <label><input type="checkbox" value="Quantitative statistical analysis"> Quantitative statistical analysis</label>
+                <label><input type="checkbox" value="Joint display"> Joint display</label>
+                <label><input type="checkbox" value="Triangulation"> Triangulation</label>
+                <label><input type="checkbox" value="Data transformation"> Data transformation</label>
+                <label><input type="checkbox" value="Integrated interpretation"> Integrated interpretation</label>
+              </div>
+
+              <div class="analysis-options" data-analysis-panel="meta" hidden>
+                <label><input type="checkbox" value="Narrative synthesis"> Narrative synthesis</label>
+                <label><input type="checkbox" value="Fixed-effect meta-analysis"> Fixed-effect meta-analysis</label>
+                <label><input type="checkbox" value="Random-effects meta-analysis"> Random-effects meta-analysis</label>
+                <label><input type="checkbox" value="Heterogeneity assessment"> Heterogeneity assessment</label>
+                <label><input type="checkbox" value="Subgroup analysis"> Subgroup analysis</label>
+                <label><input type="checkbox" value="Risk of bias assessment"> Risk of bias assessment</label>
+              </div>
+
+              <div class="form-grid">
+                <label class="field"><span>Primary software / tool</span><input id="analysisSoftware" type="text" placeholder="e.g. NVivo, SPSS, R, Stata, Excel"></label>
+                <label class="field"><span>Significance level / decision rule</span><input id="analysisRule" type="text" placeholder="e.g. p < 0.05, or qualitative stopping rule"></label>
+                <label class="field wide"><span>Analysis plan notes</span><textarea id="analysisNotes" rows="3" placeholder="Describe your planned workflow or add questions to discuss with your supervisor."></textarea></label>
+              </div>
+            </article>
+
+            <article class="setup-card" id="proposal">
+              <div class="setup-card-head">
+                <div><span class="setup-number">06</span><div><h2>Proposal requirements</h2><p>Track what your programme expects before the full thesis begins.</p></div></div>
+              </div>
+              <div class="toggle-list">
+                <label class="toggle-row"><div><strong>Research proposal required</strong><small>Include a separate proposal stage in your thesis plan.</small></div><input id="proposalRequired" type="checkbox" checked></label>
+                <label class="toggle-row"><div><strong>Ethics approval required</strong><small>Add ethics preparation and approval to your milestones.</small></div><input id="ethicsRequired" type="checkbox" checked></label>
+                <label class="toggle-row"><div><strong>Data management plan</strong><small>Track storage, anonymisation, retention and access decisions.</small></div><input id="dataManagementRequired" type="checkbox"></label>
+                <label class="toggle-row"><div><strong>Protocol registration</strong><small>Useful for some reviews, trials and prospective studies.</small></div><input id="protocolRegistration" type="checkbox"></label>
+              </div>
+              <label class="field"><span>Proposal / faculty requirements</span><textarea id="proposalRequirements" rows="4" placeholder="Paste or summarise any specific headings, formatting rules or assessment criteria."></textarea></label>
+            </article>
+
+            <article class="setup-card" id="ai-preferences">
+              <div class="setup-card-head">
+                <div><span class="setup-number">07</span><div><h2>Quire Copilot preferences</h2><p>Choose how the AI should use your research profile when supporting you.</p></div></div>
+              </div>
+              <div class="toggle-list">
+                <label class="toggle-row"><div><strong>Tailor suggestions to my study design</strong><small>Use your methodology when suggesting chapter structure, questions and terminology.</small></div><input id="aiTailorMethod" type="checkbox" checked></label>
+                <label class="toggle-row"><div><strong>Flag methodological inconsistencies</strong><small>Point out when a draft conflicts with the design or analysis plan you selected.</small></div><input id="aiMethodChecks" type="checkbox" checked></label>
+                <label class="toggle-row"><div><strong>Protect my academic voice</strong><small>Prefer suggestions and tracked changes rather than replacing large sections automatically.</small></div><input id="aiProtectVoice" type="checkbox" checked></label>
+                <label class="toggle-row"><div><strong>Require evidence links for research claims</strong><small>Encourage article-backed statements and page-level source checking.</small></div><input id="aiEvidenceLinks" type="checkbox" checked></label>
+              </div>
+            </article>
+          </div>
+
+          <aside class="setup-preview">
+            <div class="setup-preview-card">
+              <span class="eyebrow">QUIRE WILL ADAPT</span>
+              <h3 id="adaptiveTitle">Choose a study design</h3>
+              <p id="adaptiveDescription">Once selected, Quire will tailor methodology prompts, analysis options, suggested chapter content and milestone planning.</p>
+              <div class="adaptive-list" id="adaptiveList">
+                <span>Methodology guidance</span>
+                <span>Analysis planning</span>
+                <span>Chapter prompts</span>
+                <span>Deadline planning</span>
+              </div>
+            </div>
+          </aside>
+        </div>
+      </section>
+
     </main>
   </div>
 
