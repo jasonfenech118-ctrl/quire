@@ -12,7 +12,7 @@ begin
 end $$;
 
 create table if not exists public.thesis_projects (
-  id uuid primary key default gen_random_uuid(),
+  id text primary key default gen_random_uuid()::text,
   user_id uuid not null references auth.users(id) on delete cascade,
   title text not null,
   degree_name text,
@@ -30,8 +30,8 @@ create table if not exists public.thesis_projects (
 );
 
 create table if not exists public.study_setups (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null unique references public.thesis_projects(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null unique references public.thesis_projects(id) on delete cascade,
   study_type text check (study_type is null or study_type in ('qualitative','quantitative','mixed','meta')),
   population text,
   study_setting text,
@@ -60,8 +60,8 @@ create table if not exists public.study_setups (
 );
 
 create table if not exists public.objectives (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
   order_index integer not null default 1,
   title text not null,
   description text,
@@ -71,8 +71,8 @@ create table if not exists public.objectives (
 );
 
 create table if not exists public.chapters (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
   number text,
   title text not null,
   order_index integer not null,
@@ -85,10 +85,10 @@ create table if not exists public.chapters (
 );
 
 create table if not exists public.sections (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
-  chapter_id uuid not null references public.chapters(id) on delete cascade,
-  parent_section_id uuid references public.sections(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  chapter_id text not null references public.chapters(id) on delete cascade,
+  parent_section_id text references public.sections(id) on delete cascade,
   number text,
   title text not null,
   order_index integer not null,
@@ -101,8 +101,8 @@ create table if not exists public.sections (
 );
 
 create table if not exists public.articles (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
   title text not null,
   authors text,
   journal text,
@@ -120,9 +120,9 @@ create table if not exists public.articles (
 create unique index if not exists articles_project_doi_unique on public.articles(project_id,doi) where doi is not null and doi <> '';
 
 create table if not exists public.highlights (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
-  article_id uuid not null references public.articles(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  article_id text not null references public.articles(id) on delete cascade,
   page_number integer check (page_number is null or page_number > 0),
   highlighted_text text not null,
   color text,
@@ -133,10 +133,10 @@ create table if not exists public.highlights (
 );
 
 create table if not exists public.notes (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
-  article_id uuid references public.articles(id) on delete cascade,
-  highlight_id uuid references public.highlights(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  article_id text references public.articles(id) on delete cascade,
+  highlight_id text references public.highlights(id) on delete cascade,
   title text,
   body text not null,
   tags text[] not null default '{}',
@@ -146,8 +146,8 @@ create table if not exists public.notes (
 );
 
 create table if not exists public.themes (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
   name text not null,
   description text,
   created_at timestamptz not null default now(),
@@ -156,21 +156,21 @@ create table if not exists public.themes (
 );
 
 create table if not exists public.article_themes (
-  article_id uuid not null references public.articles(id) on delete cascade,
-  theme_id uuid not null references public.themes(id) on delete cascade,
+  article_id text not null references public.articles(id) on delete cascade,
+  theme_id text not null references public.themes(id) on delete cascade,
   created_at timestamptz not null default now(),
   primary key(article_id,theme_id)
 );
 
 create table if not exists public.evidence_links (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
-  article_id uuid references public.articles(id) on delete cascade,
-  highlight_id uuid references public.highlights(id) on delete cascade,
-  note_id uuid references public.notes(id) on delete cascade,
-  theme_id uuid references public.themes(id) on delete set null,
-  objective_id uuid references public.objectives(id) on delete set null,
-  section_id uuid references public.sections(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  article_id text references public.articles(id) on delete cascade,
+  highlight_id text references public.highlights(id) on delete cascade,
+  note_id text references public.notes(id) on delete cascade,
+  theme_id text references public.themes(id) on delete set null,
+  objective_id text references public.objectives(id) on delete set null,
+  section_id text references public.sections(id) on delete cascade,
   relationship text not null default 'supports' check (relationship in ('supports','contradicts','contextualises','critiques','method')),
   rationale text,
   created_at timestamptz not null default now(),
@@ -178,8 +178,8 @@ create table if not exists public.evidence_links (
 );
 
 create table if not exists public.milestones (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
   type text,
   title text not null,
   description text,
@@ -192,8 +192,8 @@ create table if not exists public.milestones (
 );
 
 create table if not exists public.progress_snapshots (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
   snapshot_date date not null default current_date,
   current_words integer not null default 0 check (current_words >= 0),
   words_per_week integer not null default 0 check (words_per_week >= 0),
@@ -209,10 +209,10 @@ create table if not exists public.progress_snapshots (
 );
 
 create table if not exists public.ai_threads (
-  id uuid primary key default gen_random_uuid(),
-  project_id uuid not null references public.thesis_projects(id) on delete cascade,
-  article_id uuid references public.articles(id) on delete cascade,
-  section_id uuid references public.sections(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  article_id text references public.articles(id) on delete cascade,
+  section_id text references public.sections(id) on delete cascade,
   mode text not null default 'research',
   title text,
   created_at timestamptz not null default now(),
@@ -220,8 +220,8 @@ create table if not exists public.ai_threads (
 );
 
 create table if not exists public.ai_messages (
-  id uuid primary key default gen_random_uuid(),
-  thread_id uuid not null references public.ai_threads(id) on delete cascade,
+  id text primary key default gen_random_uuid()::text,
+  thread_id text not null references public.ai_threads(id) on delete cascade,
   role text not null check (role in ('user','assistant','system')),
   content text not null,
   source_refs jsonb not null default '[]'::jsonb,
@@ -264,5 +264,117 @@ create trigger trg_milestones_updated_at before update on public.milestones for 
 drop trigger if exists trg_ai_threads_updated_at on public.ai_threads;
 create trigger trg_ai_threads_updated_at before update on public.ai_threads for each row execute function public.set_updated_at();
 
--- Row-level security is intentionally deferred to Step 2, when authentication
--- and cloud persistence are connected to the front-end.
+-- Step 2: user isolation and cloud persistence security
+alter table public.thesis_projects enable row level security;
+alter table public.study_setups enable row level security;
+alter table public.objectives enable row level security;
+alter table public.chapters enable row level security;
+alter table public.sections enable row level security;
+alter table public.articles enable row level security;
+alter table public.highlights enable row level security;
+alter table public.notes enable row level security;
+alter table public.themes enable row level security;
+alter table public.article_themes enable row level security;
+alter table public.evidence_links enable row level security;
+alter table public.milestones enable row level security;
+alter table public.progress_snapshots enable row level security;
+alter table public.ai_threads enable row level security;
+alter table public.ai_messages enable row level security;
+
+drop policy if exists "own thesis projects" on public.thesis_projects;
+create policy "own thesis projects" on public.thesis_projects
+for all using (auth.uid() = user_id) with check (auth.uid() = user_id);
+
+drop policy if exists "own study setups" on public.study_setups;
+create policy "own study setups" on public.study_setups
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own objectives" on public.objectives;
+create policy "own objectives" on public.objectives
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own chapters" on public.chapters;
+create policy "own chapters" on public.chapters
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own sections" on public.sections;
+create policy "own sections" on public.sections
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own articles" on public.articles;
+create policy "own articles" on public.articles
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own highlights" on public.highlights;
+create policy "own highlights" on public.highlights
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own notes" on public.notes;
+create policy "own notes" on public.notes
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own themes" on public.themes;
+create policy "own themes" on public.themes
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own article themes" on public.article_themes;
+create policy "own article themes" on public.article_themes
+for all using (
+  exists(
+    select 1 from public.articles a
+    join public.thesis_projects p on p.id=a.project_id
+    where a.id=article_id and p.user_id=auth.uid()
+  )
+)
+with check (
+  exists(
+    select 1 from public.articles a
+    join public.thesis_projects p on p.id=a.project_id
+    where a.id=article_id and p.user_id=auth.uid()
+  )
+);
+
+drop policy if exists "own evidence links" on public.evidence_links;
+create policy "own evidence links" on public.evidence_links
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own milestones" on public.milestones;
+create policy "own milestones" on public.milestones
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own progress snapshots" on public.progress_snapshots;
+create policy "own progress snapshots" on public.progress_snapshots
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own ai threads" on public.ai_threads;
+create policy "own ai threads" on public.ai_threads
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own ai messages" on public.ai_messages;
+create policy "own ai messages" on public.ai_messages
+for all using (
+  exists(
+    select 1 from public.ai_threads t
+    join public.thesis_projects p on p.id=t.project_id
+    where t.id=thread_id and p.user_id=auth.uid()
+  )
+)
+with check (
+  exists(
+    select 1 from public.ai_threads t
+    join public.thesis_projects p on p.id=t.project_id
+    where t.id=thread_id and p.user_id=auth.uid()
+  )
+);
