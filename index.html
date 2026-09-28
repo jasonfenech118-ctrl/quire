@@ -23,6 +23,7 @@
 
       <nav class="nav" aria-label="Primary">
         <button class="nav-item active" data-view="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-item" data-view="overview"><span>◈</span> Thesis Overview</button>
         <button class="nav-item" data-view="library"><span>▤</span> Research Library</button>
         <button class="nav-item" data-view="reader"><span>◫</span> Article Reader</button>
         <button class="nav-item" data-view="map"><span>⌘</span> Thesis Map</button>
@@ -34,12 +35,12 @@
 
       <div class="sidebar-spacer"></div>
 
-      <div class="thesis-mini">
+      <button class="thesis-mini thesis-mini-button" data-go="overview">
         <span class="eyebrow">CURRENT THESIS</span>
-        <strong>Patient education and stoma self-management</strong>
-        <div class="progress-line"><span style="width: 38%"></span></div>
-        <small>38% structured</small>
-      </div>
+        <strong id="sidebarThesisTitle">Patient education and stoma self-management</strong>
+        <div class="progress-line"><span id="sidebarProgressBar" style="width: 38%"></span></div>
+        <small id="sidebarProgressText">38% complete · Open project →</small>
+      </button>
 
       <button class="profile">
         <div class="avatar">JF</div>
@@ -82,7 +83,7 @@
               <h2>How can patient education support self-management after stoma formation?</h2>
               <p>3 objectives · 6 themes · 24 articles linked</p>
             </div>
-            <button class="hero-action" data-go="chapters">Continue writing →</button>
+            <button class="hero-action" data-go="overview">Open thesis project →</button>
           </article>
 
           <article class="copilot-card">
@@ -151,6 +152,150 @@
             <label class="task"><input type="checkbox"><span>Complete thematic matrix</span><small>Oct 08</small></label>
             <label class="task"><input type="checkbox"><span>Literature review first draft</span><small>Oct 24</small></label>
           </article>
+        </div>
+      </section>
+
+
+      <section id="overview" class="view">
+        <div class="project-kicker">
+          <button class="project-back" data-go="dashboard">← All work</button>
+          <span>MASTER'S THESIS · ACTIVE PROJECT</span>
+        </div>
+
+        <div class="project-title-row">
+          <div>
+            <h1 id="projectTitle">Patient education and stoma self-management</h1>
+            <div class="project-meta" id="projectMeta">Study setup not yet completed</div>
+          </div>
+          <div class="project-actions">
+            <button class="soft-btn" data-go="setup">Edit study setup</button>
+            <button class="primary-btn" data-go="chapters">Continue writing</button>
+          </div>
+        </div>
+
+        <div class="project-progress-hero">
+          <div class="progress-ring" id="projectProgressRing">
+            <div><strong id="projectProgressPercent">38%</strong><span>overall</span></div>
+          </div>
+          <div class="project-progress-copy">
+            <span class="eyebrow light">PROJECT STATUS</span>
+            <h2 id="projectStatusHeadline">Your thesis is taking shape.</h2>
+            <p id="projectStatusCopy">Quire combines writing progress, research activity, completed milestones and your study plan to show where the project currently stands.</p>
+          </div>
+          <div class="forecast-block">
+            <span class="eyebrow light">PACE-BASED FORECAST</span>
+            <strong id="forecastDate">—</strong>
+            <small id="forecastNote">Add a word target and writing pace to estimate completion.</small>
+          </div>
+        </div>
+
+        <div class="project-metrics">
+          <article class="metric-card">
+            <span>Words written</span>
+            <strong id="metricWords">6,840</strong>
+            <small id="metricWordsTarget">of target</small>
+            <div class="metric-track"><i id="wordProgressBar"></i></div>
+          </article>
+          <article class="metric-card">
+            <span>Research reviewed</span>
+            <strong id="metricArticles">18 / 24</strong>
+            <small>articles reviewed</small>
+            <div class="metric-track"><i id="articleProgressBar"></i></div>
+          </article>
+          <article class="metric-card">
+            <span>Chapters</span>
+            <strong id="metricChapters">2 / 6</strong>
+            <small>substantially developed</small>
+            <div class="metric-track"><i id="chapterProgressBar"></i></div>
+          </article>
+          <article class="metric-card">
+            <span>Milestones</span>
+            <strong id="metricMilestones">4 / 9</strong>
+            <small>completed</small>
+            <div class="metric-track"><i id="milestoneProgressBar"></i></div>
+          </article>
+        </div>
+
+        <div class="project-grid">
+          <div class="project-main-column">
+            <article class="project-panel">
+              <div class="project-panel-head">
+                <div><span class="eyebrow">STUDY PARAMETERS</span><h3>Research design</h3></div>
+                <button class="text-btn" data-go="setup">Edit</button>
+              </div>
+              <div class="parameter-grid">
+                <div><span>Study type</span><strong id="paramStudyType">Not selected</strong></div>
+                <div><span>Methodology</span><strong id="paramMethodology">Not selected</strong></div>
+                <div><span>Data collection</span><strong id="paramCollection">Not selected</strong></div>
+                <div><span>Analysis</span><strong id="paramAnalysis">Not selected</strong></div>
+                <div><span>Population / sample</span><strong id="paramPopulation">Not defined</strong></div>
+                <div><span>Analysis software</span><strong id="paramSoftware">Not selected</strong></div>
+              </div>
+              <div class="research-question-box">
+                <span class="eyebrow">RESEARCH QUESTION</span>
+                <p id="overviewResearchQuestion">Add your research question in Study Setup.</p>
+              </div>
+            </article>
+
+            <article class="project-panel">
+              <div class="project-panel-head">
+                <div><span class="eyebrow">PROGRESS</span><h3>What you've achieved</h3></div>
+                <button class="text-btn" id="editProgressBtn">Update numbers</button>
+              </div>
+              <div class="achievement-list">
+                <div class="achievement done"><span>✓</span><div><strong>Research question defined</strong><small id="achievementQuestion">Waiting for Study Setup</small></div></div>
+                <div class="achievement done"><span>✓</span><div><strong>Research library established</strong><small>24 papers added · 18 reviewed</small></div></div>
+                <div class="achievement done"><span>✓</span><div><strong>Evidence captured</strong><small>67 highlights · 31 research notes</small></div></div>
+                <div class="achievement current"><span>→</span><div><strong>Literature review in progress</strong><small id="achievementWriting">6,840 words written across current draft work</small></div></div>
+                <div class="achievement"><span>○</span><div><strong>Analysis & findings</strong><small id="achievementAnalysis">Will adapt to your selected analysis plan</small></div></div>
+              </div>
+            </article>
+
+            <article class="project-panel">
+              <div class="project-panel-head">
+                <div><span class="eyebrow">TIMEFRAME</span><h3>Project timeline</h3></div>
+                <button class="text-btn" data-go="setup">Edit deadlines</button>
+              </div>
+              <div class="time-summary">
+                <div><strong id="daysRemaining">—</strong><span>days to submission</span></div>
+                <div><strong id="scheduleStatus">—</strong><span>schedule status</span></div>
+                <div><strong id="weeklyTarget">—</strong><span>words/week needed</span></div>
+              </div>
+              <div class="overview-timeline" id="overviewTimeline"></div>
+            </article>
+          </div>
+
+          <aside class="project-side-column">
+            <article class="project-panel pace-panel">
+              <span class="eyebrow">COMPLETION ESTIMATE</span>
+              <h3>Writing pace</h3>
+              <p>Set your recent average so Quire can estimate when the remaining writing may be completed.</p>
+              <label class="field"><span>Average words written per week</span><input id="wordsPerWeek" type="number" min="1" step="100" value="900"></label>
+              <label class="field"><span>Current words written</span><input id="currentWordsWritten" type="number" min="0" step="100" value="6840"></label>
+              <button class="soft-btn" id="recalculateForecast">Recalculate forecast</button>
+              <div class="forecast-explainer">
+                <strong id="forecastWeeks">—</strong>
+                <small>Estimated writing time remaining. This is a planning estimate, not a guaranteed completion date.</small>
+              </div>
+            </article>
+
+            <article class="project-panel">
+              <span class="eyebrow">KEY DATES</span>
+              <h3>Next deadlines</h3>
+              <div class="deadline-list" id="deadlineList">
+                <div><span>Proposal</span><strong>Not set</strong></div>
+                <div><span>First full draft</span><strong>Not set</strong></div>
+                <div><span>Final submission</span><strong>Not set</strong></div>
+              </div>
+            </article>
+
+            <article class="project-panel">
+              <span class="eyebrow">PROJECT HEALTH</span>
+              <h3 id="healthTitle">Needs setup</h3>
+              <p id="healthCopy">Complete your Study Setup so Quire can compare your current progress with your deadlines and target workload.</p>
+              <button class="soft-btn" data-go="setup">Review study setup</button>
+            </article>
+          </aside>
         </div>
       </section>
 
@@ -661,6 +806,7 @@
         <button class="new-card"><span>DOI</span><strong>Add by DOI or link</strong><small>Import article metadata</small></button>
         <button class="new-card" data-go-modal="brainstorm"><span>✦</span><strong>Capture an idea</strong><small>Save a thought before it disappears</small></button>
         <button class="new-card" data-go-modal="chapters"><span>§</span><strong>New thesis section</strong><small>Add to your chapter structure</small></button>
+        <button class="new-card" data-go-modal="setup"><span>◈</span><strong>New thesis project</strong><small>Start by defining study design and targets</small></button>
       </div>
     </div>
   </div>
