@@ -85,3 +85,226 @@ function showToast(message){
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2600);
 }
+
+
+// ---------- Study setup ----------
+const setupStorageKey = 'quireStudySetup';
+
+const studyProfiles = {
+  qualitative: {
+    title: 'Qualitative study',
+    description: 'Quire will emphasise research context, reflexivity, sampling rationale, data collection depth, coding, theme development and qualitative rigour.',
+    items: ['Interview / focus-group planning','Qualitative methodology prompts','Coding & theme development','Trustworthiness / reflexivity checks']
+  },
+  quantitative: {
+    title: 'Quantitative study',
+    description: 'Quire will emphasise variables, sample planning, measurement, statistical analysis, assumptions, results structure and interpretation.',
+    items: ['Variables & measurement','Statistical analysis planning','Results table structure','Assumption & interpretation checks']
+  },
+  mixed: {
+    title: 'Mixed-methods study',
+    description: 'Quire will help keep qualitative and quantitative strands aligned and make the point of integration explicit across the thesis.',
+    items: ['Dual-method structure','Integration planning','Joint displays','Mixed-method interpretation']
+  },
+  meta: {
+    title: 'Systematic review / Meta-analysis',
+    description: 'Quire will emphasise protocol logic, reproducible searching, eligibility criteria, appraisal, synthesis and PRISMA-style reporting.',
+    items: ['Search strategy planning','Screening & eligibility','Risk-of-bias tracking','Evidence synthesis / meta-analysis']
+  }
+};
+
+function currentStudyType(){
+  return document.querySelector('input[name="studyType"]:checked')?.value || '';
+}
+
+function updateStudyTypeUI(){
+  const type = currentStudyType();
+  document.querySelectorAll('[data-method-panel]').forEach(panel => {
+    panel.hidden = panel.dataset.methodPanel !== type;
+  });
+  document.querySelectorAll('[data-analysis-panel]').forEach(panel => {
+    panel.hidden = panel.dataset.analysisPanel !== type;
+  });
+
+  const profile = studyProfiles[type];
+  if(profile){
+    document.getElementById('adaptiveTitle').textContent = profile.title;
+    document.getElementById('adaptiveDescription').textContent = profile.description;
+    document.getElementById('adaptiveList').innerHTML = profile.items.map(item => '<span>' + item + '</span>').join('');
+  } else {
+    document.getElementById('adaptiveTitle').textContent = 'Choose a study design';
+    document.getElementById('adaptiveDescription').textContent = 'Once selected, Quire will tailor methodology prompts, analysis options, suggested chapter content and milestone planning.';
+    document.getElementById('adaptiveList').innerHTML = '<span>Methodology guidance</span><span>Analysis planning</span><span>Chapter prompts</span><span>Deadline planning</span>';
+  }
+  updateSetupCompletion();
+}
+
+document.querySelectorAll('input[name="studyType"]').forEach(radio => radio.addEventListener('change', updateStudyTypeUI));
+
+document.querySelectorAll('[data-setup-jump]').forEach(btn => btn.addEventListener('click', () => {
+  document.querySelectorAll('.setup-index-item').forEach(item => item.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(btn.dataset.setupJump)?.scrollIntoView({behavior:'smooth', block:'start'});
+}));
+
+function valueOf(id){
+  const el = document.getElementById(id);
+  if(!el) return '';
+  return el.type === 'checkbox' ? el.checked : el.value;
+}
+
+function checkedAnalysis(){
+  const type = currentStudyType();
+  return [...document.querySelectorAll('[data-analysis-panel="' + type + '"] input[type="checkbox"]:checked')].map(el => el.value);
+}
+
+function collectStudySetup(){
+  return {
+    studyType: currentStudyType(),
+    thesisTitle: valueOf('thesisTitle'),
+    wordCount: valueOf('wordCount'),
+    proposalWordCount: valueOf('proposalWordCount'),
+    degreeName: valueOf('degreeName'),
+    institutionName: valueOf('institutionName'),
+    researchQuestion: valueOf('researchQuestion'),
+    proposalDeadline: valueOf('proposalDeadline'),
+    ethicsDeadline: valueOf('ethicsDeadline'),
+    dataStart: valueOf('dataStart'),
+    dataEnd: valueOf('dataEnd'),
+    draftDeadline: valueOf('draftDeadline'),
+    finalDeadline: valueOf('finalDeadline'),
+    qualDesign: valueOf('qualDesign'),
+    qualSampling: valueOf('qualSampling'),
+    qualCollection: valueOf('qualCollection'),
+    qualSampleSize: valueOf('qualSampleSize'),
+    quantDesign: valueOf('quantDesign'),
+    quantSampling: valueOf('quantSampling'),
+    quantCollection: valueOf('quantCollection'),
+    quantSampleSize: valueOf('quantSampleSize'),
+    mixedDesign: valueOf('mixedDesign'),
+    mixedPriority: valueOf('mixedPriority'),
+    mixedIntegration: valueOf('mixedIntegration'),
+    reviewType: valueOf('reviewType'),
+    reportingFramework: valueOf('reportingFramework'),
+    databases: valueOf('databases'),
+    eligibilityFramework: valueOf('eligibilityFramework'),
+    population: valueOf('population'),
+    studySetting: valueOf('studySetting'),
+    methodNotes: valueOf('methodNotes'),
+    analysis: checkedAnalysis(),
+    analysisSoftware: valueOf('analysisSoftware'),
+    analysisRule: valueOf('analysisRule'),
+    analysisNotes: valueOf('analysisNotes'),
+    proposalRequired: valueOf('proposalRequired'),
+    ethicsRequired: valueOf('ethicsRequired'),
+    dataManagementRequired: valueOf('dataManagementRequired'),
+    protocolRegistration: valueOf('protocolRegistration'),
+    proposalRequirements: valueOf('proposalRequirements'),
+    aiTailorMethod: valueOf('aiTailorMethod'),
+    aiMethodChecks: valueOf('aiMethodChecks'),
+    aiProtectVoice: valueOf('aiProtectVoice'),
+    aiEvidenceLinks: valueOf('aiEvidenceLinks')
+  };
+}
+
+function setIfPresent(id, value){
+  const el = document.getElementById(id);
+  if(!el || value === undefined || value === null) return;
+  if(el.type === 'checkbox') el.checked = Boolean(value);
+  else el.value = value;
+}
+
+function restoreStudySetup(){
+  let saved;
+  try { saved = JSON.parse(localStorage.getItem(setupStorageKey) || 'null'); } catch(e) { saved = null; }
+  if(!saved) return;
+
+  if(saved.studyType){
+    const radio = document.querySelector('input[name="studyType"][value="' + saved.studyType + '"]');
+    if(radio) radio.checked = true;
+  }
+
+  Object.keys(saved).forEach(key => {
+    if(['studyType','analysis'].includes(key)) return;
+    setIfPresent(key, saved[key]);
+  });
+
+  updateStudyTypeUI();
+
+  if(Array.isArray(saved.analysis) && saved.studyType){
+    document.querySelectorAll('[data-analysis-panel="' + saved.studyType + '"] input[type="checkbox"]').forEach(box => {
+      box.checked = saved.analysis.includes(box.value);
+    });
+  }
+  updateSetupSummary(saved);
+}
+
+function updateSetupCompletion(){
+  const data = collectStudySetup();
+  const essentials = [
+    data.studyType, data.thesisTitle, data.wordCount, data.researchQuestion,
+    data.finalDeadline, data.population, data.studySetting,
+    data.analysisSoftware, data.analysis.length ? 'yes' : ''
+  ];
+  const complete = essentials.filter(Boolean).length;
+  const percent = Math.round((complete / essentials.length) * 100);
+  const pct = document.getElementById('setupPercent');
+  const bar = document.getElementById('setupProgressBar');
+  if(pct) pct.textContent = percent + '%';
+  if(bar) bar.style.width = percent + '%';
+}
+
+function updateSetupSummary(data){
+  const profile = studyProfiles[data.studyType];
+  const title = document.getElementById('setupSummaryTitle');
+  const meta = document.getElementById('setupSummaryMeta');
+  if(!title || !meta) return;
+  title.textContent = data.thesisTitle || (profile ? profile.title : 'Not configured yet');
+  const bits = [];
+  if(profile) bits.push(profile.title);
+  if(data.wordCount) bits.push(Number(data.wordCount).toLocaleString() + ' words');
+  if(data.finalDeadline) bits.push('due ' + new Date(data.finalDeadline + 'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}));
+  meta.textContent = bits.length ? bits.join(' · ') : 'Choose your study design, target word count and key dates.';
+}
+
+document.getElementById('saveStudySetup')?.addEventListener('click', () => {
+  const data = collectStudySetup();
+  localStorage.setItem(setupStorageKey, JSON.stringify(data));
+  updateSetupSummary(data);
+  updateSetupCompletion();
+  showToast('Study setup saved');
+});
+
+document.querySelectorAll('#setup input, #setup select, #setup textarea').forEach(el => {
+  el.addEventListener('input', updateSetupCompletion);
+  el.addEventListener('change', updateSetupCompletion);
+});
+
+document.getElementById('generateTimeline')?.addEventListener('click', () => {
+  const finalDateValue = valueOf('finalDeadline');
+  const target = document.getElementById('generatedTimeline');
+  if(!finalDateValue){
+    showToast('Add a final submission date first');
+    return;
+  }
+  const finalDate = new Date(finalDateValue + 'T00:00:00');
+  const milestones = [
+    ['Freeze literature search / evidence base', -140],
+    ['Complete data collection or screening', -110],
+    ['Complete analysis', -80],
+    ['Full results / findings draft', -60],
+    ['Discussion draft', -42],
+    ['First full thesis draft', -28],
+    ['Final editing and formatting', -10],
+    ['Submission', 0]
+  ];
+  target.innerHTML = milestones.map(([label, days]) => {
+    const d = new Date(finalDate);
+    d.setDate(d.getDate() + days);
+    return '<div class="timeline-item"><strong>' + label + '</strong><span>' + d.toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}) + '</span></div>';
+  }).join('');
+  target.hidden = false;
+});
+
+restoreStudySetup();
+updateStudyTypeUI();
