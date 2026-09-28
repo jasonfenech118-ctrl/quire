@@ -42,7 +42,7 @@
         <small id="sidebarProgressText">38% complete · Open project →</small>
       </button>
 
-      <button class="profile">
+      <button class="profile" id="profileBtn" type="button">
         <div class="avatar">JF</div>
         <div>
           <strong>Jason</strong>
@@ -61,7 +61,7 @@
           <kbd>⌘ K</kbd>
         </div>
         <div class="top-actions">
-          <button class="icon-btn" title="Notifications">○</button>
+          <button class="cloud-status-btn" id="cloudStatusBtn" type="button" title="Account & cloud sync"><span id="cloudStatusDot"></span><span id="cloudStatusLabel">Local</span></button>
           <button class="primary-btn" id="newItemBtn">＋ New</button>
         </div>
       </header>
@@ -811,8 +811,65 @@
     </div>
   </div>
 
+
+  <div id="accountModal" class="modal-backdrop" hidden>
+    <div class="modal account-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">QUIRE ACCOUNT</span><h2>Account & cloud</h2></div>
+        <button id="closeAccountModal" type="button">×</button>
+      </div>
+
+      <div class="cloud-account-status">
+        <span class="cloud-account-dot" id="accountStatusDot"></span>
+        <div><strong id="accountStatusTitle">Local-only mode</strong><small id="accountStatusMessage">Your thesis is currently saved on this device.</small></div>
+      </div>
+
+      <section id="cloudConfigPanel" class="account-section">
+        <span class="eyebrow">CLOUD CONNECTION</span>
+        <h3>Connect Supabase</h3>
+        <p>Connect Quire to your Supabase project to enable accounts and cloud persistence across devices.</p>
+        <label class="field"><span>Supabase project URL</span><input id="supabaseUrl" type="url" placeholder="https://your-project.supabase.co"></label>
+        <label class="field"><span>Anon / publishable key</span><textarea id="supabaseAnonKey" rows="3" placeholder="Paste the anon / publishable key"></textarea></label>
+        <p class="account-security-note">Use only the public anon/publishable key. Never enter a service-role key here.</p>
+        <div class="account-button-row">
+          <button class="primary-btn" id="saveCloudConfig" type="button">Save cloud connection</button>
+          <button class="text-btn" id="removeCloudConfig" type="button">Remove</button>
+        </div>
+      </section>
+
+      <section id="authSignedOutPanel" class="account-section" hidden>
+        <span class="eyebrow">SIGN IN</span>
+        <h3>Use Quire across your devices</h3>
+        <p>Your local thesis remains available even when you are signed out.</p>
+        <div class="form-grid account-form-grid">
+          <label class="field wide"><span>Email</span><input id="accountEmail" type="email" autocomplete="email" placeholder="you@example.com"></label>
+          <label class="field wide"><span>Password</span><input id="accountPassword" type="password" autocomplete="current-password" minlength="6" placeholder="At least 6 characters"></label>
+        </div>
+        <div class="account-button-row">
+          <button class="primary-btn" id="signInBtn" type="button">Sign in</button>
+          <button class="soft-btn" id="signUpBtn" type="button">Create account</button>
+        </div>
+      </section>
+
+      <section id="authSignedInPanel" class="account-section" hidden>
+        <span class="eyebrow">SIGNED IN</span>
+        <h3 id="signedInEmail">—</h3>
+        <p id="lastSyncText">Your local workspace will sync automatically after changes.</p>
+        <div class="sync-action-grid">
+          <button class="soft-btn" id="syncNowBtn" type="button"><strong>↑ Save to cloud</strong><small>Push this device's latest changes</small></button>
+          <button class="soft-btn" id="pullCloudBtn" type="button"><strong>↓ Reload from cloud</strong><small>Replace this device's local workspace</small></button>
+        </div>
+        <div class="account-button-row">
+          <button class="text-btn danger-text" id="signOutBtn" type="button">Sign out</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
   <input id="fileInput" type="file" accept=".pdf" hidden />
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="data-model.js"></script>
+  <script src="cloud.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
