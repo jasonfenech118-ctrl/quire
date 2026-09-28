@@ -25,7 +25,7 @@ This prototype is intentionally dependency-free.
 1. Clone the repository.
 2. Open `index.html` in a modern browser.
 
-## Next build stage
+## Data model\n\n✅ **Step 1 complete:** Quire now has a canonical project-centric data model in `data-model.js`, with a matching PostgreSQL/Supabase schema in `supabase/schema.sql`. See `docs/data-model.md` for the relationships and migration notes.\n\n## Next build stage
 
 - Real PDF upload and rendering
 - Persistent highlights and notes
