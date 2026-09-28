@@ -2,13 +2,15 @@
 
 **Quire** is a thesis workspace designed to help postgraduate researchers move from reading to thinking to writing without losing the connection between ideas and evidence.
 
-## Front-end prototype
+## Current prototype
 
-This first version includes:
+Quire currently includes:
 
-- Thesis dashboard
+- Thesis dashboard and project overview
+- Adaptive study setup for qualitative, quantitative, mixed-methods and systematic review/meta-analysis projects
+- Word-count targets, deadlines, milestones and pace-based completion estimates
 - Research library
-- Article/PDF reading workspace
+- Article/PDF reading workspace prototype
 - Highlight and note concepts
 - Quire Copilot prototype
 - Thesis map
@@ -16,24 +18,56 @@ This first version includes:
 - Brainstorm board
 - Writing and evidence review
 
-The AI buttons are currently interactive front-end prototypes. No external AI service or PDF extraction backend is connected yet.
+The AI buttons and PDF reader are still front-end prototypes. No external AI model or real PDF extraction pipeline is connected yet.
+
+## Step 1 — Data model ✅
+
+Quire has a canonical project-centric data model in `data-model.js`, with a matching PostgreSQL/Supabase schema in `supabase/schema.sql`.
+
+The model covers thesis projects, study setup, objectives, chapters, sections, articles, highlights, notes, themes, evidence links, milestones, progress history and AI conversations.
+
+See `docs/data-model.md`.
+
+## Step 2 — Accounts & cloud persistence ✅ code complete
+
+Quire now has a local-first Supabase account and synchronisation layer in `cloud.js`.
+
+It includes:
+
+- Email/password sign-up and sign-in
+- Persistent sessions
+- Automatic cloud sync after local changes
+- First-sign-in migration of the local thesis into an empty cloud account
+- Manual **Save to cloud** and **Reload from cloud**
+- Row-level security policies so users can access only their own thesis projects
+- Local operation when cloud access is unavailable
+
+### Activate the cloud backend
+
+1. Create a Supabase project.
+2. Run `supabase/schema.sql` in the Supabase SQL Editor.
+3. Open Quire and choose **Account & cloud**.
+4. Enter the Supabase project URL and the **anon / publishable key**.
+5. Create an account or sign in.
+
+Never put a Supabase service-role key in the browser.
+
+See `docs/cloud-sync.md`.
 
 ## Run locally
-
-This prototype is intentionally dependency-free.
 
 1. Clone the repository.
 2. Open `index.html` in a modern browser.
 
-## Data model\n\n✅ **Step 1 complete:** Quire now has a canonical project-centric data model in `data-model.js`, with a matching PostgreSQL/Supabase schema in `supabase/schema.sql`. See `docs/data-model.md` for the relationships and migration notes.\n\n## Next build stage
+For reliable authentication redirects and later PDF features, serving the app over HTTPS or a local development server is preferable to opening it through a `file://` URL.
 
-- Real PDF upload and rendering
-- Persistent highlights and notes
-- Article metadata / DOI import
-- AI summarisation grounded in uploaded papers
-- Page-level citations for AI answers
-- User accounts and cloud persistence
-- Thesis/chapter data model
-- Reference manager integration
+## Next build stage
+
+1. Real PDF upload and rendering
+2. Persistent PDF highlights and notes
+3. Article metadata / DOI import
+4. AI summarisation grounded in uploaded papers
+5. Page-level citations for AI answers
+6. Reference-manager integration
 
 © Quire prototype.
