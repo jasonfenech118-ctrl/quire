@@ -47,10 +47,18 @@
     }
   }
 
-  function writeState(state){
+  function writeState(state, options={}){
     state.version = 1;
     localStorage.setItem(STORE_KEY, JSON.stringify(state));
+    if(!options.silent){
+      window.dispatchEvent(new CustomEvent('quire:store-changed',{detail:{activeProjectId:state.activeProjectId}}));
+    }
     return state;
+  }
+
+  function replaceState(nextState, options={}){
+    if(!nextState || !Array.isArray(nextState.projects)) throw new Error('Invalid Quire state.');
+    return clone(writeState(clone(nextState), options));
   }
 
   function defaultChapters(projectId){
@@ -453,6 +461,7 @@
   window.QuireStore = {
     version:1,
     getState:()=>clone(getState()),
+    replaceState,
     getActiveProject,
     getActiveProjectId:()=>getActiveProjectId(getState()),
     createProject,
