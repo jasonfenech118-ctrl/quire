@@ -444,9 +444,9 @@ function renderProjectOverview(){
   document.getElementById('projectStatusHeadline').textContent = headline;
 
   const wordPct = forecast.targetWords ? Math.min(Math.round(progress.currentWords / forecast.targetWords * 100),100) : 0;
-  const articlePct = Math.min(Math.round(progress.articlesReviewed / progress.articlesTotal * 100),100);
-  const chapterPct = Math.min(Math.round(progress.chaptersDeveloped / progress.chaptersTotal * 100),100);
-  const milestonePct = Math.min(Math.round(progress.milestonesComplete / progress.milestonesTotal * 100),100);
+  const articlePct = progress.articlesTotal ? Math.min(Math.round(progress.articlesReviewed / progress.articlesTotal * 100),100) : 0;
+  const chapterPct = progress.chaptersTotal ? Math.min(Math.round(progress.chaptersDeveloped / progress.chaptersTotal * 100),100) : 0;
+  const milestonePct = progress.milestonesTotal ? Math.min(Math.round(progress.milestonesComplete / progress.milestonesTotal * 100),100) : 0;
 
   document.getElementById('metricWords').textContent = Number(progress.currentWords).toLocaleString();
   document.getElementById('metricWordsTarget').textContent = forecast.targetWords ? 'of ' + forecast.targetWords.toLocaleString() + ' target · ' + wordPct + '%' : 'word target not set';
