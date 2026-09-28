@@ -554,3 +554,158 @@ document.getElementById('saveStudySetup')?.addEventListener('click', () => {
 });
 
 renderProjectOverview();
+
+
+// ---------- Account & cloud ----------
+const accountModal=document.getElementById('accountModal');
+const profileBtn=document.getElementById('profileBtn');
+const cloudStatusBtn=document.getElementById('cloudStatusBtn');
+
+function openAccountModal(){
+  if(accountModal) accountModal.hidden=false;
+  refreshAccountUI();
+}
+function closeAccountModal(){
+  if(accountModal) accountModal.hidden=true;
+}
+
+profileBtn?.addEventListener('click',openAccountModal);
+cloudStatusBtn?.addEventListener('click',openAccountModal);
+document.getElementById('closeAccountModal')?.addEventListener('click',closeAccountModal);
+accountModal?.addEventListener('click',e=>{if(e.target===accountModal) closeAccountModal();});
+
+function formatLastSync(value){
+  if(!value) return 'Not synced yet.';
+  const d=new Date(value);
+  if(Number.isNaN(d.getTime())) return 'Not synced yet.';
+  return 'Last synced '+d.toLocaleString(undefined,{dateStyle:'medium',timeStyle:'short'})+'.';
+}
+
+function renderCloudStatus(detail={}){
+  const configured=detail.configured ?? window.QuireCloud?.isConfigured();
+  const user=detail.user ?? window.QuireCloud?.getUser();
+  const status=detail.status || (user?'synced':configured?'signed_out':'local');
+  const message=detail.message || (user?'Cloud sync is active.':configured?'Cloud connected — sign in to sync.':'Your thesis is saved locally on this device.');
+
+  if(cloudStatusBtn){
+    cloudStatusBtn.dataset.state=status;
+    document.getElementById('cloudStatusLabel').textContent=
+      status==='syncing'?'Syncing':status==='synced'?'Synced':status==='error'?'Cloud error':configured?'Sign in':'Local';
+  }
+
+  const accountStatus=document.querySelector('.cloud-account-status');
+  if(accountStatus) accountStatus.dataset.state=status;
+  const statusTitle=document.getElementById('accountStatusTitle');
+  const statusMessage=document.getElementById('accountStatusMessage');
+  if(statusTitle) statusTitle.textContent=
+    status==='syncing'?'Syncing Quire…':
+    status==='synced'?'Cloud sync active':
+    status==='error'?'Cloud connection needs attention':
+    configured?'Cloud connected':'Local-only mode';
+  if(statusMessage) statusMessage.textContent=message;
+
+  const cfg=window.QuireCloud?.getConfig?.() || {};
+  const urlInput=document.getElementById('supabaseUrl');
+  const keyInput=document.getElementById('supabaseAnonKey');
+  if(urlInput && document.activeElement!==urlInput) urlInput.value=cfg.url||'';
+  if(keyInput && document.activeElement!==keyInput) keyInput.value=cfg.anonKey||'';
+
+  const signedOut=document.getElementById('authSignedOutPanel');
+  const signedIn=document.getElementById('authSignedInPanel');
+  if(signedOut) signedOut.hidden=!configured || Boolean(user);
+  if(signedIn) signedIn.hidden=!user;
+
+  if(user){
+    document.getElementById('signedInEmail').textContent=user.email||'Signed-in researcher';
+    document.getElementById('lastSyncText').textContent=formatLastSync(detail.lastSync || window.QuireCloud?.getLastSync?.());
+    profileBtn?.classList.add('cloud-user');
+    const label=profileBtn?.querySelector('strong');
+    const sub=profileBtn?.querySelector('small');
+    const avatar=profileBtn?.querySelector('.avatar');
+    if(label) label.textContent=(user.email||'Researcher').split('@')[0];
+    if(sub) sub.textContent='Cloud account';
+    if(avatar && user.email) avatar.textContent=user.email.slice(0,2).toUpperCase();
+  }else{
+    profileBtn?.classList.remove('cloud-user');
+  }
+}
+
+function refreshAccountUI(){
+  renderCloudStatus({
+    configured:window.QuireCloud?.isConfigured?.(),
+    user:window.QuireCloud?.getUser?.(),
+    lastSync:window.QuireCloud?.getLastSync?.()
+  });
+}
+
+window.addEventListener('quire:cloud-status',e=>{
+  renderCloudStatus(e.detail||{});
+  if(e.detail?.status==='error' && e.detail.message) showToast(e.detail.message);
+});
+
+window.addEventListener('quire:cloud-pulled',()=>{
+  restoreStudySetup();
+  updateStudyTypeUI();
+  renderProjectOverview();
+  showToast('Cloud workspace loaded');
+});
+
+document.getElementById('saveCloudConfig')?.addEventListener('click',async()=>{
+  try{
+    const url=document.getElementById('supabaseUrl').value;
+    const key=document.getElementById('supabaseAnonKey').value;
+    window.QuireCloud.setConfig(url,key);
+    await window.QuireCloud.init();
+    refreshAccountUI();
+    showToast('Cloud connection saved');
+  }catch(err){showToast(err.message||'Could not configure cloud connection');}
+});
+
+document.getElementById('removeCloudConfig')?.addEventListener('click',()=>{
+  if(!window.QuireCloud?.isConfigured?.()) return;
+  if(!confirm('Remove the Supabase connection from this device? Your local thesis will remain here.')) return;
+  window.QuireCloud.clearConfig();
+  refreshAccountUI();
+});
+
+document.getElementById('signInBtn')?.addEventListener('click',async()=>{
+  try{
+    const email=document.getElementById('accountEmail').value;
+    const password=document.getElementById('accountPassword').value;
+    if(!email || !password) throw new Error('Enter your email and password.');
+    await window.QuireCloud.signIn(email,password);
+    refreshAccountUI();
+    showToast('Signed in');
+  }catch(err){showToast(err.message||'Sign-in failed');}
+});
+
+document.getElementById('signUpBtn')?.addEventListener('click',async()=>{
+  try{
+    const email=document.getElementById('accountEmail').value;
+    const password=document.getElementById('accountPassword').value;
+    if(!email || !password) throw new Error('Enter an email and password.');
+    if(password.length<6) throw new Error('Use a password of at least 6 characters.');
+    const result=await window.QuireCloud.signUp(email,password);
+    refreshAccountUI();
+    showToast(result.session?'Account created and signed in':'Account created — check your email if confirmation is enabled');
+  }catch(err){showToast(err.message||'Could not create account');}
+});
+
+document.getElementById('signOutBtn')?.addEventListener('click',async()=>{
+  try{await window.QuireCloud.signOut();refreshAccountUI();showToast('Signed out');}
+  catch(err){showToast(err.message||'Could not sign out');}
+});
+
+document.getElementById('syncNowBtn')?.addEventListener('click',async()=>{
+  try{await window.QuireCloud.pushAll();refreshAccountUI();showToast('Saved to cloud');}
+  catch(err){showToast(err.message||'Cloud sync failed');}
+});
+
+document.getElementById('pullCloudBtn')?.addEventListener('click',async()=>{
+  if(!confirm('Reload this workspace from the cloud? Unsynced local changes could be replaced.')) return;
+  try{await window.QuireCloud.pullAll();refreshAccountUI();}
+  catch(err){showToast(err.message||'Could not load cloud workspace');}
+});
+
+refreshAccountUI();
+window.QuireCloud?.init?.();
