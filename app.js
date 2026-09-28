@@ -215,8 +215,7 @@ function setIfPresent(id, value){
 }
 
 function restoreStudySetup(){
-  let saved;
-  try { saved = JSON.parse(localStorage.getItem(setupStorageKey) || 'null'); } catch(e) { saved = null; }
+  const saved = window.QuireStore?.getStudySetupData() || null;
   if(!saved) return;
 
   if(saved.studyType){
@@ -269,7 +268,7 @@ function updateSetupSummary(data){
 
 document.getElementById('saveStudySetup')?.addEventListener('click', () => {
   const data = collectStudySetup();
-  localStorage.setItem(setupStorageKey, JSON.stringify(data));
+  window.QuireStore?.saveStudySetupData(data);
   updateSetupSummary(data);
   updateSetupCompletion();
   showToast('Study setup saved');
@@ -327,20 +326,15 @@ const defaultProgress = {
 };
 
 function loadProjectProgress(){
-  try {
-    return {...defaultProgress, ...(JSON.parse(localStorage.getItem(progressStorageKey) || '{}'))};
-  } catch(e) {
-    return {...defaultProgress};
-  }
+  return {...defaultProgress, ...(window.QuireStore?.getLatestProgress() || {})};
 }
 
 function saveProjectProgress(progress){
-  localStorage.setItem(progressStorageKey, JSON.stringify(progress));
+  window.QuireStore?.saveProgressSnapshot(progress);
 }
 
 function loadStudyData(){
-  try { return JSON.parse(localStorage.getItem(setupStorageKey) || '{}') || {}; }
-  catch(e){ return {}; }
+  return window.QuireStore?.getStudySetupData() || {};
 }
 
 function prettyDate(value){
