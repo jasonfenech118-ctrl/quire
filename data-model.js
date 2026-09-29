@@ -989,9 +989,12 @@
   function removeSection(sectionId){
     const state=getState();
     if(!state.sections.some(s=>s.id===sectionId)) return false;
-    state.evidenceLinks=state.evidenceLinks.filter(e=>e.sectionId!==sectionId);
-    state.aiThreads=state.aiThreads.filter(t=>t.sectionId!==sectionId);
-    state.sections=state.sections.filter(s=>s.id!==sectionId && s.parentSectionId!==sectionId);
+    const removedIds=new Set(state.sections.filter(s=>s.id===sectionId||s.parentSectionId===sectionId).map(s=>s.id));
+    state.evidenceLinks=state.evidenceLinks.filter(e=>!removedIds.has(e.sectionId));
+    state.aiThreads=state.aiThreads.filter(t=>!removedIds.has(t.sectionId));
+    state.feedbackItems=state.feedbackItems.filter(f=>!removedIds.has(f.sectionId));
+    state.sectionVersions=state.sectionVersions.filter(v=>!removedIds.has(v.sectionId));
+    state.sections=state.sections.filter(s=>!removedIds.has(s.id));
     writeState(state);return true;
   }
 
