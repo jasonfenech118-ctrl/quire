@@ -325,6 +325,7 @@
             <p>Upload papers, capture what matters and connect evidence to your thesis.</p>
           </div>
           <div class="library-heading-actions">
+            <button class="soft-btn" id="openBibliographyBtn" type="button">§ Bibliography</button>
             <button class="soft-btn" id="openReferenceManager" type="button">⇄ References</button>
             <button class="primary-btn" id="uploadArticleBtn">＋ Add article</button>
           </div>
@@ -884,6 +885,25 @@
 
 
 
+
+  <div id="bibliographyModal" class="modal-backdrop" hidden>
+    <div class="modal bibliography-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">CITATIONS & BIBLIOGRAPHY</span><h2>Reference the thesis consistently</h2></div>
+        <button id="closeBibliographyModal" type="button">×</button>
+      </div>
+      <div class="bibliography-controls">
+        <label><span>Citation style</span><select id="citationStyleSelect"><option value="harvard">Harvard</option><option value="apa7">APA 7th</option><option value="vancouver">Vancouver</option></select></label>
+        <label><span>Bibliography scope</span><select id="bibliographyScope"><option value="used">Cited / linked references only</option><option value="all">All library references</option></select></label>
+        <button class="soft-btn" id="copyBibliography" type="button">Copy bibliography</button>
+      </div>
+      <div id="bibliographyDiagnostics" class="bibliography-diagnostics"></div>
+      <div class="bibliography-head"><strong>Generated bibliography</strong><span id="bibliographyCount">0 entries</span></div>
+      <div id="bibliographyList" class="bibliography-list"></div>
+      <small class="bibliography-note">Always check your institution's exact referencing guidance before submission. Quire formats standard patterns but local rules may differ.</small>
+    </div>
+  </div>
+
   <div id="evidenceLinkerModal" class="modal-backdrop" hidden>
     <div class="modal evidence-linker-modal">
       <div class="modal-head">
@@ -1167,6 +1187,7 @@
   <script src="metadata.js"></script>
   <script src="copilot.js"></script>
   <script src="references.js"></script>
+  <script src="citations.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
