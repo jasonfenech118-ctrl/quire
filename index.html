@@ -391,10 +391,11 @@
         <div class="reader-layout">
           <aside class="reader-left">
             <div class="reader-side-tabs">
-              <button class="reader-tab active" type="button">Pages</button>
-              <button class="reader-tab" type="button" disabled title="Highlights arrive in Step 4">Highlights</button>
+              <button class="reader-tab active" id="pagesTab" type="button">Pages</button>
+              <button class="reader-tab" id="highlightsTab" type="button">Highlights <span id="highlightCount">0</span></button>
             </div>
             <div id="pageThumbs" class="page-thumbs" aria-label="PDF pages"></div>
+            <div id="highlightsList" class="highlights-list" hidden></div>
           </aside>
 
           <div class="pdf-stage">
@@ -427,7 +428,19 @@
             </div>
 
             <div id="pdfCanvasWrap" class="pdf-canvas-wrap" hidden>
-              <canvas id="pdfCanvas" aria-label="PDF page"></canvas>
+              <div id="pdfPageSurface" class="pdf-page-surface">
+                <canvas id="pdfCanvas" aria-label="PDF page"></canvas>
+                <div id="pdfHighlightLayer" class="pdf-highlight-layer" aria-hidden="true"></div>
+                <div id="pdfTextLayer" class="pdf-text-layer" aria-label="Selectable PDF text"></div>
+              </div>
+            </div>
+            <div id="selectionToolbar" class="selection-toolbar" hidden>
+              <button type="button" data-highlight-color="yellow" title="Yellow highlight"><span class="highlight-swatch yellow"></span></button>
+              <button type="button" data-highlight-color="green" title="Green highlight"><span class="highlight-swatch green"></span></button>
+              <button type="button" data-highlight-color="blue" title="Blue highlight"><span class="highlight-swatch blue"></span></button>
+              <button type="button" data-highlight-color="rose" title="Rose highlight"><span class="highlight-swatch rose"></span></button>
+              <span class="selection-divider"></span>
+              <button type="button" id="highlightWithNoteBtn">＋ Note</button>
             </div>
           </div>
 
@@ -440,10 +453,10 @@
               <button data-ai="critique">Critique</button>
             </div>
             <div id="aiResponse" class="ai-response">
-              <span class="eyebrow">REAL PDF READER</span>
-              <p>Your uploaded PDF is now rendered directly inside Quire. In the AI stage, Copilot will work from the actual text of this document.</p>
-              <div class="evidence-callout"><strong>Next PDF feature</strong><p>Step 4 will add selectable highlights and persistent notes linked to exact pages.</p></div>
-              <small>The PDF currently stays on this device. Cloud file storage can be added when a Quire Supabase project is ready.</small>
+              <span class="eyebrow">RESEARCH READER</span>
+              <p>Select text directly on the PDF to highlight it, attach a research note, and connect the evidence to your thesis.</p>
+              <div class="evidence-callout"><strong>Evidence stays traceable</strong><p>Every highlight remembers its article, page and exact position so you can return to the source later.</p></div>
+              <small>AI analysis is still a later step; your own highlights and notes are stored now.</small>
             </div>
             <div class="copilot-input docked">
               <input id="readerPrompt" placeholder="Ask about this paper…" />
@@ -830,6 +843,53 @@
     </div>
   </div>
 
+
+
+  <div id="highlightNoteModal" class="modal-backdrop" hidden>
+    <div class="modal highlight-note-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">RESEARCH NOTE</span><h2>Develop this evidence</h2></div>
+        <button id="closeHighlightNoteModal" type="button">×</button>
+      </div>
+
+      <div class="selected-evidence-preview">
+        <span id="notePageLabel">PAGE —</span>
+        <p id="noteHighlightText">Selected passage</p>
+      </div>
+
+      <div class="form-grid">
+        <label class="field wide"><span>What does this mean for your thesis?</span><textarea id="highlightNoteBody" rows="5" placeholder="Add your interpretation, question, critique, or idea…"></textarea></label>
+        <label class="field"><span>Highlight category</span>
+          <select id="highlightCategory">
+            <option value="key_finding">Key finding</option>
+            <option value="methodology">Methodology</option>
+            <option value="limitation">Limitation</option>
+            <option value="definition">Definition / concept</option>
+            <option value="quote">Potential quote</option>
+            <option value="contradictory">Contradictory evidence</option>
+            <option value="idea">Idea / interpretation</option>
+          </select>
+        </label>
+        <label class="field"><span>Relationship to argument</span>
+          <select id="evidenceRelationship">
+            <option value="supports">Supports</option>
+            <option value="contradicts">Contradicts</option>
+            <option value="contextualises">Contextualises</option>
+            <option value="critiques">Critiques</option>
+            <option value="method">Methodological evidence</option>
+          </select>
+        </label>
+        <label class="field"><span>Theme</span><select id="highlightTheme"><option value="">No theme yet</option></select></label>
+        <label class="field"><span>Objective</span><select id="highlightObjective"><option value="">No objective yet</option></select></label>
+        <label class="field wide"><span>Chapter</span><select id="highlightChapter"><option value="">Not linked to a chapter yet</option></select></label>
+      </div>
+
+      <div class="account-button-row">
+        <button class="primary-btn" id="saveHighlightNote" type="button">Save highlight & note</button>
+        <button class="soft-btn" id="saveHighlightOnly" type="button">Save highlight only</button>
+      </div>
+    </div>
+  </div>
 
   <div id="accountModal" class="modal-backdrop" hidden>
     <div class="modal account-modal">
