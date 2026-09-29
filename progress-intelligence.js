@@ -457,6 +457,7 @@
       renderReaderReviewStatus(articleId);
       scheduleCapture();
     });
+    window.addEventListener('quire:article-selected',e=>renderReaderReviewStatus(e.detail?.articleId));
     window.addEventListener('quire:pdf-opened',e=>renderReaderReviewStatus(e.detail?.articleId));
     window.addEventListener('quire:project-switched',()=>{setTimeout(()=>{captureNow();renderAll();},0);});
     window.addEventListener('quire:cloud-pulled',()=>{setTimeout(()=>{captureNow();renderAll();},0);});
