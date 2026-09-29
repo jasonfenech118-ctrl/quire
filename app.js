@@ -656,12 +656,18 @@ async function renderLibraryArticles(){
         '</div>'+
       '</div>'+
       '<div class="article-score"><strong>Open paper</strong><span>Quire reader</span>'+
+        '<button type="button" class="library-reading-queue" data-library-reading-queue="'+escapeHtml(article.id)+'">'+(article.citationData?.readingPlan?'✓ Reading queue':'＋ Reading queue')+'</button>'+
         (writingLibraryQuery?'<button type="button" class="library-cite-writing" data-library-cite="'+escapeHtml(article.id)+'">§ Cite in writing</button>':'')+
       '</div>'+
     '</article>';
   }).join('');
 
   document.getElementById('clearWritingLibraryQuery')?.addEventListener('click',()=>{writingLibraryQuery='';renderLibraryArticles();});
+  mount.querySelectorAll('[data-library-reading-queue]').forEach(btn=>btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent('quire:reading-queue-request',{detail:{articleId:btn.dataset.libraryReadingQueue}}));
+  }));
+
   mount.querySelectorAll('[data-library-cite]').forEach(btn=>btn.addEventListener('click',e=>{
     e.stopPropagation();
     window.dispatchEvent(new CustomEvent('quire:cite-article-request',{detail:{articleId:btn.dataset.libraryCite}}));
