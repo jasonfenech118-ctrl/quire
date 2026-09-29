@@ -137,6 +137,7 @@ See `docs/reference-manager.md`.
 - Step 26 — Literature Search & Screening Workflow ✅
 - Step 26 — Literature Search & Screening ✅
 - Step 27 — Critical Appraisal & Quality Assessment ✅
+- Step 28 — Research Data & Analysis Workspace ✅
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -218,6 +219,12 @@ Quire now records structured methodological appraisal for individual papers, pre
 
 See `docs/critical-appraisal.md`.
 
+### Step 28 — Research Data & Analysis Workspace
+
+Quire now stores de-identified analytic structures, results, findings and memos that adapt to the selected study design and can be linked directly to objectives and writing sections.
+
+See `docs/data-analysis.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -227,6 +234,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–27 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 28 — Analysis Workspace**.
+The original eight foundation steps and Phase 2 Steps 9–28 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 29 — Submission Readiness**.
 
 © Quire prototype.
