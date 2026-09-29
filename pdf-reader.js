@@ -540,12 +540,34 @@
     pendingSelection=null;editingHighlightId=null;clearNativeSelection();
     renderHighlights();
     window.dispatchEvent(new CustomEvent('quire:annotation-changed',{detail:{articleId:currentArticleId}}));
-    window.dispatchEvent(new CustomEvent('quire:workflow-handoff',{detail:{
-      title:(themeId||objectiveId||chapterId)?'Evidence organised':'Your reading has produced an idea',
-      copy:(themeId||objectiveId||chapterId)?'This evidence now has a destination. The next useful move is to develop the point in your thesis.':'Connect this note or highlight to a theme, objective or thesis section while its meaning is fresh.',
-      action:(themeId||objectiveId||chapterId)?'Use it in writing':'Organise evidence',
-      view:(themeId||objectiveId||chapterId)?'chapters':'map'
-    }}));
+    const foundationStage=window.QuireResearchFoundation?.stage?.()||'read';
+    const review=window.QuireResearchFoundation?.reviewProgress?.()||{score:0};
+    const maturity=window.QuireResearchFoundation?.maturity?.()||{key:'broad'};
+    const activeProject=window.QuireStore.getActiveProject?.()||{};
+    const gapSignals=(window.QuireStore.getState?.().analysisItems||[]).filter(item=>item.projectId===window.QuireStore.getActiveProjectId?.()&&item.kind==='gap_signal');
+    const writingReady=review.score>=65&&maturity.key==='stabilising'&&String(activeProject.researchQuestion||'').trim()&&gapSignals.length>0;
+
+    let handoff;
+    if(writingReady&&(themeId||objectiveId||chapterId)){
+      handoff={
+        title:'Evidence organised',
+        copy:'This evidence has a destination and the wider literature base is mature enough for a cautious evidence-grounded draft.',
+        action:'Use it in writing',view:'chapters'
+      };
+    }else if(foundationStage==='gap'||foundationStage==='refine'){
+      handoff={
+        title:(themeId||objectiveId||chapterId)?'Evidence organised for comparison':'Useful evidence captured',
+        copy:'Keep comparing this finding with other papers and test whether it reinforces, challenges or narrows the emerging gap.',
+        action:'Compare literature',view:'synthesis'
+      };
+    }else{
+      handoff={
+        title:(themeId||objectiveId||chapterId)?'Evidence organised — keep building the base':'Useful evidence captured',
+        copy:'One paper is only part of the picture. Continue reading across the literature before turning this into a thesis argument.',
+        action:'Continue reading',view:'library'
+      };
+    }
+    window.dispatchEvent(new CustomEvent('quire:workflow-handoff',{detail:handoff}));
   }
 
   function refreshHighlightSidebar(){
