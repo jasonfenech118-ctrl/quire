@@ -11,6 +11,7 @@ Quire currently includes:
 - Word-count targets, deadlines, milestones and pace-based completion estimates
 - Research library
 - Real PDF reading workspace
+- Browser OCR for scanned/image-only PDFs
 - Persistent highlights, notes and thesis evidence links
 - DOI / scholarly metadata import
 - BibTeX / RIS reference-manager import and export
@@ -112,6 +113,24 @@ Quire detects duplicates by DOI or normalised title, merges bibliographic metada
 
 See `docs/reference-manager.md`.
 
+## Phase 2 — Thesis workflow
+
+- Step 9 — Multi-project research workspace ✅
+- Step 10 — Persistent chapter & section editor ✅
+- Step 11 — Evidence-to-writing workflow ✅
+- Step 12 — Academic citations & bibliography ✅
+- Step 13 — Suggestion-based writing review ✅
+- Step 14 — Claim/evidence checking ✅
+- Step 15 — Multi-paper synthesis workspace ✅
+- Step 16 — Adaptive methodology workspace ✅
+- Step 17 — OCR for scanned PDFs ✅
+
+### Step 17 — OCR for scanned PDFs
+
+Quire now detects papers with no usable text layer and can run browser-based OCR on the current page or the whole document. OCR text is stored with page coordinates and rendered back as a selectable overlay, so scanned papers can use highlights, notes, grounded Copilot and exact-passage citations.
+
+See `docs/ocr.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -119,8 +138,8 @@ See `docs/reference-manager.md`.
 
 For reliable authentication redirects and later PDF features, serving the app over HTTPS or a local development server is preferable to opening it through a `file://` URL.
 
-## Original build sequence
+## Build roadmap
 
-All eight planned foundation steps are now implemented. A logical next phase is to turn these foundations into deeper research workflows such as direct reference-manager sync, bibliography/citation-style formatting, multi-project management, automated thesis-structure generation, and more complete AI writing review.
+The original eight foundation steps and Phase 2 Steps 9–17 are implemented. The next planned step is **Step 18 — Live Thesis Map**, using the real project graph rather than static prototype content.
 
 © Quire prototype.
