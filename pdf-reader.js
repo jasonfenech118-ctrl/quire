@@ -700,6 +700,7 @@
   async function openArticle(articleId){
     ensurePdfJs();currentArticleId=articleId;
     const article=window.QuireStore?.getArticle(articleId);
+    window.dispatchEvent(new CustomEvent('quire:article-selected',{detail:{articleId}}));
     const title=document.getElementById('readerArticleTitle');
     const meta=document.getElementById('readerArticleMeta');
     if(title) title.textContent=article?.title||'PDF reader';
