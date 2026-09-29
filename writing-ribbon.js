@@ -93,11 +93,31 @@
   }
 
   function bind(){
-    document.querySelectorAll('[data-ribbon-tab]').forEach(btn=>btn.addEventListener('click',()=>{
+    const tabs=[...document.querySelectorAll('[data-ribbon-tab]')];
+    function activateTab(btn,focus=false){
       const tab=btn.dataset.ribbonTab;
-      document.querySelectorAll('[data-ribbon-tab]').forEach(x=>x.classList.toggle('active',x===btn));
+      tabs.forEach(x=>{
+        const active=x===btn;
+        x.classList.toggle('active',active);
+        x.setAttribute('aria-selected',String(active));
+        x.tabIndex=active?0:-1;
+      });
       document.querySelectorAll('[data-ribbon-panel]').forEach(x=>x.classList.toggle('active',x.dataset.ribbonPanel===tab));
-    }));
+      if(focus)btn.focus();
+    }
+    tabs.forEach((btn,index)=>{
+      btn.addEventListener('click',()=>activateTab(btn));
+      btn.addEventListener('keydown',e=>{
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+        e.preventDefault();
+        let next=index;
+        if(e.key==='ArrowLeft')next=(index-1+tabs.length)%tabs.length;
+        if(e.key==='ArrowRight')next=(index+1)%tabs.length;
+        if(e.key==='Home')next=0;
+        if(e.key==='End')next=tabs.length-1;
+        activateTab(tabs[next],true);
+      });
+    });
     editor()?.addEventListener('mouseup',()=>selectedText());
     editor()?.addEventListener('keyup',()=>selectedText());
 
