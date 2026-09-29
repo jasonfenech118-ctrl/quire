@@ -134,6 +134,7 @@ See `docs/reference-manager.md`.
 - Step 23 — Final Product Polish ✅
 - Step 24 — Guided Project Launch ✅
 - Step 25 — Data Integrity & Migration Hardening ✅
+- Step 26 — Literature Search & Screening Workflow ✅
 - Step 26 — Literature Search & Screening ✅
 
 ### Step 17 — OCR for scanned PDFs
