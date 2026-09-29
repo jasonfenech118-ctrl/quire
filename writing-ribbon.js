@@ -78,6 +78,7 @@
   }
 
   function findLibrary(){
+    window.QuireInlineReferences?.captureSelection?.();
     rememberWritingContext();
     const q=writingContext?.selection||writingContext?.paragraph||'';
     window.showView?.('library');
@@ -88,6 +89,7 @@
   }
 
   function findEvidence(){
+    window.QuireInlineReferences?.captureSelection?.();
     rememberWritingContext();
     const claim=writingContext?.selection||writingContext?.paragraph||'';
     window.dispatchEvent(new CustomEvent('quire:discover-evidence',{detail:{claim,source:'writing-ribbon'}}));
