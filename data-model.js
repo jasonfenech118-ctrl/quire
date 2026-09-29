@@ -35,7 +35,10 @@
     milestones: [],
     progressSnapshots: [],
     aiThreads: [],
-    aiMessages: []
+    aiMessages: [],
+    reviewRounds: [],
+    feedbackItems: [],
+    sectionVersions: []
   });
 
   function readJson(key, fallback=null){
@@ -220,10 +223,20 @@
     return writeState(state);
   }
 
+  function normalizeStateShape(state){
+    const collections=[
+      'projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes',
+      'articleThemes','evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages',
+      'reviewRounds','feedbackItems','sectionVersions'
+    ];
+    collections.forEach(key=>{if(!Array.isArray(state[key])) state[key]=[];});
+    return state;
+  }
+
   function getState(){
     const existing = readJson(STORE_KEY,null);
-    if(existing && existing.version === 1) return existing;
-    return createInitialState();
+    if(existing && existing.version === 1) return normalizeStateShape(existing);
+    return normalizeStateShape(createInitialState());
   }
 
   function getActiveProjectId(state=getState()){
@@ -1067,6 +1080,168 @@
       .sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||'')));
   }
 
+
+  function listReviewRounds(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return clone(state.reviewRounds.filter(r=>r.projectId===projectId)
+      .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')));
+  }
+
+  function createSectionVersion(sectionId,data={}){
+    const state=getState();
+    const section=state.sections.find(s=>s.id===sectionId);
+    if(!section) throw new Error('Section not found.');
+    const ts=nowIso();
+    const row={
+      id:uid('version'),projectId:section.projectId,chapterId:section.chapterId,sectionId:section.id,
+      reviewRoundId:data.reviewRoundId||null,
+      label:data.label||('Snapshot · '+new Date(ts).toLocaleString()),
+      reason:data.reason||'manual',
+      sectionTitle:section.title||'',
+      content:section.content||'',
+      wordCount:Number(section.currentWordCount)||0,
+      sectionStatus:section.status||'not_started',
+      createdAt:ts
+    };
+    state.sectionVersions.push(row);
+    writeState(state);
+    return clone(row);
+  }
+
+  function listSectionVersions(sectionId,projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return clone(state.sectionVersions.filter(v=>v.projectId===projectId && (!sectionId||v.sectionId===sectionId))
+      .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')));
+  }
+
+  function restoreSectionVersion(versionId){
+    const state=getState();
+    const version=state.sectionVersions.find(v=>v.id===versionId);
+    if(!version) throw new Error('Version not found.');
+    const section=state.sections.find(s=>s.id===version.sectionId);
+    if(!section) throw new Error('The section for this version no longer exists.');
+    const ts=nowIso();
+
+    state.sectionVersions.push({
+      id:uid('version'),projectId:section.projectId,chapterId:section.chapterId,sectionId:section.id,
+      reviewRoundId:null,label:'Before restore · '+new Date(ts).toLocaleString(),
+      reason:'before_restore',sectionTitle:section.title||'',content:section.content||'',
+      wordCount:Number(section.currentWordCount)||0,sectionStatus:section.status||'not_started',createdAt:ts
+    });
+
+    section.title=version.sectionTitle||section.title;
+    section.content=version.content||'';
+    section.currentWordCount=Number(version.wordCount)||0;
+    section.status=version.sectionStatus||section.status;
+    section.updatedAt=ts;
+
+    const chapter=state.chapters.find(c=>c.id===section.chapterId);
+    if(chapter){
+      const total=state.sections.filter(s=>s.chapterId===chapter.id)
+        .reduce((sum,s)=>sum+(Number(s.currentWordCount)||0),0);
+      chapter.currentWordCount=total;
+      chapter.updatedAt=ts;
+    }
+
+    writeState(state);
+    return clone(section);
+  }
+
+  function createReviewRound(data={}){
+    const state=getState();
+    const projectId=data.projectId||getActiveProjectId(state);
+    if(!projectId) throw new Error('No active thesis project.');
+    const ts=nowIso();
+    const row={
+      id:uid('review'),projectId,
+      title:data.title||('Review round · '+new Date(ts).toLocaleDateString()),
+      reviewerName:data.reviewerName||'',
+      status:data.status||'awaiting_feedback',
+      scope:data.scope||'whole_thesis',
+      chapterId:data.chapterId||null,
+      submittedAt:data.submittedAt||ts.slice(0,10),
+      responseDueDate:data.responseDueDate||null,
+      notes:data.notes||'',
+      createdAt:ts,updatedAt:ts
+    };
+    state.reviewRounds.push(row);
+
+    const sections=state.sections.filter(s=>s.projectId===projectId && (row.scope!=='chapter'||s.chapterId===row.chapterId));
+    sections.forEach(section=>{
+      state.sectionVersions.push({
+        id:uid('version'),projectId,chapterId:section.chapterId,sectionId:section.id,reviewRoundId:row.id,
+        label:row.title+' · submitted',reason:'review_submission',sectionTitle:section.title||'',
+        content:section.content||'',wordCount:Number(section.currentWordCount)||0,
+        sectionStatus:section.status||'not_started',createdAt:ts
+      });
+    });
+
+    writeState(state);
+    return clone(row);
+  }
+
+  function updateReviewRound(reviewRoundId,patch={}){
+    const state=getState();
+    const row=state.reviewRounds.find(r=>r.id===reviewRoundId);
+    if(!row) return null;
+    ['title','reviewerName','status','responseDueDate','notes'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) row[key]=patch[key];
+    });
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function addFeedback(data={}){
+    const state=getState();
+    const projectId=data.projectId||getActiveProjectId(state);
+    if(!projectId) throw new Error('No active thesis project.');
+    if(!String(data.comment||'').trim()) throw new Error('Enter the supervisor feedback.');
+    const ts=nowIso();
+    const row={
+      id:uid('feedback'),projectId,reviewRoundId:data.reviewRoundId||null,
+      chapterId:data.chapterId||null,sectionId:data.sectionId||null,
+      reviewerName:data.reviewerName||'',category:data.category||'content',
+      priority:data.priority||'normal',status:data.status||'open',
+      selectedText:data.selectedText||'',comment:String(data.comment).trim(),
+      researcherResponse:data.researcherResponse||'',createdAt:ts,updatedAt:ts,resolvedAt:null
+    };
+    state.feedbackItems.push(row);
+    writeState(state);
+    return clone(row);
+  }
+
+  function listFeedback(filters={}){
+    const state=getState();
+    const projectId=filters.projectId||getActiveProjectId(state);
+    return clone(state.feedbackItems.filter(item=>{
+      if(item.projectId!==projectId)return false;
+      if(filters.reviewRoundId&&item.reviewRoundId!==filters.reviewRoundId)return false;
+      if(filters.sectionId&&item.sectionId!==filters.sectionId)return false;
+      if(filters.chapterId&&item.chapterId!==filters.chapterId)return false;
+      if(filters.status&&item.status!==filters.status)return false;
+      return true;
+    }).sort((a,b)=>{
+      const priority={high:0,normal:1,low:2};
+      return (priority[a.priority]??1)-(priority[b.priority]??1) || (b.createdAt||'').localeCompare(a.createdAt||'');
+    }));
+  }
+
+  function updateFeedback(feedbackId,patch={}){
+    const state=getState();
+    const row=state.feedbackItems.find(f=>f.id===feedbackId);
+    if(!row)return null;
+    ['status','priority','category','comment','researcherResponse','reviewerName'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) row[key]=patch[key];
+    });
+    row.resolvedAt=row.status==='resolved'?(row.resolvedAt||nowIso()):null;
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -1086,7 +1261,10 @@
       evidenceLinks:byProject('evidenceLinks'),
       milestones:byProject('milestones'),
       progressSnapshots:byProject('progressSnapshots'),
-      aiThreads:byProject('aiThreads')
+      aiThreads:byProject('aiThreads'),
+      reviewRounds:byProject('reviewRounds'),
+      feedbackItems:byProject('feedbackItems'),
+      sectionVersions:byProject('sectionVersions')
     });
   }
 
@@ -1143,6 +1321,15 @@
     getOrCreateArticleThread,
     addAiMessage,
     listAiMessages,
+    listReviewRounds,
+    createReviewRound,
+    updateReviewRound,
+    addFeedback,
+    listFeedback,
+    updateFeedback,
+    createSectionVersion,
+    listSectionVersions,
+    restoreSectionVersion,
     getProjectBundle
   };
 
