@@ -830,3 +830,23 @@ window.addEventListener('quire:metadata-saved',async e=>{
   }
   showToast(e.detail?.applied ? 'Article metadata updated' : 'Article added to your research library');
 });
+
+
+// ---------- Step 8: reference-manager interoperability ----------
+document.getElementById('openReferenceImportCard')?.addEventListener('click',()=>{
+  modal.hidden=true;
+  window.QuireReferences?.open?.();
+});
+
+window.addEventListener('quire:references-imported',e=>{
+  renderLibraryArticles();
+  updateResearchDeskCounts();
+  const d=e.detail||{};
+  showToast('References imported: '+(d.added||0)+' added, '+(d.updated||0)+' updated');
+});
+
+window.addEventListener('quire:references-exported',e=>{
+  const d=e.detail||{};
+  const label=d.format==='bib'?'BibTeX':'RIS';
+  showToast((d.count||0)+' references exported as '+label);
+});
