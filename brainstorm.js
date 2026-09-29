@@ -44,7 +44,7 @@
       const hay=new Set(text.toLowerCase().replace(/[^a-z0-9]+/g,' ').split(/\s+/));const hits=[...tokens].filter(x=>hay.has(x)).length;
       return {section:s,hits};
     }).filter(x=>x.hits>=2).sort((a,b)=>b.hits-a.hits).slice(0,5);
-    const modal=document.getElementById('ideaCaptureModal');ensureModal();modal.hidden=false;
+    ensureModal();const modal=document.getElementById('ideaCaptureModal');modal.hidden=false;
     modal.querySelector('.idea-capture-card').innerHTML='<div class="modal-head"><div><span class="eyebrow">PROVENANCE CHAIN</span><h2>'+escapeHtml(row.title)+'</h2></div><button type="button" id="closeIdeaTrace">×</button></div>'+
       '<section class="idea-trace-section"><strong>Origin</strong><p>'+escapeHtml(ORIGINS[p.origin]||p.origin||'Unknown')+(p.sourceLabel?' · '+escapeHtml(p.sourceLabel):'')+(p.sourcePage?' · p. '+escapeHtml(p.sourcePage):'')+'</p>'+(p.sourceExcerpt?'<blockquote>'+escapeHtml(p.sourceExcerpt)+'</blockquote>':'')+(sourceArticle?'<button type="button" id="openIdeaSource">Open source</button>':'')+'</section>'+
       '<section class="idea-trace-section"><strong>Downstream thesis matches</strong><p>These are inferred from shared terms, not proof that the thesis text came from this idea.</p>'+(downstream.length?downstream.map(x=>'<button type="button" data-trace-section="'+x.section.id+'">'+escapeHtml(x.section.title)+' · '+x.hits+' shared terms</button>').join(''):'<small>No clear downstream match found yet.</small>')+'</section>';
