@@ -835,7 +835,7 @@
       <div class="modal-head"><div><span class="eyebrow">ADD TO QUIRE</span><h2>Bring in a new source or idea</h2></div><button id="closeModal">×</button></div>
       <div class="new-grid">
         <button class="new-card" data-action="upload"><span>PDF</span><strong>Upload article</strong><small>Add a paper from your device</small></button>
-        <button class="new-card"><span>DOI</span><strong>Add by DOI or link</strong><small>Import article metadata</small></button>
+        <button class="new-card" id="openMetadataImport" type="button"><span>DOI</span><strong>Add by DOI or title</strong><small>Retrieve scholarly metadata automatically</small></button>
         <button class="new-card" data-go-modal="brainstorm"><span>✦</span><strong>Capture an idea</strong><small>Save a thought before it disappears</small></button>
         <button class="new-card" data-go-modal="chapters"><span>§</span><strong>New thesis section</strong><small>Add to your chapter structure</small></button>
         <button class="new-card" data-go-modal="setup"><span>◈</span><strong>New thesis project</strong><small>Start by defining study design and targets</small></button>
@@ -844,6 +844,60 @@
   </div>
 
 
+
+
+  <div id="metadataModal" class="modal-backdrop" hidden>
+    <div class="modal metadata-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">SCHOLARLY METADATA</span><h2>Find an article</h2></div>
+        <button id="closeMetadataModal" type="button">×</button>
+      </div>
+
+      <p class="metadata-intro">Paste a DOI, a doi.org link, or search using the article title. Quire will look up bibliographic metadata from Crossref.</p>
+
+      <div class="metadata-search-row">
+        <input id="metadataQuery" type="text" placeholder="10.1000/xyz123 or article title…" autocomplete="off">
+        <button class="primary-btn" id="metadataSearchBtn" type="button">Find article</button>
+      </div>
+
+      <div class="metadata-workspace">
+        <div id="metadataResults" class="metadata-results">
+          <div class="metadata-empty">Search results will appear here.</div>
+        </div>
+
+        <article id="metadataPreview" class="metadata-preview" hidden>
+          <span class="eyebrow">ARTICLE PREVIEW</span>
+          <h3 id="metadataTitle">—</h3>
+          <p id="metadataAuthors">—</p>
+
+          <div class="metadata-facts">
+            <div><span>Journal</span><strong id="metadataJournal">—</strong></div>
+            <div><span>Year</span><strong id="metadataYear">—</strong></div>
+            <div class="wide"><span>DOI</span><strong id="metadataDoi">—</strong></div>
+          </div>
+
+          <div id="metadataAbstractWrap" class="metadata-abstract" hidden>
+            <span class="eyebrow">ABSTRACT</span>
+            <p id="metadataAbstract"></p>
+          </div>
+
+          <div class="metadata-citation-box">
+            <span class="eyebrow">REFERENCE PREVIEW</span>
+            <p id="metadataCitation"></p>
+          </div>
+
+          <div id="metadataDuplicate" class="metadata-duplicate" hidden></div>
+
+          <div class="metadata-actions">
+            <button class="primary-btn" id="addMetadataToLibrary" type="button">Add to research library</button>
+            <button class="soft-btn" id="applyMetadataToCurrent" type="button" hidden>Apply to open PDF</button>
+          </div>
+        </article>
+      </div>
+
+      <small class="metadata-source-note">Metadata is retrieved from Crossref and should be checked against the published article before final referencing.</small>
+    </div>
+  </div>
 
   <div id="highlightNoteModal" class="modal-backdrop" hidden>
     <div class="modal highlight-note-modal">
@@ -951,6 +1005,7 @@
   <script src="data-model.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
+  <script src="metadata.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
