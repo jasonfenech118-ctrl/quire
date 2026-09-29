@@ -325,6 +325,8 @@
     renderVersions();render();
   }
 
+  function shorten(v,n=120){const s=String(v||'');return s.length>n?s.slice(0,n-1)+'…':s;}
+
   function buildReviewPackage(){
     const state=window.QuireStore.getState();
     const projectId=window.QuireStore.getActiveProjectId();
