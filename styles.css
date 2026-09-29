@@ -2971,3 +2971,28 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .gap-explorer-summary{grid-template-columns:1fr 1fr}
   .gap-evidence-grid,.gap-evidence-columns{grid-template-columns:1fr}
 }
+
+
+/* ---------- Step 58: Gap → Search Iteration ---------- */
+.gap-search-context{
+  margin:0 0 16px;border:1px solid var(--line);border-left:3px solid var(--gold);
+  background:#fbf7ef;padding:16px 18px;display:grid;grid-template-columns:minmax(260px,1.4fr) minmax(260px,1fr);gap:14px
+}
+.gap-search-context[hidden]{display:none}
+.gap-search-copy h2{font-family:"Libre Caslon Text",serif;font-size:20px;font-weight:400;margin:5px 0}
+.gap-search-copy p{font-size:9px;line-height:1.55;margin:0 0 6px}
+.gap-search-copy small{font-size:7px;color:var(--muted);line-height:1.45}
+.gap-search-terms{border:1px solid #e5dccf;background:#fff;padding:10px}
+.gap-search-terms>span{font-size:7px;font-weight:700;color:var(--muted)}
+.gap-search-terms>div{display:flex;flex-wrap:wrap;gap:5px;margin-top:7px}
+.gap-search-terms b{font-size:7px;font-weight:600;border:1px solid #ccd5ce;color:var(--forest);padding:4px 6px;border-radius:12px}
+.gap-search-terms em{font-size:7px;color:var(--muted)}
+.gap-search-actions{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px;align-items:center}
+.gap-search-history{grid-column:1/-1;border-top:1px solid #e6ded2;padding-top:9px}
+.gap-search-history strong,.gap-search-history small{display:block}
+.gap-search-history strong{font-size:8px}
+.gap-search-history small{font-size:7px;color:var(--muted);margin-top:3px;line-height:1.45}
+@media(max-width:800px){
+  .gap-search-context{grid-template-columns:1fr}
+  .gap-search-actions,.gap-search-history{grid-column:auto}
+}
