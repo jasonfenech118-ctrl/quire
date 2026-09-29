@@ -32,6 +32,7 @@
         <button class="nav-item" data-view="chapters"><span>¶</span> Chapters</button>
         <button class="nav-item" data-view="brainstorm"><span>✦</span> Brainstorm</button>
         <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
+        <button class="nav-item" data-view="supervision"><span>☷</span> Supervision</button>
         <button class="nav-item" data-view="methodology"><span>◌</span> Methodology</button>
         <button class="nav-item" data-view="setup"><span>⚙</span> Study Setup</button>
       </nav>
@@ -656,6 +657,8 @@
               <button type="button" data-editor-command="insertUnorderedList">• List</button>
               <span class="editor-toolbar-separator"></span>
               <button type="button" class="insert-reference-btn" id="insertReferenceBtn">§ Insert reference</button>
+              <button type="button" class="editor-supervision-btn" id="openSectionFeedbackBtn">☷ Feedback <b id="sectionFeedbackBadge"></b></button>
+              <button type="button" class="editor-version-btn" id="openSectionVersionsBtn">↶ Versions</button>
             </div>
             <div id="liveSectionEditor" class="editor live-editor" contenteditable="true" data-placeholder="Start writing this section…"></div>
           </div>
@@ -730,6 +733,56 @@
         </div>
       </section>
 
+
+
+      <section id="supervision" class="view">
+        <div class="page-heading compact">
+          <div>
+            <span class="eyebrow">SUPERVISION & REVISION</span>
+            <h1>Keep feedback beside the draft, not inside it.</h1>
+            <p>Track supervisor review rounds, revision requests and section versions without overwriting your manuscript.</p>
+          </div>
+          <div class="supervision-heading-actions">
+            <button class="soft-btn" id="addSupervisorFeedbackBtn" type="button">＋ Record feedback</button>
+            <button class="primary-btn" id="newReviewRoundBtn" type="button">＋ New review round</button>
+          </div>
+        </div>
+
+        <div class="supervision-stats">
+          <div><strong id="supervisionOpen">0</strong><span>Open feedback</span></div>
+          <div><strong id="supervisionProgress">0</strong><span>In revision</span></div>
+          <div><strong id="supervisionResolved">0</strong><span>Resolved</span></div>
+          <div><strong id="supervisionRounds">0</strong><span>Review rounds</span></div>
+          <div><strong id="supervisionVersions">0</strong><span>Saved versions</span></div>
+        </div>
+
+        <div class="supervision-layout">
+          <aside class="review-rounds-panel">
+            <div class="supervision-panel-head">
+              <div><span class="eyebrow">REVIEW ROUNDS</span><h2>Submitted drafts</h2></div>
+              <small>Click a round to filter feedback</small>
+            </div>
+            <div id="reviewRoundsList" class="review-rounds-list"></div>
+          </aside>
+
+          <section class="feedback-queue-panel">
+            <div class="supervision-panel-head feedback-queue-head">
+              <div><span class="eyebrow">REVISION QUEUE</span><h2>Supervisor feedback</h2></div>
+              <div>
+                <span id="feedbackQueueCount">0 items</span>
+                <select id="feedbackStatusFilter">
+                  <option value="active">Open + in progress</option>
+                  <option value="open">Open</option>
+                  <option value="in_progress">In progress</option>
+                  <option value="resolved">Resolved</option>
+                  <option value="all">All feedback</option>
+                </select>
+              </div>
+            </div>
+            <div id="supervisorFeedbackList" class="supervisor-feedback-list"></div>
+          </section>
+        </div>
+      </section>
 
       <section id="methodology" class="view">
         <div class="page-heading compact">
@@ -1021,6 +1074,71 @@
 
 
 
+
+
+  <div id="reviewRoundModal" class="modal-backdrop" hidden>
+    <div class="modal review-round-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">SUPERVISOR REVIEW</span><h2>Create a review round</h2></div>
+        <button id="closeReviewRoundModal" type="button">×</button>
+      </div>
+      <p class="supervision-modal-intro">Quire will save a read-only snapshot of every section included in this round so you can always see exactly what was submitted.</p>
+      <div class="form-grid">
+        <label class="field wide"><span>Review round title</span><input id="reviewRoundTitle" type="text"></label>
+        <label class="field"><span>Supervisor / reviewer</span><input id="reviewRoundReviewer" type="text" placeholder="Name"></label>
+        <label class="field"><span>Scope</span><select id="reviewRoundScope"><option value="whole_thesis">Whole thesis</option><option value="chapter">One chapter</option></select></label>
+        <label class="field wide" id="reviewRoundChapterWrap" hidden><span>Chapter</span><select id="reviewRoundChapter"></select></label>
+        <label class="field"><span>Date submitted</span><input id="reviewRoundSubmitted" type="date"></label>
+        <label class="field"><span>Response due (optional)</span><input id="reviewRoundDue" type="date"></label>
+        <label class="field wide"><span>Notes</span><textarea id="reviewRoundNotes" rows="3" placeholder="What did you send, and what kind of feedback are you expecting?"></textarea></label>
+      </div>
+      <small id="reviewRoundModalMessage" class="supervision-modal-message"></small>
+      <div class="account-button-row supervision-modal-actions">
+        <button class="soft-btn" id="cancelReviewRound" type="button">Cancel</button>
+        <button class="primary-btn" id="saveReviewRound" type="button">Create review round</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="feedbackModal" class="modal-backdrop" hidden>
+    <div class="modal feedback-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">SUPERVISOR FEEDBACK</span><h2>Record a revision request</h2></div>
+        <button id="closeFeedbackModal" type="button">×</button>
+      </div>
+      <p class="supervision-modal-intro">Feedback stays separate from your writing. You decide how—and whether—to revise the manuscript.</p>
+      <div class="form-grid">
+        <label class="field"><span>Review round</span><select id="feedbackRound"><option value="">No review round</option></select></label>
+        <label class="field"><span>Reviewer</span><input id="feedbackReviewer" type="text" placeholder="Supervisor / reviewer"></label>
+        <label class="field"><span>Chapter</span><select id="feedbackChapter"><option value="">Project-level</option></select></label>
+        <label class="field"><span>Section</span><select id="feedbackSection"><option value="">Whole chapter / project</option></select></label>
+        <label class="field"><span>Category</span><select id="feedbackCategory"><option value="content">Content</option><option value="structure">Structure</option><option value="methodology">Methodology</option><option value="evidence">Evidence</option><option value="language">Language</option><option value="formatting">Formatting</option><option value="other">Other</option></select></label>
+        <label class="field"><span>Priority</span><select id="feedbackPriority"><option value="normal">Normal</option><option value="high">High</option><option value="low">Low</option></select></label>
+        <label class="field wide"><span>Selected passage (optional)</span><textarea id="feedbackSelectedText" rows="2" placeholder="A quoted passage from the draft can help preserve context."></textarea></label>
+        <label class="field wide"><span>Feedback</span><textarea id="feedbackComment" rows="5" placeholder="Record the supervisor's comment or requested revision."></textarea></label>
+      </div>
+      <small id="feedbackModalMessage" class="supervision-modal-message"></small>
+      <div class="account-button-row supervision-modal-actions">
+        <button class="soft-btn" id="cancelFeedback" type="button">Cancel</button>
+        <button class="primary-btn" id="saveFeedback" type="button">Save feedback</button>
+      </div>
+    </div>
+  </div>
+
+  <div id="sectionVersionsModal" class="modal-backdrop" hidden>
+    <div class="modal section-versions-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">SECTION HISTORY</span><h2 id="versionModalSectionTitle">Section versions</h2></div>
+        <button id="closeSectionVersionsModal" type="button">×</button>
+      </div>
+      <div class="version-modal-toolbar">
+        <span id="versionCount">0 versions</span>
+        <button class="primary-btn" id="createSectionSnapshotBtn" type="button">＋ Save snapshot</button>
+      </div>
+      <div id="sectionVersionList" class="section-version-list"></div>
+      <small class="version-safety-note">Restoring a version is always deliberate. Quire saves the current section as a safety snapshot before restoration.</small>
+    </div>
+  </div>
 
   <div id="inlineReferenceModal" class="modal-backdrop" hidden>
     <div class="modal inline-reference-modal">
@@ -1401,6 +1519,7 @@
   <script src="methodology.js"></script>
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
+  <script src="supervision.js"></script>
   <script src="progress-intelligence.js"></script>
   <script src="app.js"></script>
 </body>
