@@ -3235,3 +3235,53 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .literature-candidate{grid-template-columns:28px 1fr}
   .candidate-actions{grid-column:2}
 }
+
+
+/* ---------- Step 66: Search-Concept Coverage ---------- */
+.search-coverage-panel{margin:0 0 16px;border:1px solid var(--line);background:#faf7f1;padding:17px 18px}
+.search-coverage-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.search-coverage-head h2{font-family:"Libre Caslon Text",serif;font-size:21px;font-weight:400;margin:5px 0}
+.search-coverage-head p{font-size:9px;color:var(--muted);line-height:1.55;max-width:760px;margin:0}
+.search-coverage-head label{display:grid;gap:5px;min-width:210px}
+.search-coverage-head label span{font-size:7px;font-weight:700;color:var(--muted)}
+.search-coverage-head select{border:1px solid var(--line);background:#fff;padding:8px;font-size:8px}
+.search-coverage-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:14px 0}
+.search-coverage-summary>div{background:#fff;padding:10px}
+.search-coverage-summary strong,.search-coverage-summary span{display:block}
+.search-coverage-summary strong{font-family:"Libre Caslon Text",serif;font-size:18px;font-weight:400}
+.search-coverage-summary span{font-size:7px;color:var(--muted);margin-top:3px}
+.search-coverage-summary .search-coverage-empty{grid-column:1/-1}
+.search-coverage-empty strong,.search-coverage-empty small{display:block}
+.search-coverage-empty strong{font-size:8px}.search-coverage-empty small{font-size:7px;color:var(--muted);margin-top:3px;line-height:1.45}
+.search-coverage-concepts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.search-coverage-concept{border:1px solid var(--line);background:#fff;padding:12px}
+.search-coverage-concept.active{border-color:var(--forest);box-shadow:inset 0 0 0 1px rgba(44,80,69,.12)}
+.search-coverage-concept-head{display:flex;justify-content:space-between;gap:12px}
+.search-coverage-concept-head span,.search-coverage-concept-head strong{display:block}
+.search-coverage-concept-head span{font-size:6.5px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}
+.search-coverage-concept-head strong{font-family:"Libre Caslon Text",serif;font-size:14px;font-weight:400;margin-top:3px}
+.search-coverage-concept-head b{font-family:"Libre Caslon Text",serif;font-size:18px;font-weight:400}
+.search-coverage-bar{height:3px;background:#e5ded3;margin:10px 0}
+.search-coverage-bar i{display:block;height:100%;background:var(--forest)}
+.search-coverage-terms{display:flex;flex-wrap:wrap;gap:4px}
+.search-coverage-terms span,.search-coverage-terms em{font-size:6.5px;border:1px solid #e1d9ce;padding:3px 5px;border-radius:10px;font-style:normal}
+.search-coverage-concept>small{display:block;font-size:7px;color:var(--muted);line-height:1.4;margin-top:8px}
+.search-coverage-concept>button{border:0;background:transparent;color:var(--forest);font-size:7px;font-weight:700;padding:8px 0 0;cursor:pointer}
+.search-coverage-detail{margin-top:10px;border:1px solid var(--line);background:#fff;padding:12px}
+.search-coverage-detail[hidden]{display:none}
+.search-coverage-detail-head{display:flex;justify-content:space-between;gap:12px}
+.search-coverage-detail-head strong,.search-coverage-detail-head small{display:block}
+.search-coverage-detail-head strong{font-family:"Libre Caslon Text",serif;font-size:15px;font-weight:400;margin:3px 0}
+.search-coverage-detail-head small{font-size:7px;color:var(--muted)}
+.search-coverage-detail-head button{border:0;background:transparent;color:var(--muted);font-size:8px}
+.search-coverage-term-list{display:flex;flex-wrap:wrap;gap:5px;margin:9px 0}
+.search-coverage-term-list span{font-size:6.5px;border:1px solid #ccd5ce;color:var(--forest);padding:3px 5px;border-radius:10px}
+.search-coverage-paper-list{display:grid;gap:4px}
+.search-coverage-paper-list button{display:grid;text-align:left;border:1px solid #ece5db;background:#fbf8f2;padding:8px;cursor:pointer}
+.search-coverage-paper-list strong{font-size:8px}.search-coverage-paper-list small{font-size:7px;color:var(--muted);margin-top:2px}
+.search-coverage-warning{font-size:8px;line-height:1.5;color:var(--muted)}
+@media(max-width:800px){
+  .search-coverage-head{display:block}
+  .search-coverage-head label{margin-top:10px;min-width:0}
+  .search-coverage-summary,.search-coverage-concepts{grid-template-columns:1fr}
+}
