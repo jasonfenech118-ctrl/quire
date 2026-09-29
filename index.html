@@ -432,6 +432,7 @@
               <div id="pdfPageSurface" class="pdf-page-surface">
                 <canvas id="pdfCanvas" aria-label="PDF page"></canvas>
                 <div id="pdfHighlightLayer" class="pdf-highlight-layer" aria-hidden="true"></div>
+                <div id="pdfCitationLayer" class="pdf-citation-layer" aria-hidden="true"></div>
                 <div id="pdfTextLayer" class="pdf-text-layer" aria-label="Selectable PDF text"></div>
               </div>
             </div>
@@ -459,10 +460,10 @@
               <button data-ai="critique">Critique</button>
             </div>
             <div id="aiResponse" class="ai-response">
-              <span class="eyebrow">GROUNDED COPILOT</span>
-              <p>Quire indexes the actual text of this PDF and retrieves the most relevant passages before answering.</p>
-              <div class="evidence-callout"><strong>Source first</strong><p>Use Summary, Methods, Findings or Critique to analyse the real article text. Page references take you back to the source.</p></div>
-              <small>Local grounded mode works without an AI account. Connect a secure endpoint for generative synthesis.</small>
+              <span class="eyebrow">CLAIM-LEVEL EVIDENCE</span>
+              <p>Quire links each supported statement to the exact passage retrieved from the article.</p>
+              <div class="evidence-callout"><strong>Trace every claim</strong><p>Citation markers sit beside the claim they support. Select one to jump to—and visually focus—the source passage in the PDF.</p></div>
+              <small>Local grounded mode remains extractive. A connected AI endpoint must return claim-to-context links for citations to appear.</small>
             </div>
             <div class="copilot-input docked">
               <input id="readerPrompt" placeholder="Ask about this paper…" />
