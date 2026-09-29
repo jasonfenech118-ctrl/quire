@@ -459,9 +459,11 @@
       const articleId=window.QuirePdfReader?.getCurrentArticleId?.();
       const article=articleId?window.QuireStore?.getArticle?.(articleId):null;
       if(!article)return;
-      window.QuireStore.updateArticle(articleId,{readingStatus:article.readingStatus==='reviewed'?'reading':'reviewed'});
+      const markingReviewed=article.readingStatus!=='reviewed';
+      window.QuireStore.updateArticle(articleId,{readingStatus:markingReviewed?'reviewed':'reading'});
       renderReaderReviewStatus(articleId);
       scheduleCapture();
+      if(markingReviewed)window.dispatchEvent(new CustomEvent('quire:paper-reviewed',{detail:{articleId}}));
     });
     window.addEventListener('quire:article-selected',e=>renderReaderReviewStatus(e.detail?.articleId));
     window.addEventListener('quire:pdf-opened',e=>renderReaderReviewStatus(e.detail?.articleId));
