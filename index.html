@@ -1483,6 +1483,32 @@
     </div>
   </div>
 
+
+  <div id="evidenceDiscoveryModal" class="modal-backdrop" hidden>
+    <div class="modal evidence-discovery-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">FIND EVIDENCE</span><h2>Support the claim you are writing</h2></div>
+        <button id="closeEvidenceDiscovery" type="button">×</button>
+      </div>
+      <div class="evidence-discovery-claim">
+        <span>CLAIM / IDEA</span>
+        <textarea id="evidenceDiscoveryClaim" rows="3" placeholder="Select a sentence in your manuscript, or describe the claim you need to support."></textarea>
+      </div>
+      <div class="evidence-discovery-tabs">
+        <button type="button" class="active" data-discovery-tab="library">My library</button>
+        <button type="button" data-discovery-tab="web">Scholarly web search</button>
+      </div>
+      <div id="evidenceDiscoveryNotice" class="evidence-discovery-notice">
+        Quire checks your own papers first. Web results are discovery candidates—not evidence—until you inspect the paper.
+      </div>
+      <div class="evidence-discovery-actions">
+        <button class="primary-btn" id="runEvidenceDiscovery" type="button">Search for evidence</button>
+        <span id="evidenceDiscoveryStatus"></span>
+      </div>
+      <div id="evidenceDiscoveryResults" class="evidence-discovery-results"></div>
+    </div>
+  </div>
+
   <div id="searchRunModal" class="modal-backdrop" hidden>
     <div class="modal search-run-modal">
       <div class="modal-head">
@@ -2091,6 +2117,7 @@
   <script src="evidence-writing.js"></script>
   <script src="research-journey.js"></script>
   <script src="writing-ribbon.js"></script>
+  <script src="evidence-discovery.js"></script>
   <script src="thesis-map.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
@@ -2105,7 +2132,6 @@
   <script src="analysis-workspace.js"></script>
   <script src="synthesis.js"></script>
   <script src="methodology.js"></script>
-  <script src="analysis-workspace.js"></script>
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
   <script src="supervision.js"></script>
