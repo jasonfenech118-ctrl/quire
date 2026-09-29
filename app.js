@@ -64,23 +64,6 @@ document.getElementById('dashboardAsk').addEventListener('click', () => {
   showToast('Copilot prompt opened in Brainstorm');
 });
 
-const aiContent = {
-  summary: '<span class="eyebrow">SUMMARY</span><p>The paper describes how people develop stoma self-management skills after discharge. Repeated practical teaching, consistent information and access to specialist follow-up are presented as important contributors to confidence.</p><div class="evidence-callout"><strong>Possible thesis link</strong><p>Chapter 2 → Patient education; Discussion → continuity of support.</p></div><small>Prototype AI output — verify against source.</small>',
-  methods: '<span class="eyebrow">METHODS</span><p><strong>Design:</strong> qualitative interview study.<br><strong>Focus:</strong> educational needs during the first six months following discharge.<br><strong>Interpretive value:</strong> useful for understanding patient experience, but not designed to estimate population-level effects.</p><small>Prototype AI output — verify against source.</small>',
-  findings: '<span class="eyebrow">KEY FINDINGS</span><p>1. Education needs changed over time.<br>2. Practical rehearsal was highly valued.<br>3. Conflicting information increased uncertainty.<br>4. Specialist follow-up supported problem solving.</p><small>Prototype AI output — verify against source.</small>',
-  critique: '<span class="eyebrow">CRITICAL APPRAISAL</span><p>The qualitative design is appropriate for exploring experience. When using this paper, separate participants\' reported perceptions from claims about effectiveness. Check sampling, reflexivity and transferability before making broader conclusions.</p><small>Prototype AI output — verify against source.</small>'
-};
-document.querySelectorAll('[data-ai]').forEach(btn => btn.addEventListener('click', () => {
-  document.getElementById('aiResponse').innerHTML = aiContent[btn.dataset.ai];
-}));
-
-document.getElementById('readerAsk').addEventListener('click', () => {
-  const input = document.getElementById('readerPrompt');
-  if(!input.value.trim()) return;
-  document.getElementById('aiResponse').innerHTML = '<span class="eyebrow">QUIRE COPILOT</span><p><strong>Your question:</strong> ' + escapeHtml(input.value) + '</p><p>This is the front-end prototype. Once the AI service is connected, Quire will answer using the article text and point back to the relevant pages and passages.</p><small>AI connection not enabled yet.</small>';
-  input.value = '';
-});
-
 document.querySelectorAll('.suggestion-actions button').forEach(btn => btn.addEventListener('click', () => {
   showToast(btn.textContent + ' — prototype interaction');
 }));
