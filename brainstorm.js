@@ -22,6 +22,7 @@
     }).join('');
     board.querySelectorAll('[data-idea-next]').forEach(btn=>btn.addEventListener('click',()=>advance(btn.dataset.ideaNext)));
     board.querySelectorAll('[data-idea-remove]').forEach(btn=>btn.addEventListener('click',()=>{if(confirm('Remove this idea?'))window.QuireStore.removeAnalysisItem(btn.dataset.ideaRemove);}));
+    board.querySelectorAll('[data-idea-trace]').forEach(btn=>btn.addEventListener('click',()=>trace(btn.dataset.ideaTrace)));
   }
   function card(row){
     const p=row.payload||{},origin=p.origin||'researcher',status=p.ideaStatus||'inbox';
@@ -31,8 +32,27 @@
       (p.sourceLabel?'<div class="idea-provenance">Origin: '+escapeHtml(p.sourceLabel)+'</div>':'')+
       '<div class="idea-tags"><span>'+escapeHtml(origin)+'</span>'+(p.sourcePage?'<span>p. '+escapeHtml(p.sourcePage)+'</span>':'')+'</div>'+
       '<div class="idea-actions">'+(next?'<button type="button" data-idea-next="'+row.id+'">Move to '+escapeHtml(STATUSES[next])+'</button>':'<button type="button" data-idea-next="'+row.id+'">Use in thesis</button>')+
-      '<button type="button" data-idea-remove="'+row.id+'">Remove</button></div></article>';
+      '<button type="button" data-idea-trace="'+row.id+'">Trace</button><button type="button" data-idea-remove="'+row.id+'">Remove</button></div></article>';
   }
+  function trace(id){
+    const row=window.QuireStore.getAnalysisItem(id);if(!row)return;
+    const p=row.payload||{},state=window.QuireStore.getState();
+    const sourceArticle=state.articles.find(a=>a.id===p.sourceId)||state.articles.find(a=>a.id===state.highlights.find(h=>h.id===p.sourceId)?.articleId);
+    const tokens=new Set(String(row.title||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').split(/\s+/).filter(x=>x.length>4));
+    const downstream=(state.sections||[]).filter(s=>s.projectId===row.projectId).map(s=>{
+      const d=document.createElement('div');d.innerHTML=s.content||'';const text=(d.innerText||'').replace(/\s+/g,' ');
+      const hay=new Set(text.toLowerCase().replace(/[^a-z0-9]+/g,' ').split(/\s+/));const hits=[...tokens].filter(x=>hay.has(x)).length;
+      return {section:s,hits};
+    }).filter(x=>x.hits>=2).sort((a,b)=>b.hits-a.hits).slice(0,5);
+    const modal=document.getElementById('ideaCaptureModal');ensureModal();modal.hidden=false;
+    modal.querySelector('.idea-capture-card').innerHTML='<div class="modal-head"><div><span class="eyebrow">PROVENANCE CHAIN</span><h2>'+escapeHtml(row.title)+'</h2></div><button type="button" id="closeIdeaTrace">×</button></div>'+
+      '<section class="idea-trace-section"><strong>Origin</strong><p>'+escapeHtml(ORIGINS[p.origin]||p.origin||'Unknown')+(p.sourceLabel?' · '+escapeHtml(p.sourceLabel):'')+(p.sourcePage?' · p. '+escapeHtml(p.sourcePage):'')+'</p>'+(p.sourceExcerpt?'<blockquote>'+escapeHtml(p.sourceExcerpt)+'</blockquote>':'')+(sourceArticle?'<button type="button" id="openIdeaSource">Open source</button>':'')+'</section>'+
+      '<section class="idea-trace-section"><strong>Downstream thesis matches</strong><p>These are inferred from shared terms, not proof that the thesis text came from this idea.</p>'+(downstream.length?downstream.map(x=>'<button type="button" data-trace-section="'+x.section.id+'">'+escapeHtml(x.section.title)+' · '+x.hits+' shared terms</button>').join(''):'<small>No clear downstream match found yet.</small>')+'</section>';
+    document.getElementById('closeIdeaTrace').addEventListener('click',()=>{modal.hidden=true;modal.remove();ensureModal();});
+    document.getElementById('openIdeaSource')?.addEventListener('click',async()=>{modal.hidden=true;window.showView?.('reader');await window.QuirePdfReader?.openArticle?.(sourceArticle.id);if(p.sourcePage)await window.QuirePdfReader?.renderPage?.(Number(p.sourcePage));});
+    modal.querySelectorAll('[data-trace-section]').forEach(btn=>btn.addEventListener('click',()=>{modal.hidden=true;window.QuireChapterEditor?.openSection?.(btn.dataset.traceSection);window.showView?.('chapters');}));
+  }
+
   function advance(id){
     const row=window.QuireStore.getAnalysisItem(id);if(!row)return;
     const current=row.payload?.ideaStatus||'inbox';
