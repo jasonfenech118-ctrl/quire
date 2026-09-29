@@ -130,6 +130,7 @@ See `docs/reference-manager.md`.
 - Step 19 — Progress Intelligence ✅
 - Step 20 — Supervisor & Revision Workflow ✅
 - Step 21 — Thesis Export ✅
+- Step 22 — Real Cloud Backend — code complete, activation pending
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -173,6 +174,14 @@ Quire can now assemble the active thesis from its real chapters, sections and ci
 
 See `docs/thesis-export.md`.
 
+### Step 22 — Real Cloud Backend Activation
+
+The repository now includes private Supabase Storage support for research PDFs. Local PDFs can be uploaded to a private per-user path and automatically downloaded to another signed-in device when the paper is opened.
+
+The code and SQL policies are complete, but the external Supabase project still needs to be created and configured.
+
+See `docs/cloud-activation.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -182,6 +191,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–21 are implemented. The next planned step is **Step 22 — Real Cloud Backend Activation**. The code can be prepared now, but actual activation requires a Supabase project and its public project credentials.
+The original eight foundation steps and Phase 2 Steps 9–21 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next build step that can proceed locally is **Step 23 — Final Product Polish**.
 
 © Quire prototype.
