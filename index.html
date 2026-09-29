@@ -32,6 +32,7 @@
         <button class="nav-item" data-view="chapters"><span>¶</span> Chapters</button>
         <button class="nav-item" data-view="brainstorm"><span>✦</span> Brainstorm</button>
         <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
+        <button class="nav-item" data-view="methodology"><span>◌</span> Methodology</button>
         <button class="nav-item" data-view="setup"><span>⚙</span> Study Setup</button>
       </nav>
 
@@ -649,6 +650,38 @@
         </div>
       </section>
 
+
+      <section id="methodology" class="view">
+        <div class="page-heading compact">
+          <div><span class="eyebrow">METHODOLOGY WORKSPACE</span><h1 id="methodologyWorkspaceTitle">Methodology</h1><p id="methodologyWorkspaceIntro">Build a defensible, reproducible research plan.</p></div>
+          <div class="methodology-heading-actions"><span id="methodologyStudyType" class="methodology-type-badge">Study type</span><button class="primary-btn" id="saveMethodologyWorkspace" type="button">Save methodology</button></div>
+        </div>
+        <div class="methodology-status">
+          <div><span class="eyebrow">METHOD COMPLETENESS</span><strong id="methodologyProgress">0%</strong><small id="methodologySaveState">Autosave</small></div>
+          <div class="methodology-progress-track"><span id="methodologyProgressBar"></span></div>
+        </div>
+        <div class="methodology-layout">
+          <aside class="methodology-checklist-panel">
+            <span class="eyebrow">METHOD CHECKLIST</span>
+            <div id="methodologyChecklist" class="methodology-checklist"></div>
+            <button class="soft-btn" data-go="setup" type="button">Edit Study Setup</button>
+          </aside>
+          <div class="methodology-fields">
+            <label class="methodology-field"><span>Design rationale</span><textarea id="method_rationale" rows="5"></textarea></label>
+            <div class="methodology-field-grid">
+              <label class="methodology-field"><span>Sampling / recruitment</span><textarea id="method_recruitment" rows="7"></textarea></label>
+              <label class="methodology-field"><span>Inclusion / exclusion</span><textarea id="method_inclusion" rows="7"></textarea></label>
+            </div>
+            <label class="methodology-field"><span>Data collection / review process</span><textarea id="method_collection" rows="7"></textarea></label>
+            <label class="methodology-field"><span>Analysis plan</span><textarea id="method_analysis" rows="7"></textarea></label>
+            <div class="methodology-field-grid">
+              <label class="methodology-field"><span>Rigour / quality</span><textarea id="method_rigour" rows="7"></textarea></label>
+              <label class="methodology-field"><span>Ethics / governance</span><textarea id="method_ethics" rows="7"></textarea></label>
+            </div>
+          </div>
+        </div>
+      </section>
+
       <section id="setup" class="view">
         <div class="page-heading compact">
           <div>
@@ -1211,6 +1244,7 @@
   <script src="references.js"></script>
   <script src="citations.js"></script>
   <script src="synthesis.js"></script>
+  <script src="methodology.js"></script>
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
   <script src="app.js"></script>
