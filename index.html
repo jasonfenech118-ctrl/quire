@@ -139,8 +139,10 @@
             <h1>Pick up where you left off.</h1>
             <p>Quire keeps the next useful action, your recent work and the state of your thesis in one place.</p>
           </div>
-          <button class="ghost-btn" data-go="overview">View progress →</button>
+          <div class="home-heading-actions"><button class="soft-btn" id="saveSessionCheckpointBtn" type="button">End session</button><button class="ghost-btn" data-go="overview">View progress →</button></div>
         </div>
+
+        <div id="sessionCheckpointCard" class="session-checkpoint-card" hidden></div>
 
         <div class="home-focus-grid">
           <article class="hero-card home-thesis-card">
@@ -2120,6 +2122,7 @@
   <script src="evidence-writing.js"></script>
   <script src="research-journey.js"></script>
   <script src="brainstorm.js"></script>
+  <script src="session-checkpoint.js"></script>
   <script src="writing-ribbon.js"></script>
   <script src="writing-companion.js"></script>
   <script src="claim-awareness.js"></script>
