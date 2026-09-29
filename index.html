@@ -23,6 +23,7 @@
 
       <nav class="nav" aria-label="Primary">
         <button class="nav-item active" data-view="dashboard"><span>⌂</span> Dashboard</button>
+        <button class="nav-item" data-view="projects"><span>▦</span> My Research <b id="projectCount" class="nav-count">1</b></button>
         <button class="nav-item" data-view="overview"><span>◈</span> Thesis Overview</button>
         <button class="nav-item" data-view="library"><span>▤</span> Research Library</button>
         <button class="nav-item" data-view="reader"><span>◫</span> Article Reader</button>
@@ -65,6 +66,23 @@
           <button class="primary-btn" id="newItemBtn">＋ New</button>
         </div>
       </header>
+
+
+      <section id="projects" class="view">
+        <div class="page-heading">
+          <div>
+            <span class="eyebrow">MY RESEARCH</span>
+            <h1>Every project, kept separate.</h1>
+            <p>Switch between theses and studies without mixing articles, chapters, notes or AI context.</p>
+          </div>
+          <button class="primary-btn" id="newResearchProjectBtn" type="button">＋ New research project</button>
+        </div>
+        <div id="projectsGrid" class="projects-grid"></div>
+        <div class="archived-projects-wrap">
+          <div class="section-title compact-title"><div><span class="eyebrow">ARCHIVE</span><h2>Archived projects</h2></div></div>
+          <div id="archivedProjects" class="archived-projects"></div>
+        </div>
+      </section>
 
       <section id="dashboard" class="view active">
         <div class="page-heading">
@@ -859,6 +877,29 @@
 
 
 
+
+  <div id="projectModal" class="modal-backdrop" hidden>
+    <div class="modal project-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">RESEARCH PROJECT</span><h2 id="projectModalTitle">New research project</h2></div>
+        <button id="closeProjectModal" type="button">×</button>
+      </div>
+      <input id="projectEditId" type="hidden">
+      <div class="form-grid">
+        <label class="field wide"><span>Project / thesis title</span><input id="projectName" type="text" placeholder="Working thesis title"></label>
+        <label class="field"><span>Degree / programme</span><input id="projectDegree" type="text" placeholder="MSc, PhD, dissertation…"></label>
+        <label class="field"><span>Institution</span><input id="projectInstitution" type="text" placeholder="University or institution"></label>
+        <label class="field wide"><span>Research question</span><textarea id="projectQuestion" rows="3" placeholder="What are you trying to answer?"></textarea></label>
+        <label class="field"><span>Target word count</span><input id="projectWordTarget" type="number" min="0" step="500"></label>
+        <label class="field"><span>Final deadline</span><input id="projectDeadline" type="date"></label>
+      </div>
+      <div class="project-modal-actions">
+        <button class="text-btn danger-text" id="archiveProjectBtn" type="button" hidden>Archive project</button>
+        <div><button class="soft-btn" id="closeProjectModalSecondary" type="button">Cancel</button><button class="primary-btn" id="saveProjectBtn" type="button">Save project</button></div>
+      </div>
+    </div>
+  </div>
+
   <div id="referenceManagerModal" class="modal-backdrop" hidden>
     <div class="modal reference-manager-modal">
       <div class="modal-head">
@@ -1098,6 +1139,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="data-model.js"></script>
+  <script src="projects.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
   <script src="metadata.js"></script>
