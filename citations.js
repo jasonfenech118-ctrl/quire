@@ -107,7 +107,7 @@
     const used=usedArticleIds();
     const unused=all.filter(a=>!used.has(a.id));
     const missing=all.filter(a=>!a.title||!a.authors||!a.year);
-    return {unused,missing,usedCount:used.size,total:all.length};
+    return {unused,missing,usedIds:[...used],usedCount:used.size,total:all.length};
   }
 
   function render(){
