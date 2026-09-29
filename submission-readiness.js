@@ -64,7 +64,15 @@
     }
     out.push(mk('cross-repeat','Writing & structure','Cross-section claim repetition',repeated.length?'review':'clear',
       repeated.length?plural(repeated.length,'high-overlap claim pair')+' appear across different sections. Check whether repetition is purposeful or should be synthesised/referenced once.':'No strong repeated-claim wording detected across sections.','chapters','Chapters'));
-    const uncoveredObjectives=objectives.filter(o=>substantiveSections.length&&sectionPlain.filter(x=>(Number(x.section.currentWordCount)||0)>=120).every(x=>overlap(o.title+' '+x.text)===0));
+    const uncoveredObjectives=objectives.filter(o=>{
+      if(!substantiveSections.length)return false;
+      const oTerms=new Set(norm(o.title+' '+(o.description||'')).split(' ').filter(x=>x.length>4&&!driftStop.has(x)));
+      if(!oTerms.size)return false;
+      return sectionPlain.filter(x=>(Number(x.section.currentWordCount)||0)>=120).every(x=>{
+        const sTerms=new Set(norm(x.text).split(' ').filter(t=>t.length>4));
+        return ![...oTerms].some(t=>sTerms.has(t));
+      });
+    });
     out.push(mk('objective-coverage','Writing & structure','Objective coverage reflection',uncoveredObjectives.length?'review':'clear',
       uncoveredObjectives.length?plural(uncoveredObjectives.length,'objective')+' have no obvious terminology overlap with substantive writing. Check coverage manually.':'Each objective has at least some terminology overlap with substantive writing, or there is not enough writing yet to assess.','chapters','Chapters'));
     const neg=/\b(no|not|without|did not|does not|failed to|no association|no difference|lower|reduced)\b/i;
