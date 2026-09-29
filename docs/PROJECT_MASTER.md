@@ -53,6 +53,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 51: In-App Workflow Diagnostics — implemented.
 - Step 52: Citation & Source Integrity Preflight — implemented.
 - Step 53: Research Question Drift Monitor — implemented.
+- Step 54: Cross-Chapter Coherence Review — implemented.
 
 ## Step 32 — implemented
 
@@ -187,7 +188,11 @@ Submission Readiness now checks inline citation links, reference metadata, dupli
 
 Submission Readiness now includes a research-question alignment reflection for ready arguments and substantive thesis sections. It uses key-term overlap only as a prompt and explicitly warns that different terminology can still be fully relevant.
 
-## Next value review — proposed Steps 54–56
+## Step 54 — implemented
+
+Submission Readiness now includes cross-section claim-repetition prompts, objective-specific coverage reflection and cautious detection of possible opposite-direction statements across thesis sections. QA corrected an initial objective-matching error before closure.
+
+## Next value review — proposed Steps 55–56
 
 - **Step 51 — In-App Workflow Diagnostics.** Extend Diagnostics with checks for the guided journey, active section, evidence graph, Ideas provenance, writing companion modules and local checkpoint/growth stores so regressions can be detected from inside Quire.
 - **Step 52 — Citation & Source Integrity Preflight.** Before export, identify citations with missing article records, evidence links with missing source passages, uncited bibliography entries and cited sources absent from the bibliography.
