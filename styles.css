@@ -2685,3 +2685,21 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .writing-library-context button,.library-cite-writing{border:1px solid var(--line);background:#fffdf8;color:var(--forest);border-radius:3px;padding:6px 8px;font-size:8px;cursor:pointer}
 .library-cite-writing{margin-top:8px;white-space:nowrap}
 @media(max-width:760px){.writing-library-context{display:block}.writing-library-context button{margin-top:10px}}
+
+
+/* ---------- Step 32: writing understanding & language coach ---------- */
+.writing-companion{padding-bottom:14px;margin-bottom:14px;border-bottom:1px solid var(--line)}
+.writing-companion-block{padding:10px 0;border-bottom:1px solid #ece5da}
+.writing-companion-block .eyebrow{font-size:5.5px}
+.writing-companion-block p{font-size:9px;line-height:1.55;color:var(--ink);margin:7px 0 0}
+.writing-language-suggestions{display:grid;gap:6px;margin-top:7px}
+.writing-language-suggestions>small{font-size:8px;line-height:1.45;color:var(--muted)}
+.language-suggestion{border-left:2px solid #b28b52;background:#f6f0e6;padding:8px 9px}
+.language-suggestion strong,.language-suggestion small{display:block}
+.language-suggestion strong{font-size:8px;color:var(--ink)}
+.language-suggestion small{font-size:7.5px;line-height:1.5;color:var(--muted);margin-top:3px}
+#reviewCurrentParagraphBtn{width:100%;margin-top:9px}
+.writing-evidence-head{margin-top:2px}
+@media(max-width:900px){
+  .writing-companion{padding-bottom:10px;margin-bottom:10px}
+}
