@@ -134,6 +134,23 @@
           </article>
         </div>
 
+        <section id="projectLaunchGuide" class="project-launch-guide" hidden>
+          <div class="launch-guide-head">
+            <div>
+              <span class="eyebrow">PROJECT LAUNCH</span>
+              <h2>Build a strong foundation before the thesis gets busy.</h2>
+              <p id="launchGuideCount">0 of 7 launch essentials complete</p>
+            </div>
+            <div class="launch-guide-progress">
+              <strong id="launchGuidePercent">0%</strong>
+              <div><span id="launchGuideBar"></span></div>
+              <button class="text-btn" id="dismissLaunchGuide" type="button">Hide guide</button>
+            </div>
+          </div>
+          <div id="launchGuideTasks" class="launch-guide-tasks"></div>
+          <button class="ghost-btn launch-guide-next" id="launchGuideNext" type="button">Continue setup →</button>
+        </section>
+
         <div class="section-title">
           <div><span class="eyebrow">TODAY</span><h2>Your research desk</h2></div>
           <button class="text-btn">Customize</button>
@@ -1397,6 +1414,96 @@
           <button class="soft-btn" id="launchBackBtn" type="button" hidden>← Back</button>
           <button class="primary-btn" id="launchNextBtn" type="button">Continue →</button>
           <button class="primary-btn" id="finishLaunchBtn" type="button" hidden>Create thesis workspace</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+  <div id="projectLaunchModal" class="modal-backdrop" hidden>
+    <div class="modal project-launch-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">GUIDED PROJECT LAUNCH</span><h2>Start the thesis with a clear foundation.</h2></div>
+        <button id="closeProjectLaunchModal" type="button">×</button>
+      </div>
+
+      <div class="launch-stepper" aria-label="Project launch progress">
+        <div class="launch-stepper-track"><span id="launchProgressBar"></span></div>
+        <div class="launch-stepper-labels">
+          <span class="active" data-launch-step-indicator="1"><b>1</b> Project</span>
+          <span data-launch-step-indicator="2"><b>2</b> Study design</span>
+          <span data-launch-step-indicator="3"><b>3</b> Plan</span>
+          <span data-launch-step-indicator="4"><b>4</b> Review</span>
+        </div>
+      </div>
+
+      <section class="launch-step-panel" data-launch-step-panel="1">
+        <span class="eyebrow">01 · PROJECT</span>
+        <h3>Give the work a home.</h3>
+        <p>Use a working title if the final title is not settled yet. You can change these details later.</p>
+        <div class="form-grid">
+          <label class="field wide"><span>Project / thesis title</span><input id="launchTitle" type="text" placeholder="Working thesis title"></label>
+          <label class="field"><span>Degree / programme</span><input id="launchDegree" type="text" placeholder="MSc, PhD, dissertation…"></label>
+          <label class="field"><span>Institution</span><input id="launchInstitution" type="text" placeholder="University or institution"></label>
+          <label class="field wide"><span>Supervisor / reviewer (optional)</span><input id="launchSupervisor" type="text" placeholder="Supervisor name"></label>
+        </div>
+      </section>
+
+      <section class="launch-step-panel" data-launch-step-panel="2" hidden>
+        <span class="eyebrow">02 · STUDY DESIGN</span>
+        <h3>What kind of project is this?</h3>
+        <p>This only sets the starting structure. Study Setup will still let you refine the methodology in detail.</p>
+
+        <div class="launch-study-types">
+          <button type="button" data-launch-study-type="qualitative"><span>QUAL</span><strong>Qualitative</strong><small>Interviews, focus groups, observation and interpretive analysis.</small></button>
+          <button type="button" data-launch-study-type="quantitative"><span>QUANT</span><strong>Quantitative</strong><small>Measurement, surveys, cohorts, trials and statistical analysis.</small></button>
+          <button type="button" data-launch-study-type="mixed"><span>MIXED</span><strong>Mixed methods</strong><small>Qualitative and quantitative strands brought together deliberately.</small></button>
+          <button type="button" data-launch-study-type="meta"><span>REVIEW</span><strong>Systematic review / meta-analysis</strong><small>Protocol-led searching, screening, synthesis and optional meta-analysis.</small></button>
+        </div>
+
+        <label class="field launch-question-field"><span>Research question</span><textarea id="launchQuestion" rows="4" placeholder="What are you trying to understand, compare, explain or evaluate?"></textarea></label>
+      </section>
+
+      <section class="launch-step-panel" data-launch-step-panel="3" hidden>
+        <span class="eyebrow">03 · PLAN</span>
+        <h3>Set enough structure for Quire to guide the pace.</h3>
+        <p>Targets and dates can stay provisional. They are used for progress and timeline calculations.</p>
+
+        <div class="form-grid">
+          <label class="field"><span>Target word count</span><input id="launchWordTarget" type="number" min="0" step="500" value="20000"></label>
+          <label class="field"><span>Final deadline</span><input id="launchDeadline" type="date"></label>
+        </div>
+
+        <div class="launch-requirements">
+          <label><input id="launchProposalRequired" type="checkbox" checked><div><strong>Proposal required</strong><small>Track proposal work and deadlines in Study Setup.</small></div></label>
+          <label><input id="launchEthicsRequired" type="checkbox" checked><div><strong>Ethics / governance review expected</strong><small>This can be switched off for projects where it does not apply.</small></div></label>
+        </div>
+
+        <div class="launch-structure-preview">
+          <div><span class="eyebrow">STARTING CHAPTER STRUCTURE</span><small id="launchChapterNote">A standard thesis structure will be created.</small></div>
+          <div id="launchChapterPreview"></div>
+        </div>
+      </section>
+
+      <section class="launch-step-panel" data-launch-step-panel="4" hidden>
+        <span class="eyebrow">04 · REVIEW</span>
+        <h3>Ready to create the workspace.</h3>
+        <p>Quire will create the project, study setup and starting chapter structure. No sample articles, themes or fake progress will be added.</p>
+        <div id="launchReviewSummary" class="launch-review-summary"></div>
+        <div class="launch-after-create">
+          <strong>What happens next?</strong>
+          <p>The Dashboard will show a launch readiness guide for the remaining real tasks: add a source, start writing and connect evidence.</p>
+        </div>
+      </section>
+
+      <small id="launchMessage" class="launch-message"></small>
+
+      <div class="project-launch-actions">
+        <button class="text-btn" id="cancelProjectLaunchBtn" type="button">Cancel</button>
+        <div>
+          <button class="soft-btn" id="launchBackBtn" type="button" hidden>← Back</button>
+          <button class="primary-btn" id="launchNextBtn" type="button">Continue →</button>
+          <button class="primary-btn" id="launchCreateBtn" type="button" hidden>Create project</button>
         </div>
       </div>
     </div>
