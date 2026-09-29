@@ -375,7 +375,7 @@
     });
 
     rows.push([
-      'flow_summary','','','','','','','','','','','','','','','','','','',
+      'flow_summary','','','','','','','','','','','','','','','','','',
       'identified='+summary.identified+
       '; library='+summary.libraryTotal+
       '; title_abstract_screened='+summary.titleScreened+
