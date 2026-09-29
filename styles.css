@@ -2807,3 +2807,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .session-checkpoint-card{display:grid;grid-template-columns:auto 1fr 1fr auto;gap:12px;align-items:center;border:1px solid var(--line);background:#f7f2e9;padding:11px 13px;margin-bottom:13px}
 .session-checkpoint-card strong,.session-checkpoint-card small{display:block;font-size:7px}.session-checkpoint-card p{font-size:8px;margin:3px 0;line-height:1.35}
 @media(max-width:900px){.review-package-grid{grid-template-columns:1fr}.session-checkpoint-card{grid-template-columns:1fr}.home-heading-actions{align-items:stretch;flex-direction:column}}
+
+
+/* ---------- Step 45: provenance-aware idea capture ---------- */
+.idea-capture-card{max-width:650px}
+.idea-capture-card>label,.idea-capture-grid label{display:grid;gap:5px}.idea-capture-card label>span{font-size:7px;font-weight:700;color:var(--muted)}
+.idea-capture-card textarea,.idea-capture-card input,.idea-capture-card select{width:100%;border:1px solid var(--line);background:#fff;padding:9px;font:inherit}
+.idea-capture-grid{display:grid;grid-template-columns:180px 1fr;gap:10px;margin-top:10px}
+.idea-capture-quoted{margin-top:10px;padding:10px;border-left:2px solid var(--gold);background:#f8f3ea}.idea-capture-quoted p{font-size:8px;line-height:1.5;margin:5px 0}
+.idea-actions{display:flex;gap:6px;margin-top:8px}.idea-actions button{border:0;background:transparent;color:var(--forest);font-size:7px;cursor:pointer;padding:0}
+.idea-empty{font-size:8px;color:var(--muted);padding:12px;border:1px dashed var(--line)}
+@media(max-width:600px){.idea-capture-grid{grid-template-columns:1fr}}
