@@ -308,6 +308,7 @@
       contexts:contexts.map(c=>({context_id:c.context_id,page:c.page,text:c.text})),
       instruction:[
         'Use only the supplied article contexts.',
+        mode==='thesis-value'?'Organise the answer around study, findings, limitations, thesis relevance and possible thesis destination. Clearly label relevance/destination as researcher-facing suggestions rather than source claims.':'Answer the requested analysis mode.',
         'Return JSON with title, intro, and claims.',
         'Each claim must be an object with text and context_ids.',
         'context_ids must contain only IDs from the supplied contexts that directly support that claim.',
