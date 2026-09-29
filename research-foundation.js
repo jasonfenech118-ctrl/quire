@@ -217,11 +217,34 @@
 
   function maturity(projectId){
     const ctx=context(projectId);
+    const explicit=window.QuirePaperContribution?.maturityEvidence?.(ctx.projectId);
     const synthesized=ctx.articles.filter(hasSynthesis).length;
     const multiThemes=repeatedThemeCount(ctx);
     const counterEvidence=ctx.highlights.filter(row=>row.category==='contradictory').length;
     const gaps=ctx.gapExplorations.length;
     const reviewed=ctx.reviewed.length;
+
+    if(explicit?.classified>=3){
+      if(explicit.key==='expanding'){
+        return {
+          key:'expanding',label:'Still expanding',
+          copy:explicit.copy,
+          evidence:{reviewed,synthesized,multiThemes,counterEvidence,gaps,readingCheckpoints:explicit.classified,newConceptSignals:explicit.counts.newConcept}
+        };
+      }
+      if(explicit.key==='recurring'){
+        return {
+          key:'stabilising',label:'Beginning to stabilise',
+          copy:explicit.copy,
+          evidence:{reviewed,synthesized,multiThemes,counterEvidence,gaps,readingCheckpoints:explicit.classified,newConceptSignals:explicit.counts.newConcept}
+        };
+      }
+      return {
+        key:'developing',label:'Developing',
+        copy:explicit.copy,
+        evidence:{reviewed,synthesized,multiThemes,counterEvidence,gaps,readingCheckpoints:explicit.classified,newConceptSignals:explicit.counts.newConcept}
+      };
+    }
 
     if(ctx.articles.length<5||reviewed<3){
       return {
