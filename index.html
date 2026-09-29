@@ -446,7 +446,12 @@
           </div>
 
           <aside class="copilot-panel">
-            <div class="copilot-panel-head"><div class="copilot-orb small">✦</div><div><strong>Quire Copilot</strong><small>Working with this article</small></div></div>
+            <div class="copilot-panel-head">
+              <div class="copilot-orb small">✦</div>
+              <div><strong>Quire Copilot</strong><small>Working with this article</small></div>
+              <button class="copilot-settings-btn" id="copilotSettingsBtn" type="button" title="Copilot settings">⚙</button>
+            </div>
+            <div class="copilot-status" id="copilotStatus"><span></span><small id="copilotStatusLabel">Local grounded mode</small></div>
             <div class="quick-actions">
               <button data-ai="summary">Summarise</button>
               <button data-ai="methods">Methods</button>
@@ -454,10 +459,10 @@
               <button data-ai="critique">Critique</button>
             </div>
             <div id="aiResponse" class="ai-response">
-              <span class="eyebrow">RESEARCH READER</span>
-              <p>Select text directly on the PDF to highlight it, attach a research note, and connect the evidence to your thesis.</p>
-              <div class="evidence-callout"><strong>Evidence stays traceable</strong><p>Every highlight remembers its article, page and exact position so you can return to the source later.</p></div>
-              <small>AI analysis is still a later step; your own highlights and notes are stored now.</small>
+              <span class="eyebrow">GROUNDED COPILOT</span>
+              <p>Quire indexes the actual text of this PDF and retrieves the most relevant passages before answering.</p>
+              <div class="evidence-callout"><strong>Source first</strong><p>Use Summary, Methods, Findings or Critique to analyse the real article text. Page references take you back to the source.</p></div>
+              <small>Local grounded mode works without an AI account. Connect a secure endpoint for generative synthesis.</small>
             </div>
             <div class="copilot-input docked">
               <input id="readerPrompt" placeholder="Ask about this paper…" />
@@ -847,6 +852,35 @@
 
 
 
+
+  <div id="aiSettingsModal" class="modal-backdrop" hidden>
+    <div class="modal ai-settings-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">QUIRE COPILOT</span><h2>Grounded AI connection</h2></div>
+        <button id="closeAiSettingsModal" type="button">×</button>
+      </div>
+
+      <div class="ai-mode-card">
+        <span class="eyebrow">LOCAL MODE</span>
+        <h3>Grounded analysis works without a backend</h3>
+        <p>Quire extracts the article page-by-page, retrieves relevant passages, and shows source pages. This mode is extractive rather than generative.</p>
+      </div>
+
+      <section class="account-section">
+        <span class="eyebrow">OPTIONAL GENERATIVE AI</span>
+        <h3>Connect a secure server endpoint</h3>
+        <p>For generative summaries and answers, connect Quire to your own HTTPS backend. The backend should hold the AI provider secret; never place a secret API key in the browser.</p>
+        <label class="field"><span>AI endpoint URL</span><input id="aiEndpoint" type="url" placeholder="https://your-domain.com/api/quire-ai"></label>
+        <p class="account-security-note">Quire sends only the retrieved article passages, question, article metadata and study context to this endpoint.</p>
+        <small id="aiSettingsMessage" class="ai-settings-message"></small>
+        <div class="account-button-row">
+          <button class="primary-btn" id="saveAiSettings" type="button">Save AI connection</button>
+          <button class="text-btn" id="clearAiSettings" type="button">Use local mode only</button>
+        </div>
+      </section>
+    </div>
+  </div>
+
   <div id="metadataModal" class="modal-backdrop" hidden>
     <div class="modal metadata-modal">
       <div class="modal-head">
@@ -1007,6 +1041,7 @@
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
   <script src="metadata.js"></script>
+  <script src="copilot.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
