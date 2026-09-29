@@ -170,6 +170,7 @@ create table if not exists public.evidence_links (
   note_id text references public.notes(id) on delete cascade,
   theme_id text references public.themes(id) on delete set null,
   objective_id text references public.objectives(id) on delete set null,
+  chapter_id text references public.chapters(id) on delete set null,
   section_id text references public.sections(id) on delete cascade,
   relationship text not null default 'supports' check (relationship in ('supports','contradicts','contextualises','critiques','method')),
   rationale text,
