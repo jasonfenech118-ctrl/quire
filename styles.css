@@ -2630,3 +2630,33 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .discovery-empty,.discovery-loading{border:1px dashed var(--line-dark);padding:18px;text-align:center}
 .discovery-empty strong{font-family:"Libre Caslon Text",serif;font-size:14px;font-weight:400}
 .discovery-empty p,.discovery-loading{font-size:8px;line-height:1.5;color:var(--muted)}
+
+
+/* Step 30 — continuous writing workflow */
+.return-to-writing-btn{
+  position:fixed;
+  right:24px;
+  bottom:24px;
+  z-index:115;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  max-width:280px;
+  padding:10px 14px;
+  border:1px solid rgba(23,59,52,.18);
+  border-radius:12px;
+  background:#fff;
+  color:#173b34;
+  box-shadow:0 12px 34px rgba(24,45,40,.16);
+  cursor:pointer;
+  text-align:left;
+}
+.return-to-writing-btn[hidden]{display:none!important}
+.return-to-writing-btn>span{font-size:20px;line-height:1}
+.return-to-writing-btn div{display:flex;flex-direction:column;min-width:0}
+.return-to-writing-btn strong{font-size:12px}
+.return-to-writing-btn small{margin-top:2px;max-width:210px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;color:#65736f}
+.return-to-writing-btn:hover{transform:translateY(-1px);box-shadow:0 15px 38px rgba(24,45,40,.2)}
+@media (max-width:760px){
+  .return-to-writing-btn{right:12px;bottom:12px;max-width:calc(100vw - 24px)}
+}
