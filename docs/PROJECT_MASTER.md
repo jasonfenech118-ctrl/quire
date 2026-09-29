@@ -76,9 +76,39 @@ A step is not considered complete only because a JavaScript or documentation fil
 - Supabase/cloud code exists, but activation is intentionally deferred. Do not interpret code-complete as connected.
 - Step 30 must therefore refine and validate the existing writing-ribbon foundation rather than start a second competing implementation.
 
+## Agreed future feature backlog — after Step 32
+
+Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
+
+### Intelligent Writing
+- “What am I trying to say?” reflection of rough writing.
+- Idea → academic paragraph builder that separates the researcher's idea, claims needing evidence, questions, structure and literature needs.
+- Claim-aware writing that identifies statements likely to need references.
+- Personal academic-English coaching based on recurring patterns, without a simplistic score.
+- Contextual academic vocabulary choices: more precise, cautious, formal or simpler, with meaning differences explained.
+
+### Evidence Intelligence
+- Evidence confidence at claim level rather than citation counting.
+- Structured “Why do I care?” paper summaries: study, findings, limitations, thesis relevance, possible destination and exact supporting passages.
+- Contradiction/counter-evidence detection.
+- “Am I being critical enough?” guidance that distinguishes description from comparison, interpretation and critique.
+- Reading assistance for selected passages: explain simply/academically, relevance, limitations and relation to the research question.
+
+### Research Memory
+- Natural-language recall across papers, highlights, notes and prior ideas.
+- Idea provenance: distinguish own idea, source-derived thought, supervisor feedback, highlight and brainstorming origin.
+- Automatically maintained argument map connecting research question → objectives → themes → arguments → claims → evidence/counter-evidence → thesis sections.
+
+### Guided Thesis Workflow
+- Supervisor review packages with changes, unresolved questions, weak-evidence areas and revision actions.
+- End-of-session checkpoint summarising work completed, unresolved questions and the best starting point next time.
+- Context-aware next actions throughout Quire so the researcher does not need to remember which tool comes next.
+
+Core rule: Quire should become simpler as it becomes more capable. Hide or remove features that cannot be integrated naturally into the researcher's current context.
+
 ## Future roadmap direction
 
-After Step 32, continue consolidating Quire around the five-stage mental model: Discover → Understand → Organise → Write → Review. Likely later areas include research provenance/idea tracing, further usability consolidation, adaptive writing guidance, accessibility/device testing, export fidelity and eventual controlled backend activation. These are roadmap directions, not yet claims of implementation.
+After Step 32, convert the agreed backlog above into numbered milestones in dependency order. Do not implement all features at once. Continue consolidating Quire around Discover → Understand → Organise → Write → Review, with eventual accessibility/device testing, export fidelity and controlled backend activation.
 
 ## New-chat recovery
 
