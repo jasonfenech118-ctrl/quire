@@ -2550,3 +2550,54 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .analysis-card-grid{grid-template-columns:1fr}
   .analysis-heading-actions{width:100%}
 }
+
+
+/* ---------- Simple research journey ---------- */
+.research-journey{
+  margin:0 0 14px;border:1px solid var(--line);background:rgba(255,253,248,.92);display:grid;
+  grid-template-columns:210px minmax(0,1fr);align-items:stretch
+}
+.journey-intro{padding:10px 12px;border-right:1px solid var(--line);display:flex;flex-direction:column;justify-content:center}
+.journey-intro strong{font-family:"Libre Caslon Text",serif;font-size:10px;font-weight:400;line-height:1.35;margin-top:3px}
+.journey-steps{display:grid;grid-template-columns:repeat(8,1fr)}
+.journey-steps button{
+  min-width:0;border:0;border-right:1px solid var(--line);background:transparent;color:var(--muted);padding:8px 5px;text-align:center
+}
+.journey-steps button:last-child{border-right:0}
+.journey-steps button:hover,.journey-steps button.active{background:#eef3ee;color:var(--forest)}
+.journey-steps button span{display:flex;width:17px;height:17px;margin:0 auto 4px;border:1px solid currentColor;border-radius:50%;align-items:center;justify-content:center;font-size:6px}
+.journey-steps button strong,.journey-steps button small{display:block}
+.journey-steps button strong{font-size:7px}
+.journey-steps button small{font-size:5.5px;margin-top:2px;opacity:.8;white-space:nowrap}
+
+/* ---------- Word-style writing ribbon ---------- */
+.writing-ribbon{border:1px solid var(--line);background:#f8f5ef;margin-bottom:9px}
+.ribbon-tabs{display:flex;gap:0;border-bottom:1px solid var(--line);background:#fffdf8;padding:0 5px}
+.ribbon-tabs button{border:0;background:transparent;color:var(--muted);font-size:7px;padding:7px 9px;border-bottom:2px solid transparent}
+.ribbon-tabs button.active{color:var(--forest);border-bottom-color:var(--forest);font-weight:700}
+.ribbon-panel{display:none;min-height:58px;padding:7px 8px;align-items:stretch;gap:6px}
+.ribbon-panel.active{display:flex}
+.ribbon-group{border-right:1px solid var(--line);padding:0 9px 0 3px;display:flex;flex-direction:column;justify-content:space-between;gap:5px}
+.ribbon-group:last-child{border-right:0}
+.ribbon-group.wide{flex:1}
+.ribbon-group>small{font-size:5.5px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}
+.ribbon-group>div{display:flex;gap:4px;align-items:center;flex-wrap:wrap}
+.ribbon-group button{
+  border:1px solid var(--line);background:#fffdf8;color:var(--ink);border-radius:2px;padding:6px 8px;font-size:7px;min-height:27px
+}
+.ribbon-group button:hover{border-color:var(--forest);background:#f0f5f1}
+.ribbon-group button.ribbon-primary{background:var(--forest);border-color:var(--forest);color:#fff}
+.ribbon-group p{font-size:6px;color:var(--muted);margin:0;line-height:1.35}
+@media(max-width:1100px){
+  .research-journey{grid-template-columns:1fr}
+  .journey-intro{border-right:0;border-bottom:1px solid var(--line)}
+  .journey-steps{overflow:auto}
+  .journey-steps button{min-width:82px}
+}
+@media(max-width:700px){
+  .research-journey{display:none}
+  .ribbon-tabs{overflow:auto}
+  .ribbon-tabs button{white-space:nowrap}
+  .ribbon-panel.active{overflow:auto}
+  .ribbon-group{min-width:max-content}
+}
