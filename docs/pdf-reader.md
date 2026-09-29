@@ -33,12 +33,6 @@ No Quire Supabase project is required for Step 3.
 
 When cloud accounts are eventually activated, article metadata can sync immediately through the existing cloud layer. The actual PDF binary remains local until Supabase Storage (or another file store) is configured. A later storage migration can upload those binaries without redesigning the article reader.
 
-## Next: Step 4
+## Step 4 implemented
 
-Persistent highlights and notes will build on this reader. The next layer needs to:
-
-1. render a selectable PDF text layer;
-2. save selected text with page number and PDF coordinates;
-3. restore visual highlights when a page is reopened;
-4. attach notes to highlights;
-5. link highlights/notes to themes, objectives and thesis sections.
+The PDF reader now includes a selectable text layer, persistent coloured highlights, attached notes, and evidence links. See `highlights-notes.md` for the current annotation workflow.
