@@ -288,6 +288,7 @@
       await openArticle(article.id);
       return window.QuireStore.getArticle(article.id);
     }catch(err){
+      await PdfStore.remove(article.id).catch(()=>{});
       window.QuireStore.removeArticle(article.id);
       throw err;
     }
