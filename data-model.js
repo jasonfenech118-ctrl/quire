@@ -948,6 +948,93 @@
     };
   }
 
+  function computeResearchReviewRatio(state,projectId,articles,highlights,notes,objectives,themes,evidence){
+    const clamp01=value=>Math.max(0,Math.min(1,Number(value)||0));
+    const hasText=value=>Boolean(String(value||'').trim());
+    const plan=state.searchPlans.find(row=>row.projectId===projectId)||{};
+    const searchRuns=state.searchRuns.filter(row=>row.projectId===projectId);
+    const screening=state.screeningRecords.filter(row=>row.projectId===projectId);
+    const appraisals=state.appraisals.filter(row=>row.projectId===projectId);
+    const analysis=state.analysisItems.filter(row=>row.projectId===projectId);
+    const articleThemes=state.articleThemes.filter(link=>articles.some(article=>article.id===link.articleId));
+    const reviewed=articles.filter(article=>article.readingStatus==='reviewed');
+
+    const searchChecks=[
+      Array.isArray(plan.concepts)&&plan.concepts.some(concept=>Array.isArray(concept.terms)&&concept.terms.some(hasText)),
+      Array.isArray(plan.databases)&&plan.databases.some(hasText),
+      hasText(plan.inclusionCriteria)||hasText(plan.exclusionCriteria),
+      searchRuns.length>0
+    ];
+    const searchScore=searchChecks.filter(Boolean).length/searchChecks.length;
+
+    let screeningScore=0;
+    if(articles.length){
+      const recordMap=new Map(screening.map(row=>[row.articleId,row]));
+      const titleDone=articles.filter(article=>{
+        const value=recordMap.get(article.id)?.titleAbstractDecision;
+        return value&&value!=='pending'&&value!=='not_started';
+      }).length;
+      const fullDone=articles.filter(article=>{
+        const value=recordMap.get(article.id)?.fullTextDecision;
+        return value&&value!=='not_started';
+      }).length;
+      screeningScore=clamp01(.20+(titleDone/articles.length*.40)+(fullDone/articles.length*.40));
+    }
+
+    const annotatedIds=new Set([...highlights.map(row=>row.articleId),...notes.map(row=>row.articleId)].filter(Boolean));
+    const hasSynthesis=article=>{
+      const data=article?.citationData?.synthesis||{};
+      return ['design','sample','methods','findings','limitations','relevance'].some(key=>hasText(data[key]));
+    };
+    const extractedIds=new Set(articles.filter(hasSynthesis).map(row=>row.id));
+    let readingDepth=0;
+    articles.forEach(article=>{
+      if(article.readingStatus==='reviewed')readingDepth+=.45;
+      if(annotatedIds.has(article.id))readingDepth+=.25;
+      if(extractedIds.has(article.id))readingDepth+=.30;
+    });
+    const readingScore=articles.length?clamp01(readingDepth/articles.length):0;
+
+    const completedAppraisals=new Set(appraisals.filter(row=>row.completedAt&&row.overallJudgement&&row.overallJudgement!=='not_started').map(row=>row.articleId));
+    const completedReviewed=reviewed.filter(article=>completedAppraisals.has(article.id)).length;
+    const appraisalScore=reviewed.length?clamp01(completedReviewed/reviewed.length):0;
+
+    const perTheme=new Map();
+    articleThemes.forEach(link=>{
+      if(!link.themeId||!link.articleId)return;
+      if(!perTheme.has(link.themeId))perTheme.set(link.themeId,new Set());
+      perTheme.get(link.themeId).add(link.articleId);
+    });
+    const multiThemes=[...perTheme.values()].filter(set=>set.size>=2).length;
+    const contradictory=highlights.filter(row=>row.category==='contradictory').length;
+    const synthesisItems=analysis.filter(row=>['synthesis_finding','review_outcome'].includes(row.kind)).length;
+    const synthesized=articles.filter(hasSynthesis).length;
+    const synthesisTarget=Math.max(2,Math.min(Math.max(reviewed.length,2),6));
+    const synthesisScore=clamp01(
+      Math.min(.50,synthesized/synthesisTarget*.50)+
+      (multiThemes?.25:0)+(contradictory?.10:0)+(synthesisItems?.15:0)
+    );
+
+    const objectiveIds=new Set(objectives.map(row=>row.id));
+    const themeIds=new Set(themes.map(row=>row.id));
+    const coveredObjectives=new Set(evidence.filter(row=>row.objectiveId&&objectiveIds.has(row.objectiveId)).map(row=>row.objectiveId));
+    const coveredThemes=new Set(evidence.filter(row=>row.themeId&&themeIds.has(row.themeId)).map(row=>row.themeId));
+    let coverageBase=0;
+    if(objectives.length)coverageBase=coveredObjectives.size/objectives.length;
+    else if(themes.length)coverageBase=coveredThemes.size/themes.length;
+    const gaps=analysis.filter(row=>row.kind==='gap_signal').length;
+    const coverageScore=clamp01((coverageBase*.60)+(Math.min(1,gaps/2)*.40));
+
+    return clamp01(
+      searchScore*.15+
+      screeningScore*.15+
+      readingScore*.25+
+      appraisalScore*.15+
+      synthesisScore*.20+
+      coverageScore*.10
+    );
+  }
+
   function computeLiveProgress(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -992,7 +1079,7 @@
     const ratio=(num,den)=>den?Math.min(1,num/den):0;
     const wordTarget=Number(project.wordTarget)||0;
     const writingRatio=ratio(currentWords,wordTarget);
-    const researchRatio=ratio(articlesReviewed,articles.length);
+    const researchRatio=computeResearchReviewRatio(state,projectId,articles,highlights,notes,objectives,themes,evidence);
     const chapterRatio=ratio(chaptersDeveloped,chapters.length);
     const milestoneRatio=ratio(milestonesComplete,milestones.length);
     const evidenceRatios=[];
@@ -2235,6 +2322,16 @@
     getMethodWorkspace,
     saveMethodWorkspace,
     computeLiveProgress,
+    computeResearchReviewProgress:(projectId)=>{
+      const state=getState();projectId=projectId||getActiveProjectId(state);
+      const articles=state.articles.filter(a=>a.projectId===projectId&&a.readingStatus!=='archived');
+      const highlights=state.highlights.filter(h=>h.projectId===projectId);
+      const notes=state.notes.filter(n=>n.projectId===projectId);
+      const objectives=state.objectives.filter(o=>o.projectId===projectId&&o.status!=='archived');
+      const themes=state.themes.filter(t=>t.projectId===projectId);
+      const evidence=state.evidenceLinks.filter(e=>e.projectId===projectId);
+      return Math.round(computeResearchReviewRatio(state,projectId,articles,highlights,notes,objectives,themes,evidence)*100);
+    },
     getProgressSnapshots,
     getLatestProgress,
     saveProgressSnapshot,
