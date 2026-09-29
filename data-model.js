@@ -100,16 +100,21 @@
 
   function normalizeProgress(input={}){
     return {
-      currentWords:Number(input.currentWords ?? input.current_words ?? 6840) || 0,
-      wordsPerWeek:Number(input.wordsPerWeek ?? input.words_per_week ?? 900) || 0,
-      articlesTotal:Number(input.articlesTotal ?? 24) || 0,
-      articlesReviewed:Number(input.articlesReviewed ?? 18) || 0,
-      chaptersTotal:Number(input.chaptersTotal ?? 6) || 0,
-      chaptersDeveloped:Number(input.chaptersDeveloped ?? 2) || 0,
-      milestonesTotal:Number(input.milestonesTotal ?? 9) || 0,
-      milestonesComplete:Number(input.milestonesComplete ?? 4) || 0,
-      highlights:Number(input.highlights ?? 67) || 0,
-      notes:Number(input.notes ?? 31) || 0
+      currentWords:Number(input.currentWords ?? input.current_words ?? 0) || 0,
+      wordsPerWeek:Number(input.wordsPerWeek ?? input.words_per_week ?? 0) || 0,
+      articlesTotal:Number(input.articlesTotal ?? input.articles_total ?? 0) || 0,
+      articlesReviewed:Number(input.articlesReviewed ?? input.articles_reviewed ?? 0) || 0,
+      chaptersTotal:Number(input.chaptersTotal ?? input.chapters_total ?? 0) || 0,
+      chaptersDeveloped:Number(input.chaptersDeveloped ?? input.chapters_developed ?? 0) || 0,
+      milestonesTotal:Number(input.milestonesTotal ?? input.milestones_total ?? 0) || 0,
+      milestonesComplete:Number(input.milestonesComplete ?? input.milestones_complete ?? 0) || 0,
+      highlights:Number(input.highlights ?? 0) || 0,
+      notes:Number(input.notes ?? 0) || 0,
+      evidenceLinks:Number(input.evidenceLinks ?? input.evidence_links ?? 0) || 0,
+      sectionsTotal:Number(input.sectionsTotal ?? input.sections_total ?? 0) || 0,
+      sectionsWithEvidence:Number(input.sectionsWithEvidence ?? input.sections_with_evidence ?? 0) || 0,
+      overallProgress:Number(input.overallProgress ?? input.overall_progress ?? 0) || 0,
+      source:input.source || 'legacy'
     };
   }
 
@@ -207,6 +212,7 @@
       projectId,
       snapshotDate:ts.slice(0,10),
       ...legacyProgress,
+      source:'legacy',
       createdAt:ts
     });
 
@@ -263,7 +269,8 @@
     state.themes.push(...defaultThemes(id));
     state.progressSnapshots.push({
       id:uid('progress'),projectId:id,snapshotDate:ts.slice(0,10),
-      ...normalizeProgress({currentWords:0,wordsPerWeek:0,articlesTotal:0,articlesReviewed:0,chaptersTotal:6,chaptersDeveloped:0,milestonesTotal:0,milestonesComplete:0,highlights:0,notes:0}),
+      ...normalizeProgress({currentWords:0,wordsPerWeek:0,articlesTotal:0,articlesReviewed:0,chaptersTotal:6,chaptersDeveloped:0,milestonesTotal:0,milestonesComplete:0,highlights:0,notes:0,source:'legacy'}),
+      source:'legacy',
       createdAt:ts
     });
     state.activeProjectId=id;
@@ -474,24 +481,218 @@
     return clone(setup.designDetails.workspace);
   }
 
+  function localDateKey(date=new Date()){
+    const y=date.getFullYear();
+    const m=String(date.getMonth()+1).padStart(2,'0');
+    const d=String(date.getDate()).padStart(2,'0');
+    return y+'-'+m+'-'+d;
+  }
+
+  function getProgressSnapshots(projectId,{derivedOnly=false}={}){
+    const state=getState();
+    projectId=projectId || getActiveProjectId(state);
+    return clone(state.progressSnapshots.filter(p=>p.projectId===projectId && (!derivedOnly || p.source==='derived'))
+      .sort((a,b)=>(a.snapshotDate||'').localeCompare(b.snapshotDate||'') || (a.createdAt||'').localeCompare(b.createdAt||'')));
+  }
+
+  function observedWritingPace(state,projectId,currentWords){
+    const today=new Date();
+    const todayKey=localDateKey(today);
+    const rows=state.progressSnapshots.filter(p=>p.projectId===projectId && p.source==='derived' && p.snapshotDate!==todayKey)
+      .sort((a,b)=>(b.snapshotDate||'').localeCompare(a.snapshotDate||''));
+    if(!rows.length) return {wordsPerWeek:0,windowDays:0,baseline:null};
+    const cutoff=new Date(today);cutoff.setDate(cutoff.getDate()-35);
+    const eligible=rows.filter(row=>{
+      const d=new Date((row.snapshotDate||'')+'T12:00:00');
+      return !Number.isNaN(d.getTime()) && d>=cutoff;
+    });
+    const baseline=(eligible.length?eligible:rows).slice(-1)[0];
+    const baselineDate=new Date((baseline.snapshotDate||'')+'T12:00:00');
+    const days=Math.max(1,Math.round((today-baselineDate)/86400000));
+    const delta=Math.max(0,Number(currentWords)-Number(baseline.currentWords||0));
+    return {
+      wordsPerWeek:days>=1?Math.round(delta/(days/7)):0,
+      windowDays:days,
+      baseline:clone(baseline)
+    };
+  }
+
+  function computeLiveProgress(projectId){
+    const state=getState();
+    projectId=projectId || getActiveProjectId(state);
+    const project=state.projects.find(p=>p.id===projectId)||{};
+    const setup=state.studySetups.find(s=>s.projectId===projectId)||{};
+    const articles=state.articles.filter(a=>a.projectId===projectId && a.readingStatus!=='archived');
+    const chapters=state.chapters.filter(ch=>ch.projectId===projectId);
+    const sections=state.sections.filter(sec=>sec.projectId===projectId);
+    const milestones=state.milestones.filter(m=>m.projectId===projectId && m.status!=='skipped');
+    const highlights=state.highlights.filter(h=>h.projectId===projectId);
+    const notes=state.notes.filter(n=>n.projectId===projectId);
+    const evidence=state.evidenceLinks.filter(e=>e.projectId===projectId);
+    const objectives=state.objectives.filter(o=>o.projectId===projectId && o.status!=='archived');
+    const themes=state.themes.filter(t=>t.projectId===projectId);
+
+    const currentWords=sections.reduce((sum,sec)=>sum+Math.max(0,Number(sec.currentWordCount)||0),0);
+    const articlesReviewed=articles.filter(a=>a.readingStatus==='reviewed').length;
+    const chaptersDeveloped=chapters.filter(ch=>{
+      const chapterSections=sections.filter(sec=>sec.chapterId===ch.id);
+      const words=chapterSections.reduce((sum,sec)=>sum+Math.max(0,Number(sec.currentWordCount)||0),0);
+      return ch.status==='complete' || ch.status==='review' || (words>0 && ['in_progress','outlined'].includes(ch.status));
+    }).length;
+    const milestonesComplete=milestones.filter(m=>m.status==='complete').length;
+
+    const evidenceArticleIds=new Set();
+    const evidenceSectionIds=new Set();
+    const evidenceObjectiveIds=new Set();
+    const evidenceThemeIds=new Set();
+    evidence.forEach(link=>{
+      let articleId=link.articleId;
+      if(!articleId&&link.highlightId) articleId=highlights.find(h=>h.id===link.highlightId)?.articleId;
+      if(articleId)evidenceArticleIds.add(articleId);
+      if(link.sectionId)evidenceSectionIds.add(link.sectionId);
+      if(link.objectiveId)evidenceObjectiveIds.add(link.objectiveId);
+      if(link.themeId)evidenceThemeIds.add(link.themeId);
+    });
+    state.articleThemes.forEach(row=>{
+      const article=articles.find(a=>a.id===row.articleId);
+      if(article)evidenceThemeIds.add(row.themeId);
+    });
+
+    const ratio=(num,den)=>den?Math.min(1,num/den):0;
+    const wordTarget=Number(project.wordTarget)||0;
+    const writingRatio=ratio(currentWords,wordTarget);
+    const researchRatio=ratio(articlesReviewed,articles.length);
+    const chapterRatio=ratio(chaptersDeveloped,chapters.length);
+    const milestoneRatio=ratio(milestonesComplete,milestones.length);
+    const evidenceRatios=[];
+    if(articles.length)evidenceRatios.push(ratio(evidenceArticleIds.size,articles.length));
+    if(sections.length)evidenceRatios.push(ratio(evidenceSectionIds.size,sections.length));
+    if(objectives.length)evidenceRatios.push(ratio(evidenceObjectiveIds.size,objectives.length));
+    if(themes.length)evidenceRatios.push(ratio(evidenceThemeIds.size,themes.length));
+    const evidenceRatio=evidenceRatios.length?evidenceRatios.reduce((a,b)=>a+b,0)/evidenceRatios.length:0;
+
+    const setupFields=[
+      setup.studyType,project.title,project.wordTarget,project.researchQuestion,project.finalDeadline,
+      setup.population,setup.studySetting,setup.analysisSoftware,
+      Array.isArray(setup.analysis)&&setup.analysis.length?'analysis':''
+    ];
+    const setupRatio=setupFields.filter(Boolean).length/setupFields.length;
+
+    const overallProgress=Math.round((
+      writingRatio*.35 + researchRatio*.15 + evidenceRatio*.15 +
+      chapterRatio*.15 + milestoneRatio*.10 + setupRatio*.10
+    )*100);
+
+    const pace=observedWritingPace(state,projectId,currentWords);
+    return clone({
+      projectId,
+      currentWords,
+      wordTarget,
+      wordsPerWeek:pace.wordsPerWeek,
+      paceWindowDays:pace.windowDays,
+      articlesTotal:articles.length,
+      articlesReviewed,
+      chaptersTotal:chapters.length,
+      chaptersDeveloped,
+      milestonesTotal:milestones.length,
+      milestonesComplete,
+      highlights:highlights.length,
+      notes:notes.length,
+      evidenceLinks:evidence.length,
+      evidenceArticles:evidenceArticleIds.size,
+      sectionsTotal:sections.length,
+      sectionsWithEvidence:evidenceSectionIds.size,
+      objectivesTotal:objectives.length,
+      objectivesWithEvidence:evidenceObjectiveIds.size,
+      themesTotal:themes.length,
+      themesWithEvidence:evidenceThemeIds.size,
+      writingRatio,
+      researchRatio,
+      evidenceRatio,
+      chapterRatio,
+      milestoneRatio,
+      setupRatio,
+      overallProgress
+    });
+  }
+
   function getLatestProgress(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
-    const rows=state.progressSnapshots.filter(p=>p.projectId===projectId)
-      .sort((a,b)=>(b.createdAt || '').localeCompare(a.createdAt || ''));
-    return clone(rows[0] || normalizeProgress({}));
+    const rows=state.progressSnapshots.filter(p=>p.projectId===projectId && p.source==='derived')
+      .sort((a,b)=>(b.snapshotDate||'').localeCompare(a.snapshotDate||'') || (b.createdAt||'').localeCompare(a.createdAt||''));
+    return clone(rows[0] || normalizeProgress({source:'derived'}));
   }
 
-  function saveProgressSnapshot(progress, projectId){
+  function saveProgressSnapshot(progress, projectId, options={}){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
-    const normalized=normalizeProgress(progress);
+    const normalized=normalizeProgress({...progress,source:progress.source||'derived'});
     const ts=nowIso();
+    const snapshotDate=options.snapshotDate||localDateKey(new Date());
     state.progressSnapshots.push({
-      id:uid('progress'),projectId,snapshotDate:ts.slice(0,10),...normalized,createdAt:ts
+      id:uid('progress'),projectId,snapshotDate,...normalized,source:normalized.source||'derived',createdAt:ts
     });
     writeState(state);
-    return clone(normalized);
+    return clone(state.progressSnapshots[state.progressSnapshots.length-1]);
+  }
+
+  function captureDailyProgressSnapshot(projectId){
+    const state=getState();
+    projectId=projectId || getActiveProjectId(state);
+    const live=computeLiveProgress(projectId);
+    const today=localDateKey(new Date());
+    const ts=nowIso();
+    const snapshot={
+      currentWords:live.currentWords,
+      wordsPerWeek:live.wordsPerWeek,
+      articlesTotal:live.articlesTotal,
+      articlesReviewed:live.articlesReviewed,
+      chaptersTotal:live.chaptersTotal,
+      chaptersDeveloped:live.chaptersDeveloped,
+      milestonesTotal:live.milestonesTotal,
+      milestonesComplete:live.milestonesComplete,
+      highlights:live.highlights,
+      notes:live.notes,
+      evidenceLinks:live.evidenceLinks,
+      sectionsTotal:live.sectionsTotal,
+      sectionsWithEvidence:live.sectionsWithEvidence,
+      overallProgress:live.overallProgress,
+      source:'derived'
+    };
+    let row=state.progressSnapshots.find(p=>p.projectId===projectId && p.snapshotDate===today && p.source==='derived');
+    const comparable=Object.keys(snapshot);
+    if(row){
+      const changed=comparable.some(k=>String(row[k]??'')!==String(snapshot[k]??''));
+      if(!changed) return clone(row);
+      Object.assign(row,snapshot,{createdAt:row.createdAt||ts,updatedAt:ts});
+    }else{
+      row={id:uid('progress'),projectId,snapshotDate:today,...snapshot,createdAt:ts,updatedAt:ts};
+      state.progressSnapshots.push(row);
+    }
+    writeState(state);
+    return clone(row);
+  }
+
+  function listMilestones(projectId){
+    const state=getState();
+    projectId=projectId || getActiveProjectId(state);
+    return clone(state.milestones.filter(m=>m.projectId===projectId)
+      .sort((a,b)=>(a.orderIndex||999)-(b.orderIndex||999) || String(a.dueDate||'').localeCompare(String(b.dueDate||''))));
+  }
+
+  function updateMilestone(milestoneId,patch={}){
+    const state=getState();
+    const row=state.milestones.find(m=>m.id===milestoneId);
+    if(!row) return null;
+    ['title','description','orderIndex','dueDate','status'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) row[key]=patch[key];
+    });
+    if(row.status==='complete'&&!row.completedAt) row.completedAt=nowIso();
+    if(row.status!=='complete') row.completedAt=null;
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
   }
 
 
@@ -903,8 +1104,13 @@
     saveStudySetupData,
     getMethodWorkspace,
     saveMethodWorkspace,
+    computeLiveProgress,
+    getProgressSnapshots,
     getLatestProgress,
     saveProgressSnapshot,
+    captureDailyProgressSnapshot,
+    listMilestones,
+    updateMilestone,
     listArticles,
     getArticle,
     addArticle,
