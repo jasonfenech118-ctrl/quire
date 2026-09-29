@@ -145,6 +145,8 @@ See `docs/reference-manager.md`.
 - Step 30 — Unified Writing Workspace & Academic Ribbon ✅
 - Step 31 — Guided Five-Destination Product Framework ✅
 - Step 32 — Writing Understanding, Language Coach & Guided Research Flow ✅
+- Steps 33–55 — Evidence intelligence, research memory, provenance, critical writing, supervision/session workflow, integrity and submission-pack enhancements ✅
+- Step 56 — Real-browser/device frontend validation gate ⏳
 
 **Frontend-first rule:** Quire is currently being developed and refined locally. Do not activate or modify the external Supabase backend until the frontend workflow is reviewed and approved. Step 22 means the integration code exists; it does not mean a Supabase project is currently connected.
 
@@ -251,8 +253,8 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-Steps 1–32 have implementation in the repository. Step 22 is code-complete but external Supabase activation is deliberately deferred while Quire remains frontend-first. Step 30 introduced the unified academic writing ribbon; Step 31 simplified primary navigation; Step 32 added the optional Writing Companion and consolidated the working journey around Discover → Understand → Organise → Write → Review with contextual next-step handoffs.
+Steps 1–55 have implementation in the repository. Step 22 is code-complete but external Supabase activation is deliberately deferred while Quire remains frontend-first. Step 30 introduced the unified academic writing ribbon; Step 31 simplified primary navigation; Step 32 added the optional Writing Companion and consolidated the working journey around Discover → Understand → Organise → Write → Review with contextual next-step handoffs. Steps 33–55 extend that framework with claim/evidence intelligence, paper relevance, counter-evidence synthesis, critical-writing support, selected-passage reading help, research memory, persistent idea provenance, a living argument map, supervisor/session workflows, personal writing growth, command actions, integrity/coherence checks and a submission pack.
 
-Before starting the next numbered milestone, review `docs/PROJECT_MASTER.md` and `docs/CONTINUE_HERE.md` so the agreed future feature backlog is implemented in dependency order rather than as disconnected tools.
+Before continuing, review `docs/PROJECT_MASTER.md` and `docs/CONTINUE_HERE.md`. Step 56 is deliberately a real-browser/device validation gate and must not be marked complete from static code inspection alone.
 
 © Quire prototype.
