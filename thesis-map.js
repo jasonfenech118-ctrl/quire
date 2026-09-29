@@ -471,6 +471,18 @@
     }else renderInspector(null,data,s);
   }
 
+
+  function focusNode(type,id){
+    selectedNode={type,id:String(id)};
+    if(dirty) render();
+    const s=state();
+    const data=buildGraphData(s);
+    const node=data.nodes.find(n=>n.type===type&&String(n.id)===String(id));
+    if(!node) return false;
+    selectNode(type,String(id),data,s);
+    return true;
+  }
+
   function bind(){
     document.getElementById('addMapConnectionBtn')?.addEventListener('click',()=>openConnectionModal());
     document.getElementById('closeMapConnectionModal')?.addEventListener('click',()=>document.getElementById('mapConnectionModal').hidden=true);
@@ -515,5 +527,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireThesisMap={render,openConnectionModal};
+  window.QuireThesisMap={render,focusNode,openConnectionModal};
 })();
