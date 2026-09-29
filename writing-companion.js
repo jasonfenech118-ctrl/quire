@@ -28,7 +28,9 @@
 
   function understanding(text){
     const ss=sentences(text);
+    const wc=words(text).length;
     if(!text)return 'Start writing a paragraph. Quire will reflect back the main idea it understands so you can check whether your meaning is clear.';
+    if(wc<8)return 'This is still a short note or fragment. Keep developing the idea before Quire tries to interpret it as an academic argument.';
     const lead=ss[0]||text;
     const contrast=ss.find(s=>/\b(however|although|whereas|but|despite|in contrast)\b/i.test(s));
     const cause=ss.find(s=>/\b(because|therefore|thus|consequently|suggests?|indicates?|associated with|leads? to)\b/i.test(s));
@@ -42,6 +44,9 @@
   function languageSuggestions(text){
     const out=[];
     const ss=sentences(text);
+    const wc=words(text).length;
+    if(!text)return [{title:'Nothing to review yet',body:'Start writing and Quire will offer optional language guidance here.'}];
+    if(wc<8)return [{title:'Keep developing the thought',body:'This is too short for useful grammar or academic-style feedback. Quire will wait rather than over-correct an unfinished idea.'}];
     const long=ss.find(s=>words(s).length>32);
     if(long)out.push({title:'Shorten a long sentence',body:'One sentence is '+words(long).length+' words. Splitting it may make the argument easier to follow.'});
     const ands=(text.match(/\band\b/gi)||[]).length;
