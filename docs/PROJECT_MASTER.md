@@ -40,6 +40,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 38: Selected-Passage Reading Assistant — implemented.
 - Step 39: Provenance-Aware Research Memory Search — implemented.
 - Step 40: Persistent Ideas & Provenance — implemented.
+- Step 41: Living Argument Map — implemented.
 
 ## Step 32 — implemented
 
@@ -120,7 +121,11 @@ Global search now acts as lightweight research memory: question scaffolding is i
 
 The Ideas workspace is no longer only static prototype content. Ideas are persisted through the existing local analysis-item store, move through Inbox → Developing themes → Ready for thesis, and carry explicit origin metadata (researcher, source-derived, supervisor, analysis or brainstorming) plus source/page identifiers where available. Ready ideas hand off naturally into thesis writing.
 
-## Agreed future feature backlog — after Step 40
+## Step 41 — implemented
+
+The existing Thesis Map now includes persistent ready-for-thesis ideas as **Arguments** and likely empirical/factual sentences from real thesis sections as **Claims**. It connects themes → arguments → claims → evidence → writing where stored or cautiously derivable. Automatically inferred relationships are marked as derived rather than being presented as researcher-authored links.
+
+## Agreed future feature backlog — after Step 41
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
