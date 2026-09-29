@@ -1,6 +1,6 @@
-# Quire Literature Search & Screening — Step 24
+# Quire Literature Search & Screening — Step 26
 
-Step 24 gives Quire a reproducible literature-search and screening workflow while keeping the Research Library as the single source of truth for papers.
+Step 26 gives Quire a reproducible literature-search and screening workflow while keeping the Research Library as the single source of truth for papers.
 
 ## Search strategy
 
