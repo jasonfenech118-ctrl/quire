@@ -569,11 +569,9 @@ renderLibraryArticles();
 
 function updateResearchDeskCounts(){
   if(!window.QuireStore) return;
-  const articles=window.QuireStore.listArticles();
-  const highlights=window.QuireStore.listHighlights();
-  const notes=window.QuireStore.listNotes();
+  const live=window.QuireStore.computeLiveProgress?.() || {};
   const themes=window.QuireStore.listThemes();
-  const values=[articles.length,highlights.length,notes.length,themes.length];
+  const values=[live.articlesTotal||0,live.highlights||0,live.notes||0,themes.length];
   document.querySelectorAll('.stat-panel .stats > div strong').forEach((el,index)=>{
     if(values[index]!==undefined) el.textContent=String(values[index]);
   });
