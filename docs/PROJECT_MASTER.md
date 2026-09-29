@@ -54,6 +54,8 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 52: Citation & Source Integrity Preflight — implemented.
 - Step 53: Research Question Drift Monitor — implemented.
 - Step 54: Cross-Chapter Coherence Review — implemented.
+- Step 55: Export Fidelity & Submission Pack — implemented.
+- Step 56: Manual Frontend Validation Gate — pending real-browser/device validation.
 
 ## Step 32 — implemented
 
@@ -192,7 +194,25 @@ Submission Readiness now includes a research-question alignment reflection for r
 
 Submission Readiness now includes cross-section claim-repetition prompts, objective-specific coverage reflection and cautious detection of possible opposite-direction statements across thesis sections. QA corrected an initial objective-matching error before closure.
 
-## Next value review — proposed Steps 55–56
+## Step 55 — implemented
+
+Thesis Export now provides a downloadable Submission Pack combining export metadata, reference-integrity diagnostics, supervision/revision status and the full Submission Readiness report. It explicitly remains companion preflight material rather than institutional certification.
+
+## Step 56 — validation gate
+
+Do **not** mark this complete from repository/static inspection alone. It requires:
+- desktop and mobile real-browser walkthroughs;
+- keyboard-only navigation;
+- screen-reader smoke checks on primary destinations and writing controls;
+- PDF selection/highlight/note/Explain/Idea interactions;
+- OCR behavior on an image-only PDF;
+- Writing Companion / Claim Awareness interaction during real editing;
+- Ideas capture/trace lifecycle;
+- Word-compatible export inspection in Word or equivalent;
+- browser Print → PDF visual inspection;
+- backup/restore and diagnostics smoke tests.
+
+Backend activation remains blocked until this frontend validation gate is reviewed.
 
 - **Step 51 — In-App Workflow Diagnostics.** Extend Diagnostics with checks for the guided journey, active section, evidence graph, Ideas provenance, writing companion modules and local checkpoint/growth stores so regressions can be detected from inside Quire.
 - **Step 52 — Citation & Source Integrity Preflight.** Before export, identify citations with missing article records, evidence links with missing source passages, uncited bibliography entries and cited sources absent from the bibliography.
