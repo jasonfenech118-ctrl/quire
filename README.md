@@ -13,13 +13,13 @@ Quire currently includes:
 - Real PDF reading workspace
 - Persistent highlights, notes and thesis evidence links
 - DOI / scholarly metadata import
-- Quire Copilot prototype
+- Grounded article Copilot with real PDF text retrieval
 - Thesis map
 - Chapter planner and editor
 - Brainstorm board
 - Writing and evidence review
 
-The AI buttons are still prototypes. The PDF reader, annotations and scholarly metadata workflow are functional locally; no external AI model is connected yet.
+The article Copilot now works in a local grounded-analysis mode using text extracted from the real PDF. An optional secure server endpoint can provide generative AI synthesis; no provider secret is stored in the browser.
 
 ## Step 1 — Data model ✅
 
@@ -87,6 +87,14 @@ The metadata preview includes title, authors, journal, year, DOI, abstract and a
 
 See `docs/article-metadata.md`.
 
+## Step 6 — Grounded article Copilot ✅
+
+Quire now extracts the actual uploaded PDF page-by-page and indexes the text locally. Summary, Methods, Findings, Critique and article questions retrieve supporting passages from that paper and expose clickable source pages.
+
+Without a backend, Quire uses a local extractive grounded mode. A secure HTTPS AI endpoint can optionally be connected for generative synthesis; Quire sends only retrieved article passages and never asks users to place a provider secret key in browser code.
+
+See `docs/grounded-copilot.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -96,8 +104,7 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Next build stage
 
-1. AI summarisation grounded in uploaded papers
-2. Page-level citations for AI answers
-3. Reference-manager integration
+1. Claim-level / exact-passage citations for AI answers
+2. Reference-manager integration
 
 © Quire prototype.
