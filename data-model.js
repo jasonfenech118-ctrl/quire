@@ -1989,6 +1989,106 @@
     return true;
   }
 
+
+  function defaultWritingCoachProfile(projectId){
+    const ts=nowIso();
+    return {
+      id:uid('writingprofile'),projectId,
+      explanationLevel:'teaching',
+      targetStyle:'clear_academic',
+      preserveVoice:true,
+      vocabularyGrowth:true,
+      grammarTeaching:true,
+      preferredVariant:'british',
+      createdAt:ts,updatedAt:ts
+    };
+  }
+
+  function getWritingCoachProfile(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return clone(state.writingCoachProfiles.find(p=>p.projectId===projectId)||defaultWritingCoachProfile(projectId));
+  }
+
+  function saveWritingCoachProfile(data={},projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    if(!projectId)throw new Error('No active thesis project.');
+    let row=state.writingCoachProfiles.find(p=>p.projectId===projectId);
+    if(!row){
+      row=defaultWritingCoachProfile(projectId);
+      state.writingCoachProfiles.push(row);
+    }
+    ['explanationLevel','targetStyle','preferredVariant'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(data,key))row[key]=String(data[key]||row[key]);
+    });
+    ['preserveVoice','vocabularyGrowth','grammarTeaching'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(data,key))row[key]=Boolean(data[key]);
+    });
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function listWritingLessons(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return clone(state.writingLessons.filter(x=>x.projectId===projectId)
+      .sort((a,b)=>(b.createdAt||'').localeCompare(a.createdAt||'')));
+  }
+
+  function addWritingLesson(data={}){
+    const state=getState();
+    const projectId=data.projectId||getActiveProjectId(state);
+    if(!projectId)throw new Error('No active thesis project.');
+    const ts=nowIso();
+    const row={
+      id:uid('lesson'),projectId,sectionId:data.sectionId||null,
+      category:data.category||'grammar',
+      originalText:String(data.originalText||''),
+      suggestedText:String(data.suggestedText||''),
+      explanation:String(data.explanation||''),
+      rule:String(data.rule||''),
+      vocabulary:Array.isArray(data.vocabulary)?clone(data.vocabulary):[],
+      status:['new','reviewed','mastered'].includes(data.status)?data.status:'new',
+      createdAt:ts,updatedAt:ts
+    };
+    state.writingLessons.push(row);
+    writeState(state);
+    return clone(row);
+  }
+
+  function updateWritingLesson(lessonId,patch={}){
+    const state=getState();
+    const row=state.writingLessons.find(x=>x.id===lessonId);
+    if(!row)return null;
+    if(Object.prototype.hasOwnProperty.call(patch,'status')){
+      row.status=['new','reviewed','mastered'].includes(patch.status)?patch.status:row.status;
+    }
+    ['category','originalText','suggestedText','explanation','rule'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key))row[key]=String(patch[key]||'');
+    });
+    if(Object.prototype.hasOwnProperty.call(patch,'vocabulary'))row.vocabulary=Array.isArray(patch.vocabulary)?clone(patch.vocabulary):[];
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function writingGrowthSummary(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    const rows=state.writingLessons.filter(x=>x.projectId===projectId);
+    const categories={};
+    rows.forEach(row=>{categories[row.category]=(categories[row.category]||0)+1;});
+    return clone({
+      total:rows.length,
+      new:rows.filter(x=>x.status==='new').length,
+      reviewed:rows.filter(x=>x.status==='reviewed').length,
+      mastered:rows.filter(x=>x.status==='mastered').length,
+      categories
+    });
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
