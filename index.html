@@ -397,6 +397,7 @@
             <p>Build the search strategy, log every search and screen the same papers already held in your Research Library.</p>
           </div>
           <div class="search-screen-actions">
+            <button class="soft-btn" id="openLiteratureDiscoveryBtn" type="button">⌕ Discover papers</button>
             <button class="soft-btn" id="searchOpenReferencesBtn" type="button">⇄ Import references</button>
             <button class="soft-btn" id="exportSearchAuditBtn" type="button">↓ Export audit CSV</button>
             <button class="primary-btn" id="newSearchRunBtn" type="button">＋ Log search run</button>
@@ -404,6 +405,34 @@
         </div>
 
         <section id="gapSearchContext" class="gap-search-context" hidden aria-live="polite"></section>
+
+        <section id="literatureDiscoveryPanel" class="literature-discovery-panel" hidden aria-labelledby="literatureDiscoveryTitle">
+          <div class="literature-discovery-head">
+            <div>
+              <span class="eyebrow">SCHOLARLY CANDIDATE DISCOVERY</span>
+              <h2 id="literatureDiscoveryTitle">Find papers to screen, not evidence to trust automatically.</h2>
+              <p>Search scholarly metadata from the concepts already in your research plan. Results are candidates only—inspect the abstract/full paper before deciding whether they belong in the review.</p>
+            </div>
+            <button class="text-btn" id="closeLiteratureDiscoveryBtn" type="button">Close</button>
+          </div>
+          <div class="literature-discovery-controls">
+            <label><span>Discovery query</span><textarea id="literatureDiscoveryQuery" rows="3" placeholder="Quire can build this from your search-plan concepts."></textarea></label>
+            <label><span>Number of candidates</span><select id="literatureDiscoveryRows"><option value="10">10</option><option value="20" selected>20</option><option value="30">30</option><option value="50">50</option></select></label>
+            <button class="primary-btn" id="runLiteratureDiscoveryBtn" type="button">Search scholarly metadata</button>
+          </div>
+          <div class="literature-discovery-boundary">
+            <strong>Discovery is not screening</strong>
+            <small>Crossref metadata can be incomplete and relevance is not guaranteed. Nothing is imported until you select it, and an imported reference still needs screening and full-paper inspection.</small>
+          </div>
+          <div class="literature-discovery-toolbar">
+            <span id="literatureDiscoveryStatus">Ready</span>
+            <div>
+              <button class="text-btn" id="selectNewDiscoveryBtn" type="button">Select new candidates</button>
+              <button class="soft-btn" id="importDiscoveryCandidatesBtn" type="button" disabled>Import selected to screening queue</button>
+            </div>
+          </div>
+          <div id="literatureDiscoveryResults" class="literature-discovery-results"></div>
+        </section>
 
         <div class="search-flow-strip">
           <div><strong id="searchFlowIdentified">0</strong><span>Records identified</span></div>
@@ -2247,6 +2276,7 @@
   <script src="inline-references.js"></script>
   <script src="search-screening.js"></script>
   <script src="gap-search.js"></script>
+  <script src="literature-discovery.js"></script>
   <script src="question-evolution.js"></script>
   <script src="contribution-builder.js"></script>
   <script src="paper-contribution.js"></script>
