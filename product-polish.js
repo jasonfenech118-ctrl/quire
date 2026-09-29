@@ -151,7 +151,7 @@
   }
 
   function memoryAnswer(query,rows=search(query)){
-    const top=rows.slice(0,8);
+    const top=rows.filter(row=>row.type!=='command').slice(0,8);
     const groups=new Map();
     top.forEach(row=>{
       const provenance=({article:'Papers',highlight:'Source highlights',note:'Research notes',section:'Thesis writing',chapter:'Thesis structure',theme:'Themes',objective:'Objectives',feedback:'Supervisor feedback',analysis:'Ideas / analysis'})[row.type]||'Other';
