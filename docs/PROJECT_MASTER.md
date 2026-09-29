@@ -49,6 +49,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 47: Personal Writing Growth Centre — implemented.
 - Step 48: Provenance Chain Inspector — implemented.
 - Step 49: Contextual Command Palette — implemented.
+- Step 50: Frontend Release Readiness — code-level audit complete; real browser/device QA remains a separate validation task.
 
 ## Step 32 — implemented
 
@@ -165,7 +166,22 @@ Ideas now expose a provenance-chain inspector showing stored origin/source/page/
 
 Ctrl/Cmd+K now acts as a find-or-do surface. Alongside workspace search it can surface common contextual actions such as capture idea, continue writing, link evidence, run writing review, save an end-session checkpoint and open progress. Command actions are excluded from Research Memory summaries.
 
-## Added-value roadmap after Step 49
+## Step 50 — code-level audit complete
+
+The release audit found no duplicate HTML IDs and successfully parsed all 35 local JavaScript modules. It also found and fixed two concrete regression issues: stale Home Copilot event wiring and an Idea Trace modal lifecycle problem. All newly added modules are loaded from `index.html`.
+
+This is a **code-level** readiness result, not a claim that every interaction has been manually exercised in a real browser/device matrix. Real browser, mobile, keyboard-only and export rendering checks remain valuable before calling the frontend production-ready.
+
+## Next value review — proposed Steps 51–56
+
+- **Step 51 — In-App Workflow Diagnostics.** Extend Diagnostics with checks for the guided journey, active section, evidence graph, Ideas provenance, writing companion modules and local checkpoint/growth stores so regressions can be detected from inside Quire.
+- **Step 52 — Citation & Source Integrity Preflight.** Before export, identify citations with missing article records, evidence links with missing source passages, uncited bibliography entries and cited sources absent from the bibliography.
+- **Step 53 — Research Question Drift Monitor.** Compare themes, ready arguments, thesis claims and chapter focus with the saved research question/objectives; surface low-overlap areas as reflection prompts, not as invalid content.
+- **Step 54 — Cross-Chapter Coherence Review.** Flag repeated claims, terminology inconsistencies, abrupt objective coverage gaps and contradictions between thesis sections for human review.
+- **Step 55 — Export Fidelity & Submission Pack.** Add a pre-export package containing readiness report, reference integrity summary, supervisor/revision status and final thesis export metadata.
+- **Step 56 — Manual Frontend Validation Gate.** Real-browser desktop/mobile, keyboard-only, screen-reader smoke checks, PDF/OCR interaction checks and Word/PDF export inspection. Backend activation must remain blocked until this gate is reviewed.
+
+Do not treat Step 56 as complete from static code inspection alone. External Supabase activation still requires an explicit later decision.
 
 A second product review identified the next high-value frontend milestones:
 
