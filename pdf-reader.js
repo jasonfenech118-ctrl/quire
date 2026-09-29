@@ -827,7 +827,7 @@
     document.getElementById('selectionToIdeaBtn')?.addEventListener('click',()=>{
       if(!pendingSelection)return;
       const article=window.QuireStore.getArticle(pendingSelection.articleId);
-      const detail={origin:'source',sourceId:null,sourcePage:pendingSelection.pageNumber,sourceExcerpt:pendingSelection.highlightedText,sourceLabel:(article?.title||'Source')+' · p. '+pendingSelection.pageNumber};
+      const detail={origin:'source',sourceId:pendingSelection.articleId,sourcePage:pendingSelection.pageNumber,sourceExcerpt:pendingSelection.highlightedText,sourceLabel:(article?.title||'Source')+' · p. '+pendingSelection.pageNumber};
       hideSelectionToolbar();clearNativeSelection();
       window.dispatchEvent(new CustomEvent('quire:idea-capture-request',{detail}));
     });
