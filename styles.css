@@ -3099,3 +3099,30 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:600px){
   .paper-contribution-options{grid-template-columns:1fr}
 }
+
+
+/* ---------- Step 62: Research Decision Log ---------- */
+.research-decision-card{border-left:3px solid #a89882}
+.research-decision-head{align-items:flex-start}
+.research-decision-head .soft-btn{flex:0 0 auto}
+.research-decision-summary{display:flex;justify-content:space-between;gap:10px;border:1px solid var(--line);background:#f8f4ed;padding:9px 11px;margin-bottom:10px}
+.research-decision-summary strong,.research-decision-summary small{font-size:8px}
+.research-decision-summary small{color:var(--muted)}
+.research-decision-list{display:grid;gap:6px}
+.research-decision-empty{border:1px dashed var(--line);padding:12px;font-size:8px;color:var(--muted)}
+.research-decision-row{display:grid;grid-template-columns:120px 1fr auto;gap:12px;border-top:1px solid #ece4d9;padding:10px 0}
+.research-decision-row.superseded{opacity:.62}
+.research-decision-meta span,.research-decision-meta small{display:block}
+.research-decision-meta span{font-size:6.5px;font-weight:700;letter-spacing:.08em;color:var(--forest)}
+.research-decision-meta small{font-size:7px;color:var(--muted);margin-top:3px}
+.research-decision-row>div>strong{font-size:9px}
+.research-decision-row p{font-size:8px;line-height:1.5;margin:4px 0}
+.research-decision-row>div>small{display:block;font-size:7px;line-height:1.4;color:var(--muted);margin-top:3px}
+.research-decision-row>button{border:0;background:transparent;color:var(--forest);font-size:7px;font-weight:700;cursor:pointer}
+.research-decision-modal{width:min(780px,96vw)}
+.research-decision-intro{font-size:9px;color:var(--muted);line-height:1.5}
+@media(max-width:700px){
+  .research-decision-row{grid-template-columns:1fr}
+  .research-decision-summary{display:block}
+  .research-decision-summary small{display:block;margin-top:3px}
+}
