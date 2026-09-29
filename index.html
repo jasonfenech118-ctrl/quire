@@ -184,6 +184,20 @@
           </div>
         </div>
 
+
+        <section class="project-launch-card">
+          <div class="project-launch-head">
+            <div>
+              <span class="eyebrow">PROJECT LAUNCH</span>
+              <h3>Research workspace readiness</h3>
+              <p id="launchReadinessLabel">Checking project setup…</p>
+            </div>
+            <div class="launch-readiness-score"><strong id="launchReadinessPercent">0%</strong><span>ready</span></div>
+          </div>
+          <div class="launch-readiness-track"><span id="launchReadinessBar"></span></div>
+          <div id="projectLaunchReadiness" class="project-launch-readiness"></div>
+        </section>
+
         <div class="project-progress-hero">
           <div class="progress-ring" id="projectProgressRing">
             <div><strong id="projectProgressPercent">0%</strong><span>overall</span></div>
@@ -1075,7 +1089,7 @@
         <button class="new-card" id="openReferenceImportCard" type="button"><span>BIB</span><strong>Import references</strong><small>BibTeX or RIS from Zotero, Mendeley or EndNote</small></button>
         <button class="new-card" data-go-modal="brainstorm"><span>✦</span><strong>Capture an idea</strong><small>Save a thought before it disappears</small></button>
         <button class="new-card" data-go-modal="chapters"><span>§</span><strong>New thesis section</strong><small>Add to your chapter structure</small></button>
-        <button class="new-card" data-go-modal="setup"><span>◈</span><strong>New thesis project</strong><small>Start by defining study design and targets</small></button>
+        <button class="new-card" id="newThesisProjectCard" type="button"><span>◈</span><strong>New thesis project</strong><small>Launch a project with guided setup</small></button>
       </div>
     </div>
   </div>
@@ -1271,6 +1285,120 @@
         <select id="evidenceLinkerFilter"><option value="all">All evidence</option><option value="unlinked">Not linked here</option><option value="linked">Already linked</option></select>
       </div>
       <div id="evidenceLinkerList" class="evidence-linker-list"></div>
+    </div>
+  </div>
+
+
+  <div id="guidedLaunchModal" class="modal-backdrop" hidden>
+    <div class="modal guided-launch-modal">
+      <div class="modal-head">
+        <div>
+          <span class="eyebrow">GUIDED PROJECT LAUNCH</span>
+          <h2>Start the thesis with the right structure</h2>
+        </div>
+        <button id="closeGuidedLaunchModal" type="button">×</button>
+      </div>
+
+      <div class="launch-stepper">
+        <span id="launchStepLabel">Step 1 of 5</span>
+        <div>
+          <i class="active" data-launch-dot="1">1</i>
+          <i data-launch-dot="2">2</i>
+          <i data-launch-dot="3">3</i>
+          <i data-launch-dot="4">4</i>
+          <i data-launch-dot="5">5</i>
+        </div>
+      </div>
+
+      <section class="launch-step" data-launch-step="1">
+        <span class="eyebrow">PROJECT IDENTITY</span>
+        <h3>What are you working on?</h3>
+        <p>Use a working title. Everything can still be refined later.</p>
+        <div class="form-grid">
+          <label class="field wide"><span>Working thesis / project title *</span><input id="launchTitle" type="text" placeholder="e.g. Patient education and self-management after stoma formation"></label>
+          <label class="field"><span>Degree / programme</span><input id="launchDegree" type="text" placeholder="MSc, PhD, dissertation…"></label>
+          <label class="field"><span>Institution</span><input id="launchInstitution" type="text" placeholder="University or institution"></label>
+          <label class="field wide"><span>Supervisor</span><input id="launchSupervisor" type="text" placeholder="Supervisor / advisor name"></label>
+        </div>
+      </section>
+
+      <section class="launch-step" data-launch-step="2" hidden>
+        <span class="eyebrow">QUESTION & OBJECTIVES</span>
+        <h3>What does the project need to answer?</h3>
+        <p>A working question and one or more objectives give the Thesis Map something meaningful to organise around.</p>
+        <label class="field wide"><span>Working research question</span><textarea id="launchQuestion" rows="4" placeholder="What are you trying to understand, test, compare or evaluate?"></textarea></label>
+        <div class="launch-objectives">
+          <label class="field"><span>Objective 1</span><input id="launchObjective1" type="text" placeholder="Primary objective"></label>
+          <label class="field"><span>Objective 2</span><input id="launchObjective2" type="text" placeholder="Optional"></label>
+          <label class="field"><span>Objective 3</span><input id="launchObjective3" type="text" placeholder="Optional"></label>
+        </div>
+      </section>
+
+      <section class="launch-step" data-launch-step="3" hidden>
+        <span class="eyebrow">STUDY DESIGN</span>
+        <h3>What kind of research project is this?</h3>
+        <p>Quire uses this choice to adapt Methodology, analysis planning and later prompts. Choose “Not decided yet” if the design is still evolving.</p>
+        <div class="launch-study-types">
+          <label><input type="radio" name="launchStudyType" value=""><span><strong>Not decided yet</strong><small>Keep the workspace flexible for now</small></span></label>
+          <label><input type="radio" name="launchStudyType" value="qualitative"><span><strong>Qualitative</strong><small>Interviews, focus groups, observations, qualitative data</small></span></label>
+          <label><input type="radio" name="launchStudyType" value="quantitative"><span><strong>Quantitative</strong><small>Measurements, surveys, statistical analysis</small></span></label>
+          <label><input type="radio" name="launchStudyType" value="mixed"><span><strong>Mixed methods</strong><small>Integrated qualitative and quantitative strands</small></span></label>
+          <label><input type="radio" name="launchStudyType" value="meta"><span><strong>Systematic review / meta-analysis</strong><small>Search, screening, appraisal and evidence synthesis</small></span></label>
+        </div>
+        <div class="form-grid launch-context-grid">
+          <label class="field"><span>Population / participants</span><input id="launchPopulation" type="text" placeholder="Who or what is being studied?"></label>
+          <label class="field"><span>Setting / context</span><input id="launchSetting" type="text" placeholder="Clinical, community, database, service…"></label>
+        </div>
+      </section>
+
+      <section class="launch-step" data-launch-step="4" hidden>
+        <span class="eyebrow">TARGETS & TIMELINE</span>
+        <h3>Give Quire enough information to plan with you.</h3>
+        <p>Word targets and dates feed Progress Intelligence, milestones and the completion forecast.</p>
+        <div class="form-grid">
+          <label class="field"><span>Thesis word target</span><input id="launchWordTarget" type="number" min="0" step="500" value="20000"></label>
+          <label class="field"><span>Proposal deadline</span><input id="launchProposalDeadline" type="date"></label>
+          <label class="field wide"><span>Final submission deadline</span><input id="launchFinalDeadline" type="date"></label>
+        </div>
+      </section>
+
+      <section class="launch-step" data-launch-step="5" hidden>
+        <span class="eyebrow">INITIAL STRUCTURE</span>
+        <h3>Choose the starting chapter framework.</h3>
+        <p>This is a scaffold, not a locked template. Chapters can be renamed, added or reordered later.</p>
+
+        <div class="launch-template-cards">
+          <label><input type="radio" name="launchTemplate" value="empirical" checked><span><strong>Empirical thesis</strong><small>Introduction → Literature Review → Methodology → Results → Discussion → Conclusion</small></span></label>
+          <label><input type="radio" name="launchTemplate" value="review"><span><strong>Evidence synthesis</strong><small>Includes Review Methods and Evidence Synthesis chapters</small></span></label>
+          <label><input type="radio" name="launchTemplate" value="compact"><span><strong>Compact structure</strong><small>A simpler five-chapter starting point</small></span></label>
+        </div>
+
+        <div class="launch-final-grid">
+          <div>
+            <span class="eyebrow">CHAPTER PREVIEW</span>
+            <div id="launchStructurePreview" class="launch-structure-preview"></div>
+          </div>
+          <aside class="launch-summary-card">
+            <span class="eyebrow">PROJECT SUMMARY</span>
+            <strong id="launchSummaryTitle">Untitled thesis</strong>
+            <p id="launchSummaryQuestion">Research question not yet defined</p>
+            <div><span>Design</span><b id="launchSummaryType">Not decided yet</b></div>
+            <div><span>Objectives</span><b id="launchSummaryObjectives">0 objectives entered</b></div>
+            <div><span>Timeline</span><b id="launchSummaryTimeline">20,000 word target</b></div>
+            <div><span>Structure</span><b id="launchSummaryStructure">6 chapter structure</b></div>
+          </aside>
+        </div>
+      </section>
+
+      <small id="launchMessage" class="launch-message"></small>
+      <div class="launch-actions">
+        <button class="text-btn" id="cancelGuidedLaunch" type="button">Cancel</button>
+        <div>
+          <button class="soft-btn" id="launchBackBtn" type="button" hidden>← Back</button>
+          <button class="primary-btn" id="launchNextBtn" type="button">Continue →</button>
+          <button class="primary-btn" id="finishLaunchBtn" type="button" hidden>Create thesis workspace</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1552,6 +1680,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="data-model.js"></script>
+  <script src="guided-launch.js"></script>
   <script src="projects.js"></script>
   <script src="chapter-editor.js"></script>
   <script src="evidence-writing.js"></script>
