@@ -522,10 +522,15 @@ create table if not exists public.literature_search_plans (
   concepts jsonb not null default '[]'::jsonb,
   databases jsonb not null default '[]'::jsonb,
   limits text,
+  inclusion_criteria text,
+  exclusion_criteria text,
   notes text,
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
+
+alter table public.literature_search_plans add column if not exists inclusion_criteria text;
+alter table public.literature_search_plans add column if not exists exclusion_criteria text;
 
 create table if not exists public.literature_search_runs (
   id text primary key default gen_random_uuid()::text,
