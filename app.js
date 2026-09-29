@@ -867,3 +867,6 @@ window.addEventListener('quire:project-switched',()=>{
     if(sideTitle) sideTitle.textContent=active.title||'Untitled thesis';
   }
 });
+
+
+window.addEventListener('quire:bibliography-copied',()=>showToast('Bibliography copied'));
