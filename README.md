@@ -6,6 +6,10 @@
 
 Quire currently includes:
 
+- Simplified five-destination navigation: Home, Research, Ideas, Thesis and Progress
+- Word-style thesis ribbon with References, Evidence, Review and AI Assist
+- Evidence-aware claim, opposing-evidence and interpretation checks
+
 - Thesis dashboard and project overview
 - Adaptive study setup for qualitative, quantitative, mixed-methods and systematic review/meta-analysis projects
 - Live word-count, evidence, milestone and history-based progress intelligence
