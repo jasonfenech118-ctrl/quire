@@ -1211,3 +1211,20 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 .review-empty strong{font-family:"Libre Caslon Text",serif;font-weight:400}
 .review-empty small{font-size:8px;line-height:1.5;color:var(--muted);margin-top:6px}
 @media(max-width:760px){.review-heading-actions{width:100%;flex-direction:column;align-items:stretch}.review-heading-actions select{max-width:none}}
+
+
+/* ---------- Step 14: claim/evidence checking ---------- */
+.evidence-audit-head{
+  display:flex;justify-content:space-between;align-items:center;border-top:1px solid var(--line);
+  margin-top:14px;padding-top:13px
+}
+.evidence-audit-head strong{font-size:10px}.evidence-audit-head span{font-size:8px;color:var(--muted)}
+.evidence-audit-mount{display:grid;gap:8px;margin-top:8px}
+.evidence-audit-card{border:1px solid #d8cbb9;background:#fbf5ea;border-radius:3px;padding:10px}
+.evidence-audit-card p{font-size:9px;line-height:1.5;margin:6px 0}
+.candidate-evidence{display:grid;gap:4px;margin:8px 0}
+.candidate-evidence>small{font-size:7px;color:var(--muted);text-transform:uppercase;letter-spacing:.1em}
+.candidate-evidence button{
+  border:1px solid #c6d0c8;background:#eef3ee;color:var(--forest);text-align:left;border-radius:3px;
+  padding:6px 7px;font-size:8px
+}
