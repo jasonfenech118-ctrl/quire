@@ -25,14 +25,16 @@ The primary user-facing framework is **Home → Research → Ideas → Thesis �
 - Five-stage flow is responsive and keeps specialist tools underneath the simpler user-facing framework.
 - Contextual workflow handoffs are now event-driven: highlight captured → **Organise evidence**; evidence assigned to a destination → **Use it in writing**; evidence linked to a thesis section → **Continue writing**; writing review → **Check evidence** when evidence issues are detected, otherwise **Continue writing**.
 - The agreed future feature set is preserved in PROJECT_MASTER under four areas: Intelligent Writing, Evidence Intelligence, Research Memory and Guided Thesis Workflow.
+- Writing Companion is now collapsible; the user's Show/Hide preference is stored locally.
+- Companion QA behavior was tightened: empty writing gets a neutral prompt, very short fragments are treated as unfinished thoughts, and recurring-pattern learning still requires a substantive sample.
+- **More tools** retains specialist capability but is no longer a flat list; tools are grouped as Project, Research, Understand & Organise, and Review & Finish.
 
 ## Next exact work
 
-1. QA Step 32 on empty paragraphs, short notes and longer academic paragraphs; verify handoffs do not become noisy or misleading.
-2. Decide whether the writing companion should be collapsible and remember that preference locally.
-3. Review Home and More tools for remaining duplicated paths that undermine the five-stage model.
-4. Complete Step 32 only after the simplified flow and writing companion work coherently together.
-5. Keep Step 32 frontend-first and local. Do not activate Supabase.
+1. Review Home for duplicated cards/actions that repeat primary navigation or the new sensible-next-step guidance.
+2. Perform final code-level Step 32 coherence/accessibility QA across the companion, five-stage flow, handoffs and grouped specialist tools.
+3. If QA is clean, mark Step 32 complete in PROJECT_MASTER/README and define the first milestone from the agreed future backlog before implementing it.
+4. Keep Step 32 frontend-first and local. Do not activate Supabase.
 
 ## Product principles to preserve
 
