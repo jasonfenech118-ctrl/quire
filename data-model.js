@@ -270,19 +270,55 @@
       updatedAt:ts
     });
     state.studySetups.push({
-      id:uid('setup'),projectId:id,studyType:'',population:'',studySetting:'',methodNotes:'',
+      id:uid('setup'),projectId:id,
+      studyType:input.studyType || '',
+      population:input.population || '',
+      studySetting:input.studySetting || '',
+      methodNotes:input.methodNotes || '',
       analysis:[],analysisSoftware:'',analysisRule:'',analysisNotes:'',
-      proposalRequired:true,ethicsRequired:true,dataManagementRequired:false,protocolRegistration:false,
-      proposalRequirements:'',proposalDeadline:'',ethicsDeadline:'',dataStart:'',dataEnd:'',draftDeadline:'',
+      proposalRequired:input.proposalRequired ?? true,
+      ethicsRequired:input.ethicsRequired ?? true,
+      dataManagementRequired:false,protocolRegistration:false,
+      proposalRequirements:'',
+      proposalDeadline:input.proposalDeadline || '',
+      ethicsDeadline:'',dataStart:'',dataEnd:'',draftDeadline:'',
       aiTailorMethod:true,aiMethodChecks:true,aiProtectVoice:true,aiEvidenceLinks:true,
       designDetails:{},createdAt:ts,updatedAt:ts
     });
-    state.objectives.push(...defaultObjectives(id));
-    state.chapters.push(...defaultChapters(id));
-    state.themes.push(...defaultThemes(id));
+
+    const objectiveTitles=Array.isArray(input.objectives)
+      ? input.objectives.map(x=>String(x||'').trim()).filter(Boolean)
+      : [];
+    state.objectives.push(...objectiveTitles.map((title,index)=>({
+      id:uid('objective'),projectId:id,orderIndex:index+1,title,description:'',status:'active',createdAt:ts,updatedAt:ts
+    })));
+
+    const chapterInput=Array.isArray(input.chapters)&&input.chapters.length?input.chapters:null;
+    const chapterRows=chapterInput
+      ? chapterInput.map((item,index)=>{
+          const value=typeof item==='string'?{title:item}:item;
+          return {
+            id:uid('chapter'),projectId:id,
+            number:String(value.number||index+1),
+            title:String(value.title||('Chapter '+(index+1))).trim(),
+            orderIndex:index+1,targetWordCount:Number(value.targetWordCount)||null,
+            currentWordCount:0,status:index===0?'in_progress':'not_started',
+            createdAt:ts,updatedAt:ts
+          };
+        })
+      : defaultChapters(id);
+    state.chapters.push(...chapterRows);
+
+    const themeNames=Array.isArray(input.themes)
+      ? input.themes.map(x=>String(x||'').trim()).filter(Boolean)
+      : [];
+    state.themes.push(...themeNames.map(name=>({
+      id:uid('theme'),projectId:id,name,description:'',createdAt:ts,updatedAt:ts
+    })));
+
     state.progressSnapshots.push({
       id:uid('progress'),projectId:id,snapshotDate:ts.slice(0,10),
-      ...normalizeProgress({currentWords:0,wordsPerWeek:0,articlesTotal:0,articlesReviewed:0,chaptersTotal:6,chaptersDeveloped:0,milestonesTotal:0,milestonesComplete:0,highlights:0,notes:0,source:'legacy'}),
+      ...normalizeProgress({currentWords:0,wordsPerWeek:0,articlesTotal:0,articlesReviewed:0,chaptersTotal:chapterRows.length,chaptersDeveloped:0,milestonesTotal:0,milestonesComplete:0,highlights:0,notes:0,source:'legacy'}),
       source:'legacy',
       createdAt:ts
     });
