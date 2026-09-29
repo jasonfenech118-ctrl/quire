@@ -876,6 +876,7 @@
     state.notes=state.notes.filter(n=>n.articleId!==articleId);
     state.articleThemes=state.articleThemes.filter(x=>x.articleId!==articleId);
     state.evidenceLinks=state.evidenceLinks.filter(x=>x.articleId!==articleId);
+    state.screeningRecords=state.screeningRecords.filter(x=>x.articleId!==articleId);
     state.articles=state.articles.filter(a=>a.id!==articleId);
     writeState(state);
     return true;
