@@ -16,7 +16,7 @@ Quire currently includes:
 - DOI / scholarly metadata import
 - BibTeX / RIS reference-manager import and export
 - Grounded article Copilot with real PDF text retrieval
-- Thesis map
+- Live thesis relationship map
 - Chapter planner and editor
 - Brainstorm board
 - Writing and evidence review
@@ -124,12 +124,21 @@ See `docs/reference-manager.md`.
 - Step 15 — Multi-paper synthesis workspace ✅
 - Step 16 — Adaptive methodology workspace ✅
 - Step 17 — OCR for scanned PDFs ✅
+- Step 18 — Live Thesis Map ✅
 
 ### Step 17 — OCR for scanned PDFs
 
 Quire now detects papers with no usable text layer and can run browser-based OCR on the current page or the whole document. OCR text is stored with page coordinates and rendered back as a selectable overlay, so scanned papers can use highlights, notes, grounded Copilot and exact-passage citations.
 
 See `docs/ocr.md`.
+
+### Step 18 — Live Thesis Map
+
+The Thesis Map is now generated from the active project's real research graph. It traces the research question through objectives, themes, articles/evidence, chapters and sections; supports relationship filtering; provides clickable node inspection and navigation; and highlights structural gaps.
+
+The map also includes a connection editor that writes directly into Quire's existing evidence-link model.
+
+See `docs/thesis-map.md`.
 
 ## Run locally
 
@@ -140,6 +149,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–17 are implemented. The next planned step is **Step 18 — Live Thesis Map**, using the real project graph rather than static prototype content.
+The original eight foundation steps and Phase 2 Steps 9–18 are implemented. The next planned step is **Step 19 — Progress Intelligence**, replacing remaining prototype progress counters with metrics derived from real project activity and history.
 
 © Quire prototype.
