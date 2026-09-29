@@ -4,6 +4,7 @@
 (function(){
   let timer=null;
   const PATTERN_KEY='quire_writing_patterns_v1';
+  const COLLAPSE_KEY='quire_writing_companion_collapsed_v1';
 
   function editor(){return document.getElementById('liveSectionEditor');}
   function clean(text=''){return String(text).replace(/\s+/g,' ').trim();}
@@ -148,15 +149,28 @@
 
   function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
 
+  function setCollapsed(collapsed){
+    const body=document.getElementById('writingCompanionBody');
+    const btn=document.getElementById('toggleWritingCompanion');
+    if(!body||!btn)return;
+    body.hidden=collapsed;
+    btn.textContent=collapsed?'Show':'Hide';
+    btn.setAttribute('aria-expanded',String(!collapsed));
+    document.getElementById('writingCompanion')?.classList.toggle('collapsed',collapsed);
+    localStorage.setItem(COLLAPSE_KEY,collapsed?'1':'0');
+  }
+
   function bind(){
     editor()?.addEventListener('input',queue);
     editor()?.addEventListener('keyup',queue);
     editor()?.addEventListener('mouseup',()=>render(false));
     document.getElementById('reviewCurrentParagraphBtn')?.addEventListener('click',deeperReview);
+    document.getElementById('toggleWritingCompanion')?.addEventListener('click',()=>setCollapsed(document.getElementById('toggleWritingCompanion')?.getAttribute('aria-expanded')==='true'));
+    setCollapsed(localStorage.getItem(COLLAPSE_KEY)==='1');
     window.addEventListener('quire:section-opened',()=>setTimeout(()=>render(false),0));
     render(false);
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireWritingCompanion={render,currentParagraph,understanding,languageSuggestions,reviewCategories,proposedWording,recurringPattern};
+  window.QuireWritingCompanion={render,currentParagraph,understanding,languageSuggestions,reviewCategories,proposedWording,recurringPattern,setCollapsed};
 })();
