@@ -2996,3 +2996,33 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .gap-search-context{grid-template-columns:1fr}
   .gap-search-actions,.gap-search-history{grid-column:auto}
 }
+
+
+/* ---------- Step 59: Research Question Evolution ---------- */
+.question-evolution-panel{margin-top:18px;border-top:1px solid var(--line);padding-top:17px}
+.question-evolution-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.question-evolution-head h3{font-family:"Libre Caslon Text",serif;font-size:18px;font-weight:400;margin:4px 0}
+.question-evolution-head p{font-size:8px;color:var(--muted);line-height:1.5;margin:0;max-width:640px}
+.question-evolution-status{margin-top:12px;border-left:2px solid var(--gold);background:#f7f1e6;padding:9px 11px}
+.question-evolution-status strong,.question-evolution-status small{display:block}
+.question-evolution-status strong{font-size:8px}.question-evolution-status small{font-size:7px;color:var(--muted);margin-top:3px;line-height:1.45}
+.question-evolution-timeline{display:grid;gap:7px;margin-top:10px}
+.question-evolution-empty{font-size:8px;color:var(--muted);border:1px dashed var(--line);padding:12px}
+.question-evolution-entry{display:grid;grid-template-columns:92px 1fr;gap:13px;border:1px solid var(--line);background:#fff;padding:11px}
+.question-version span,.question-version small{display:block}
+.question-version span{font-size:6.5px;font-weight:700;letter-spacing:.1em;color:var(--forest)}
+.question-version small{font-size:7px;color:var(--muted);margin-top:4px}
+.question-evolution-entry>div>strong{display:block;font-family:"Libre Caslon Text",serif;font-weight:400;font-size:14px;line-height:1.45}
+.question-previous{display:block;font-size:7px;color:var(--muted);margin-top:5px}
+.question-evolution-entry p{font-size:8px;line-height:1.5;margin:7px 0}
+.question-evolution-entry button{border:0;background:transparent;color:var(--forest);font-size:7px;font-weight:700;padding:3px 0;cursor:pointer}
+.question-evolution-modal{width:min(760px,96vw)}
+.question-evolution-intro{font-size:9px;color:var(--muted);line-height:1.5}
+.question-version-preview{border-left:2px solid var(--line-dark);background:#f8f4ed;padding:10px 12px;margin:12px 0}
+.question-version-preview span{font-size:6.5px;font-weight:700;color:var(--muted);letter-spacing:.09em}
+.question-version-preview p{font-family:"Libre Caslon Text",serif;font-size:13px;line-height:1.45;margin:5px 0 0}
+@media(max-width:700px){
+  .question-evolution-head{display:block}
+  .question-evolution-head .soft-btn{margin-top:10px}
+  .question-evolution-entry{grid-template-columns:1fr}
+}
