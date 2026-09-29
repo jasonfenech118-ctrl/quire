@@ -498,6 +498,20 @@
           </section>
         </div>
 
+        <section class="search-coverage-panel" aria-labelledby="searchCoverageTitle">
+          <div class="search-coverage-head">
+            <div>
+              <span class="eyebrow">SEARCH-CONCEPT COVERAGE</span>
+              <h2 id="searchCoverageTitle">Does the collected corpus cover the concepts you planned to search?</h2>
+              <p>This is metadata/abstract coverage only. Low coverage can signal a search blind spot, terminology mismatch or genuinely smaller literature—but Quire will not call it a knowledge gap.</p>
+            </div>
+            <label><span>Corpus</span><select id="searchCoverageScope"><option value="all">All collected records</option><option value="screened">Title/abstract included + maybe</option><option value="fulltext">Full-text included + maybe</option></select></label>
+          </div>
+          <div id="searchCoverageSummary" class="search-coverage-summary"></div>
+          <div id="searchCoverageConcepts" class="search-coverage-concepts"></div>
+          <div id="searchCoverageDetail" class="search-coverage-detail" hidden></div>
+        </section>
+
         <section class="screening-panel">
           <div class="screening-panel-head">
             <div><span class="eyebrow">SCREENING</span><h2>Title/abstract → full text</h2></div>
@@ -2277,6 +2291,7 @@
   <script src="search-screening.js"></script>
   <script src="gap-search.js"></script>
   <script src="literature-discovery.js"></script>
+  <script src="search-coverage.js"></script>
   <script src="question-evolution.js"></script>
   <script src="contribution-builder.js"></script>
   <script src="paper-contribution.js"></script>
