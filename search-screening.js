@@ -191,6 +191,33 @@
     window.dispatchEvent(new CustomEvent('quire:search-run-saved',{detail:{run}}));
   }
 
+  function articleOrigin(article){
+    const data=article?.citationData||{};
+    const discovery=data.discovery||null;
+    if(discovery){
+      const state=window.QuireStore.getState();
+      const gap=discovery.gapId?(state.analysisItems||[]).find(item=>item.id===discovery.gapId&&item.kind==='gap_signal'):null;
+      return {
+        key:discovery.gapId?'gap_discovery':'crossref_discovery',
+        label:discovery.gapId?'Gap-targeted scholarly discovery':'Scholarly candidate discovery',
+        detail:[gap?.title,discovery.query].filter(Boolean).join(' · '),
+        query:discovery.query||'',
+        gapId:discovery.gapId||'',
+        runId:discovery.discoveryRunId||''
+      };
+    }
+    if(data.importSource){
+      return {key:'reference_import',label:data.importSource+' reference import',detail:data.citationKey?'Citation key '+data.citationKey:'',query:'',gapId:'',runId:''};
+    }
+    if(data.metadataSource==='Crossref'){
+      return {key:'metadata_lookup',label:'Crossref DOI / title lookup',detail:article.doi?'DOI '+article.doi:'Scholarly metadata record',query:'',gapId:'',runId:''};
+    }
+    if(data.localPdf||data.localFileName){
+      return {key:'pdf_upload',label:'Uploaded PDF',detail:data.localFileName||'',query:'',gapId:'',runId:''};
+    }
+    return {key:'library_record',label:'Library / manual record',detail:'',query:'',gapId:'',runId:''};
+  }
+
   function screenDecisionClass(value){
     if(value==='include')return 'include';
     if(value==='exclude')return 'exclude';
@@ -205,7 +232,8 @@
     const query=(document.getElementById('screeningSearch')?.value||'').trim().toLowerCase();
     return articles.map(article=>({article,record:map.get(article.id)})).filter(({article,record})=>{
       if(query){
-        const hay=[article.title,article.authors,article.year,article.doi].filter(Boolean).join(' ').toLowerCase();
+        const origin=articleOrigin(article);
+        const hay=[article.title,article.authors,article.year,article.doi,origin.label,origin.detail].filter(Boolean).join(' ').toLowerCase();
         if(!hay.includes(query))return false;
       }
       if(screeningFilter==='pending')return record.titleAbstractDecision==='pending';
@@ -237,6 +265,7 @@
           '<span>'+escapeHtml(authorYear(article))+'</span>'+
           '<strong>'+escapeHtml(article.title||'Untitled reference')+'</strong>'+
           '<small>'+escapeHtml([article.journal,article.doi?'DOI '+article.doi:''].filter(Boolean).join(' · '))+'</small>'+
+          '<small class="screening-origin '+escapeHtml(articleOrigin(article).key)+'"><b>Origin:</b> '+escapeHtml(articleOrigin(article).label)+(articleOrigin(article).detail?' · '+escapeHtml(articleOrigin(article).detail.slice(0,180)):'')+'</small>'+
           '<button type="button" data-screen-open="'+article.id+'">Open paper →</button>'+
         '</div>'+
         '<label><span>Title / abstract</span><select data-screen-ta="'+article.id+'" class="decision-'+screenDecisionClass(record.titleAbstractDecision)+'">'+
@@ -303,7 +332,7 @@
     const summary=window.QuireStore.screeningSummary();
     const header=[
       'record_type','date','framework','database_or_source','article_title','authors',
-      'query','title_abstract_decision','full_text_decision','exclusion_reason',
+      'query','record_origin','discovery_gap_id','title_abstract_decision','full_text_decision','exclusion_reason',
       'result_count','imported_count','duplicates_removed','limits',
       'inclusion_criteria','exclusion_criteria','notes'
     ];
@@ -311,29 +340,42 @@
 
     rows.push([
       'search_plan',plan.updatedAt||plan.createdAt||'',plan.framework||'',
-      (plan.databases||[]).join('; '),'','',queryFromPlan(plan),'','','','','','',
+      (plan.databases||[]).join('; '),'','',queryFromPlan(plan),'','','','','','','','',
       plan.limits||'',plan.inclusionCriteria||'',plan.exclusionCriteria||'',plan.notes||''
     ]);
 
     runs.forEach(run=>rows.push([
       'search_run',run.searchedAt||run.createdAt||'',plan.framework||'',run.databaseName||'',
-      '','',run.queryText||'','','','',
+      '','',run.queryText||'','logged_search_run','','','','','',
       run.resultCount||0,run.importedCount||0,run.duplicatesRemoved||0,
       '','','',run.notes||''
     ]));
 
+    const discoveryRuns=(window.QuireStore.getState().analysisItems||[])
+      .filter(item=>item.projectId===window.QuireStore.getActiveProjectId()&&item.kind==='literature_discovery_run');
+    discoveryRuns.forEach(item=>{
+      const p=item.payload||{};
+      rows.push([
+        'discovery_run',p.searchedAt||item.createdAt||'',plan.framework||'',p.source||'Crossref',
+        '','',p.query||'','scholarly_candidate_discovery',p.gapId||'','','','',
+        p.candidateCount||0,(p.importedArticleIds||[]).length,p.duplicateCount||0,
+        '','','',p.boundary||''
+      ]);
+    });
+
     records.forEach(record=>{
       const article=articleMap.get(record.articleId)||{};
+      const origin=articleOrigin(article);
       rows.push([
         'screening',record.screenedAt||record.updatedAt||'',plan.framework||'','',
-        article.title||'',article.authors||'','',
+        article.title||'',article.authors||'',origin.query||'',origin.label||'',origin.gapId||'',
         record.titleAbstractDecision||'pending',record.fullTextDecision||'not_started',
         record.exclusionReason||'','','','','','','',record.notes||''
       ]);
     });
 
     rows.push([
-      'flow_summary','','','','','','','','','','','','','','','',
+      'flow_summary','','','','','','','','','','','','','','','','','','',
       'identified='+summary.identified+
       '; library='+summary.libraryTotal+
       '; title_abstract_screened='+summary.titleScreened+
