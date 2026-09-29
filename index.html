@@ -33,6 +33,7 @@
         <button class="nav-item" data-view="brainstorm"><span>✦</span> Brainstorm</button>
         <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
         <button class="nav-item" data-view="supervision"><span>☷</span> Supervision</button>
+        <button class="nav-item" data-view="export"><span>⇩</span> Thesis Export</button>
         <button class="nav-item" data-view="methodology"><span>◌</span> Methodology</button>
         <button class="nav-item" data-view="setup"><span>⚙</span> Study Setup</button>
       </nav>
@@ -785,6 +786,68 @@
         </div>
       </section>
 
+
+      <section id="export" class="view">
+        <div class="page-heading compact export-page-heading">
+          <div>
+            <span class="eyebrow">THESIS EXPORT</span>
+            <h1>Turn the workspace into a submission draft.</h1>
+            <p>Build a clean document from the real thesis structure, manuscript sections and cited references.</p>
+          </div>
+          <div class="export-heading-actions">
+            <button class="soft-btn" id="refreshExportPreview" type="button">Refresh preview</button>
+            <button class="soft-btn" id="downloadWordBtn" type="button">↓ Word</button>
+            <button class="primary-btn" id="printPdfBtn" type="button">Print / Save PDF</button>
+          </div>
+        </div>
+
+        <div class="export-summary-strip">
+          <div><strong id="exportWordCount">0</strong><span>words</span></div>
+          <div><strong id="exportChapterCount">0</strong><span>chapters</span></div>
+          <div><strong id="exportReferenceCount">0</strong><span>references</span></div>
+          <div><strong id="exportCitationStyleLabel">Harvard</strong><span>citation style</span></div>
+        </div>
+
+        <div class="export-workspace">
+          <aside class="export-settings-panel">
+            <span class="eyebrow">EXPORT SETTINGS</span>
+            <label class="export-setting"><span>Candidate / author name</span><input id="exportAuthorName" type="text" placeholder="Your full name"></label>
+            <label class="export-setting"><span>Submission date</span><input id="exportSubmissionDate" type="date"></label>
+            <label class="export-setting"><span>Citation style</span><select id="exportCitationStyle"><option value="harvard">Harvard</option><option value="apa7">APA 7th</option><option value="vancouver">Vancouver</option></select></label>
+            <label class="export-setting"><span>Export scope</span><select id="exportScope"><option value="whole">Whole thesis</option><option value="chapter">One chapter</option></select></label>
+            <label class="export-setting" id="exportChapterWrap" hidden><span>Chapter</span><select id="exportChapter"></select></label>
+
+            <div class="export-checks">
+              <label><input id="exportIncludeAbstract" type="checkbox" checked><span>Include abstract</span></label>
+              <label><input id="exportIncludeToc" type="checkbox" checked><span>Include contents page</span></label>
+              <label><input id="exportIncludeBibliography" type="checkbox" checked><span>Include bibliography</span></label>
+              <label><input id="exportPageBreakChapters" type="checkbox" checked><span>Start chapters on a new page</span></label>
+            </div>
+
+            <label class="export-setting export-abstract-setting"><span>Abstract</span><textarea id="exportAbstract" rows="8" placeholder="Enter or refine your thesis abstract here."></textarea></label>
+
+            <div id="exportReadiness" class="export-readiness"></div>
+
+            <div class="export-format-note">
+              <strong>Word export</strong>
+              <p>Downloads a Word-compatible <code>.doc</code> file. Final university template details can still be refined in Word.</p>
+              <strong>PDF export</strong>
+              <p>Uses the browser's print engine with an A4 academic print layout. Choose “Save as PDF” in the print dialog.</p>
+            </div>
+          </aside>
+
+          <main class="export-preview-panel">
+            <div class="export-preview-head">
+              <span class="eyebrow">DOCUMENT PREVIEW</span>
+              <small>Generated from the active thesis</small>
+            </div>
+            <div class="export-paper-shell">
+              <div id="thesisExportDocument" class="thesis-export-document"></div>
+            </div>
+          </main>
+        </div>
+      </section>
+
       <section id="methodology" class="view">
         <div class="page-heading compact">
           <div><span class="eyebrow">METHODOLOGY WORKSPACE</span><h1 id="methodologyWorkspaceTitle">Methodology</h1><p id="methodologyWorkspaceIntro">Build a defensible, reproducible research plan.</p></div>
@@ -1521,6 +1584,7 @@
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
   <script src="supervision.js"></script>
+  <script src="thesis-export.js"></script>
   <script src="progress-intelligence.js"></script>
   <script src="app.js"></script>
 </body>
