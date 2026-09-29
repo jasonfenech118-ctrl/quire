@@ -1272,3 +1272,42 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 .methodology-field textarea{width:100%;border:0;resize:vertical;outline:0;background:transparent;color:var(--ink);font-family:"Libre Caslon Text",serif;font-size:12px;line-height:1.6}
 .methodology-field-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
 @media(max-width:850px){.methodology-layout{grid-template-columns:1fr}.methodology-checklist-panel{position:static}.methodology-field-grid{grid-template-columns:1fr}.methodology-heading-actions{width:100%;justify-content:space-between}}
+
+
+/* ---------- Step 17: OCR for scanned PDFs ---------- */
+.ocr-panel{
+  margin:10px 0 12px;padding:12px;border:1px solid #4a443d;border-radius:4px;
+  background:#272420;color:#efe6da
+}
+.ocr-panel[hidden]{display:none}
+.ocr-panel-head{display:flex;justify-content:space-between;gap:10px;align-items:flex-start}
+.ocr-panel-head>div{min-width:0}
+.ocr-panel-head .eyebrow{display:block;color:#bda985;margin-bottom:3px}
+.ocr-panel-head strong{display:block;font-family:"Libre Caslon Text",serif;font-size:13px;font-weight:400}
+.ocr-panel-head button{
+  border:0;background:transparent;color:#aaa196;font-size:17px;line-height:1;padding:0 2px
+}
+.ocr-panel>p{font-size:8px;line-height:1.5;color:#aaa196;margin:9px 0}
+.ocr-options{display:grid;gap:8px}
+.ocr-options label>span{display:block;font-size:7px;color:#b9afa2;margin-bottom:4px}
+.ocr-options select{
+  width:100%;border:1px solid #4a443d;background:#211f1b;color:#e9dfd2;
+  border-radius:3px;padding:7px 8px;font-size:8px
+}
+.ocr-options .ocr-check{display:grid;grid-template-columns:16px 1fr;gap:6px;align-items:start}
+.ocr-options .ocr-check span{margin:1px 0 0;line-height:1.4}
+.ocr-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:10px}
+.ocr-actions .soft-btn{background:#302d29;border-color:#534c44;color:#e4d9ca}
+.ocr-actions .primary-btn{background:#efe6d6;color:#292621;border-color:#efe6d6}
+.ocr-actions .danger-text{color:#c99b94}
+.ocr-progress-track{height:3px;background:#3b3732;margin-top:11px;overflow:hidden}
+.ocr-progress-track span{display:block;width:0;height:100%;background:#b89964;transition:width .15s ease}
+.ocr-status,.ocr-detail{display:block}
+.ocr-status{font-size:8px;margin-top:7px;color:#e3d8c8}
+.ocr-detail{font-size:7px;line-height:1.45;color:#948b80;margin-top:3px}
+.pdf-text-layer[data-source="ocr"] span{cursor:text}
+@media(max-width:800px){
+  #openOcrPanelBtn{display:none}
+  .ocr-actions{display:grid;grid-template-columns:1fr 1fr}
+  .ocr-actions .danger-text{grid-column:1/-1}
+}
