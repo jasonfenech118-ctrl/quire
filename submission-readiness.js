@@ -63,6 +63,13 @@
     const dupes=duplicates(articles);
     out.push(mk('duplicates','Evidence & references','Duplicate references',dupes.size?'review':'clear',
       dupes.size?plural(dupes.size,'library record')+' appear to share a DOI or normalised title.':'No obvious DOI/title duplicates detected.','library','Research Library'));
+    out.push(mk('unused-references','Evidence & references','Unused library references',diag.unused?.length?'info':'clear',
+      diag.unused?.length?plural(diag.unused.length,'library item')+' are not currently cited in the manuscript. This is informational; research libraries commonly contain uncited reading.':'Every current library item is cited.','library','Research Library'));
+    const citedIds=new Set(diag.usedIds||[]);
+    const highlightedArticleIds=new Set((state.highlights||[]).filter(h=>h.projectId===pid).map(h=>h.articleId));
+    const citedWithoutPassage=[...citedIds].filter(id=>!highlightedArticleIds.has(id));
+    out.push(mk('citation-passages','Evidence & references','Cited-source passage trace',citedWithoutPassage.length?'review':'clear',
+      citedWithoutPassage.length?plural(citedWithoutPassage.length,'cited source')+' have no saved highlight/passage in Quire. The citation may still be valid, but page-level support has not been captured here.':'Cited sources have at least one saved passage/highlight for traceability.','library','Research Library'));
     const sectionEvidence=new Set(evidence.map(e=>e.sectionId).filter(Boolean)),written=sections.filter(s=>(Number(s.currentWordCount)||0)>0);
     const noEvidence=written.filter(s=>!sectionEvidence.has(s.id));
     out.push(mk('evidence','Evidence & references','Evidence-linked writing',noEvidence.length?'review':'clear',
