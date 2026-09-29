@@ -80,12 +80,13 @@
     const node=el(id);if(node)node.style.width=clamp(value)+'%';
   }
 
-  function renderBreakdown(live){
+  function renderBreakdown(live,reviewProgress){
     const mount=el('progressBreakdown');
     if(!mount)return;
+    const reviewPct=Number.isFinite(Number(reviewProgress?.score))?Number(reviewProgress.score):pct(live.researchRatio);
     const rows=[
       ['Writing',pct(live.writingRatio),35],
-      ['Research review',pct(live.researchRatio),15],
+      ['Research review',reviewPct,15],
       ['Evidence coverage',pct(live.evidenceRatio),15],
       ['Chapters',pct(live.chapterRatio),15],
       ['Milestones',pct(live.milestoneRatio),10],
@@ -198,8 +199,12 @@
   }
 
   function renderAchievements(ctx){
-    const {setup,live}=ctx;
-    setText('achievementQuestion',setup.researchQuestion?'Research question recorded in Study Setup':'Waiting for Study Setup');
+    const {project,setup,live}=ctx;
+    const topic=String(project.title||'').trim();
+    const directionReady=Boolean(topic&&!['untitled thesis','research project'].includes(topic.toLowerCase()));
+    setText('achievementQuestion',directionReady
+      ? (setup.researchQuestion?'Working question recorded; keep refining it against the literature.':'Research area recorded; the working question can emerge as the literature develops.')
+      : 'Start with a broad research area; the final question does not need to be fixed yet.');
     setText('achievementLibrary',live.articlesTotal
       ? live.articlesTotal+' papers in library · '+live.articlesReviewed+' reviewed'
       : 'No research papers added yet');
@@ -211,7 +216,7 @@
     if(!list)return;
     const items=[...list.querySelectorAll('.achievement')];
     const statuses=[
-      Boolean(setup.researchQuestion),
+      directionReady,
       live.articlesTotal>0,
       live.evidenceLinks>0||live.highlights>0,
       live.currentWords>0,
@@ -333,16 +338,20 @@
     else if(overall>=55)headline='The thesis is moving through its middle stages.';
     else if(overall>=30)headline='Research and writing are becoming connected.';
     setText('projectStatusHeadline',headline);
+    const researchReview=window.QuireResearchFoundation?.reviewProgress?.(window.QuireStore.getActiveProjectId())||null;
+    const articlePct=Number.isFinite(Number(researchReview?.score))?Number(researchReview.score):pct(live.researchRatio);
     setText('projectStatusCopy',
-      'Calculated from real project records: writing '+pct(live.writingRatio)+'%, research review '+pct(live.researchRatio)+'%, evidence coverage '+pct(live.evidenceRatio)+'%, chapters '+pct(live.chapterRatio)+'%, milestones '+pct(live.milestoneRatio)+'% and setup '+pct(live.setupRatio)+'%.');
+      'Calculated from real project records: writing '+pct(live.writingRatio)+'%, research review '+articlePct+'%, evidence coverage '+pct(live.evidenceRatio)+'%, chapters '+pct(live.chapterRatio)+'%, milestones '+pct(live.milestoneRatio)+'% and setup '+pct(live.setupRatio)+'%. Research review is process-based and does not mean that '+articlePct+'% of all existing literature has been read.');
 
     const wordPct=pct(live.writingRatio);
-    const articlePct=pct(live.researchRatio);
     const chapterPct=pct(live.chapterRatio);
     const milestonePct=pct(live.milestoneRatio);
     setText('metricWords',live.currentWords.toLocaleString());
     setText('metricWordsTarget',live.wordTarget?'of '+live.wordTarget.toLocaleString()+' target · '+wordPct+'%':'word target not set');
-    setText('metricArticles',live.articlesReviewed+' / '+live.articlesTotal);
+    setText('metricArticles',articlePct+'%');
+    setText('metricArticlesTarget',researchReview
+      ? researchReview.counts.reviewed+' reviewed in depth · '+researchReview.counts.papers+' collected'
+      : live.articlesReviewed+' reviewed · '+live.articlesTotal+' collected');
     setText('metricChapters',live.chaptersDeveloped+' / '+live.chaptersTotal);
     setText('metricMilestones',live.milestonesComplete+' / '+live.milestonesTotal);
     setWidth('wordProgressBar',wordPct);setWidth('articleProgressBar',articlePct);setWidth('chapterProgressBar',chapterPct);setWidth('milestoneProgressBar',milestonePct);
@@ -356,7 +365,7 @@
     setText('overviewResearchQuestion',project.researchQuestion||'Add your research question in Study Setup.');
 
     renderAchievements(ctx);
-    renderBreakdown(live);
+    renderBreakdown(live,researchReview);
 
     const forecast=forecastFor(project,live);
     renderPace(forecast,live);
@@ -399,10 +408,7 @@
     const objectives=state.objectives.filter(o=>o.projectId===projectId&&o.status!=='archived');
     const themes=state.themes.filter(t=>t.projectId===projectId);
 
-    const heroTitle=document.querySelector('.hero-card h2');
-    if(heroTitle)heroTitle.textContent=project.researchQuestion||'Define your research question in Study Setup.';
-    const heroStats=el('dashboardThesisStats');
-    if(heroStats)heroStats.textContent=objectives.length+' objectives · '+themes.length+' themes · '+live.evidenceArticles+' evidence-backed papers';
+    window.QuireResearchFoundation?.renderHomeHero?.();
 
     const values=[live.articlesTotal,live.highlights,live.notes,themes.length];
     document.querySelectorAll('.stat-panel .stats > div strong').forEach((node,index)=>{
