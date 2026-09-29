@@ -44,6 +44,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 42: Supervisor Review Package — implemented.
 - Step 43: End-of-Session Checkpoint — implemented.
 - Step 44: Integrated Value & UX Audit — implemented.
+- Step 45: Better Idea Capture & Source-to-Idea Handoffs — implemented.
 
 ## Step 32 — implemented
 
@@ -140,7 +141,11 @@ Home now supports an explicit **End session** checkpoint stored locally per proj
 
 The integrated audit checked syntax for the newly touched workflow modules, verified that each new module is loaded by the application, and checked direct app-level event bindings against current DOM IDs. It found and fixed stale Home Copilot wiring left behind by the earlier Home simplification.
 
-## Added-value roadmap after Step 44
+## Step 45 — implemented
+
+Idea capture now uses an in-app provenance-aware modal rather than browser prompts. Selected PDF passages can be sent directly to Ideas with article ID, page, source label and excerpt preserved.
+
+## Added-value roadmap after Step 45
 
 A second product review identified the next high-value frontend milestones:
 
