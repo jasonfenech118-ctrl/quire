@@ -22,11 +22,29 @@ document.querySelectorAll('[data-go-modal]').forEach(btn => btn.addEventListener
   modal.hidden = true; showView(btn.dataset.goModal);
 }));
 
-fileInput.addEventListener('change', e => {
+fileInput.addEventListener('change', async e => {
   const file = e.target.files[0];
   if(!file) return;
   modal.hidden = true;
-  showToast(file.name + ' added to your library (prototype)');
+  try{
+    showToast('Adding '+file.name+'…');
+    let article;
+    const pendingId=window.QuirePdfReader?.pendingArticleId;
+    if(pendingId){
+      article=await window.QuirePdfReader.attachFileToArticle(pendingId,file);
+      window.QuirePdfReader.pendingArticleId=null;
+    }else{
+      article=await window.QuirePdfReader.importFile(file);
+    }
+    renderLibraryArticles();
+    showView('reader');
+    showToast((article?.title || file.name)+' is ready to read');
+  }catch(err){
+    console.error(err);
+    showToast(err.message || 'Quire could not add this PDF');
+  }finally{
+    fileInput.value='';
+  }
 });
 
 document.querySelectorAll('.prompt-chip').forEach(chip => chip.addEventListener('click', () => {
@@ -709,3 +727,71 @@ document.getElementById('pullCloudBtn')?.addEventListener('click',async()=>{
 
 refreshAccountUI();
 window.QuireCloud?.init?.();
+
+
+// ---------- Step 3: live research library + PDF opening ----------
+function articleYearLabel(article){
+  return article.year ? String(article.year) : 'PDF';
+}
+
+async function renderLibraryArticles(){
+  const mount=document.getElementById('articleListMount');
+  if(!mount || !window.QuireStore) return;
+  const articles=window.QuireStore.listArticles();
+  const count=document.querySelector('.filter-tabs button:first-child span');
+  if(count) count.textContent=String(articles.length);
+
+  if(!articles.length){
+    mount.innerHTML='<div class="project-panel"><span class="eyebrow">RESEARCH LIBRARY</span><h3>No articles yet</h3><p>Upload your first PDF to start building the evidence base for this thesis.</p><button class="primary-btn" id="emptyLibraryUpload" type="button">＋ Add article</button></div>';
+    document.getElementById('emptyLibraryUpload')?.addEventListener('click',()=>fileInput.click());
+    return;
+  }
+
+  mount.innerHTML=articles
+    .slice()
+    .sort((x,y)=>(y.createdAt||'').localeCompare(x.createdAt||''))
+    .map(article=>{
+      const citation=article.citationData || {};
+      const meta=[article.authors,article.journal].filter(Boolean).join(' · ') || 'Imported PDF';
+      const pageText=citation.pageCount ? citation.pageCount+' pages' : 'PDF';
+      const reviewed=article.readingStatus==='reviewed'?'Reviewed':article.readingStatus==='reading'?'Reading':'Unread';
+      return '<article class="article-card" data-article-id="'+escapeHtml(article.id)+'">'+
+        '<div class="article-main">'+
+          '<div class="pdf-thumb">PDF</div>'+
+          '<div>'+
+            '<div class="tags"><span>'+escapeHtml(articleYearLabel(article))+'</span><span>'+escapeHtml(reviewed)+'</span></div>'+
+            '<h3>'+escapeHtml(article.title || 'Untitled article')+'</h3>'+
+            '<p>'+escapeHtml(meta)+'</p>'+
+            '<div class="meta-row"><span>'+escapeHtml(pageText)+'</span><span data-pdf-status="'+escapeHtml(article.id)+'">Checking PDF…</span></div>'+
+          '</div>'+
+        '</div>'+
+        '<div class="article-score"><strong>Open paper</strong><span>Quire reader</span></div>'+
+      '</article>';
+    }).join('');
+
+  mount.querySelectorAll('[data-article-id]').forEach(card=>{
+    card.addEventListener('click',async()=>{
+      const id=card.dataset.articleId;
+      showView('reader');
+      try{await window.QuirePdfReader.openArticle(id);}
+      catch(err){console.error(err);showToast(err.message || 'Could not open PDF');}
+    });
+  });
+
+  for(const article of articles){
+    const target=mount.querySelector('[data-pdf-status="'+CSS.escape(article.id)+'"]');
+    if(!target) continue;
+    try{
+      const hasPdf=await window.QuirePdfStore.has(article.id);
+      target.innerHTML=hasPdf
+        ? '<span class="local-pdf-badge">● PDF on this device</span>'
+        : '<span class="local-pdf-badge missing-pdf-badge">○ Attach PDF</span>';
+    }catch(e){
+      target.textContent='Local file status unavailable';
+    }
+  }
+}
+
+window.addEventListener('quire:store-changed',()=>renderLibraryArticles());
+window.addEventListener('quire:cloud-pulled',()=>renderLibraryArticles());
+renderLibraryArticles();
