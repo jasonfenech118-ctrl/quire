@@ -206,8 +206,19 @@ create table if not exists public.progress_snapshots (
   milestones_complete integer not null default 0,
   highlights integer not null default 0,
   notes integer not null default 0,
+  evidence_links integer not null default 0,
+  sections_total integer not null default 0,
+  sections_with_evidence integer not null default 0,
+  overall_progress integer not null default 0 check (overall_progress between 0 and 100),
+  source text not null default 'legacy',
   created_at timestamptz not null default now()
 );
+
+alter table public.progress_snapshots add column if not exists evidence_links integer not null default 0;
+alter table public.progress_snapshots add column if not exists sections_total integer not null default 0;
+alter table public.progress_snapshots add column if not exists sections_with_evidence integer not null default 0;
+alter table public.progress_snapshots add column if not exists overall_progress integer not null default 0;
+alter table public.progress_snapshots add column if not exists source text not null default 'legacy';
 
 create table if not exists public.ai_threads (
   id text primary key default gen_random_uuid()::text,
