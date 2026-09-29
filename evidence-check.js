@@ -55,6 +55,52 @@
     })||null;
   }
 
+  function checkClaimAgainstArticle(claim,articleId){
+    const state=window.QuireStore.getState();
+    const article=state.articles.find(a=>a.id===articleId);
+    if(!article)return {status:'insufficient',message:'The selected article is no longer available.',article:null,matches:[]};
+    const rows=projectEvidence().filter(row=>row.article?.id===articleId)
+      .map(row=>({...row,score:similarity(claim,row.text)}))
+      .sort((a,b)=>b.score-a.score);
+    const best=rows[0]?.score||0;
+    if(!rows.length){
+      return {status:'insufficient',message:'Quire has no saved passage from this paper to verify the claim. Open the paper and inspect the relevant page before citing it.',article,matches:[]};
+    }
+
+    const negation=/\b(no|not|never|without|did not|does not|was not|were not|failed to|no association|no difference)\b/i;
+    const claimNeg=negation.test(claim);
+    const bestNeg=negation.test(rows[0]?.highlight?.highlightedText||rows[0]?.text||'');
+    if(best>=.1 && claimNeg!==bestNeg){
+      return {status:'possible-contradiction',message:'The closest saved passage appears to differ in direction or negation from your claim. Re-read the source before using this citation.',article,matches:rows.slice(0,3)};
+    }
+    if(best>=.18)return {status:'supports',message:'A saved passage appears closely related to this claim. Check the exact wording, population and context before finalising the citation.',article,matches:rows.slice(0,3)};
+    if(best>=.08)return {status:'partial',message:'The paper contains related saved evidence, but Quire cannot verify that it supports the full wording of your claim. Consider narrowing the claim or checking the paper directly.',article,matches:rows.slice(0,3)};
+    return {status:'insufficient',message:'The saved evidence from this paper does not closely match the claim. Do not rely on the citation until you verify the source.',article,matches:rows.slice(0,3)};
+  }
+
+  function showClaimCheck(claim,articleId){
+    const result=checkClaimAgainstArticle(claim,articleId);
+    window.showView?.('review');
+    const mount=document.getElementById('evidenceAuditMount');
+    if(!mount)return result;
+    const labels={supports:'Related support found',partial:'Partial / uncertain support','possible-contradiction':'Possible contradiction',insufficient:'Insufficient evidence'};
+    document.getElementById('evidenceAuditCount').textContent='1 claim check';
+    mount.innerHTML='<article class="evidence-audit-card claim-check '+result.status+'">'+
+      '<span class="suggestion-type warning">'+escapeHtml((labels[result.status]||result.status).toUpperCase())+'</span>'+
+      '<p><strong>'+escapeHtml(shorten(claim,260))+'</strong></p>'+
+      '<p>'+escapeHtml(result.message)+'</p>'+
+      (result.article?'<small>'+escapeHtml(label(result.article))+' · '+escapeHtml(result.article.title||'')+'</small>':'')+
+      (result.matches?.length?'<div class="candidate-evidence"><small>Closest saved passages</small>'+result.matches.map(row=>
+        '<button type="button" data-claim-highlight="'+row.highlight.id+'">'+escapeHtml(shorten(row.highlight.highlightedText||row.text,160))+' · p. '+(row.highlight.pageNumber||'—')+'</button>'
+      ).join('')+'</div>':'')+
+      '</article>';
+    mount.querySelectorAll('[data-claim-highlight]').forEach(btn=>btn.addEventListener('click',()=>{
+      window.showView?.('chapters');
+      setTimeout(()=>window.QuireEvidenceWriting?.open?.(),100);
+    }));
+    return result;
+  }
+
   function audit(){
     const section=activeSection();
     const mount=document.getElementById('evidenceAuditMount');
@@ -129,7 +175,12 @@
   function bind(){
     document.getElementById('runEvidenceCheck')?.addEventListener('click',audit);
     document.getElementById('reviewSectionSelect')?.addEventListener('change',()=>document.getElementById('evidenceAuditMount').innerHTML='');
+    window.addEventListener('quire:evidence-check-request',e=>{
+      const claim=e.detail?.claim||'';
+      const articleId=e.detail?.articleId;
+      if(claim&&articleId)showClaimCheck(claim,articleId);
+    });
   }
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireEvidenceCheck={audit};
+  window.QuireEvidenceCheck={audit,checkClaimAgainstArticle,showClaimCheck};
 })();
