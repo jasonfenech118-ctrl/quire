@@ -607,6 +607,7 @@
     if(!articleId) return importFile(file);
     if(!(file.type==='application/pdf'||/\.pdf$/i.test(file.name||''))) throw new Error('Please choose a PDF file.');
     await PdfStore.save(articleId,file);
+    await PdfStore.removeTextIndex(articleId).catch(()=>{});
     const article=window.QuireStore.getArticle(articleId);
     window.QuireStore.updateArticle(articleId,{citationData:{...(article?.citationData||{}),localFileName:file.name,fileSize:file.size,localPdf:true}});
     await openArticle(articleId);
