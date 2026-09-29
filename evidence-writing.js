@@ -118,7 +118,7 @@
     const editor=document.getElementById('liveSectionEditor');
     if(!editor) return;
     editor.focus();
-    const citation='('+articleLabel(a)+')';
+    const citation=window.QuireCitations?.citationForArticle?.(a) || '('+articleLabel(a)+')';
     const text=note?.body?note.body:'Evidence: '+h.highlightedText;
     document.execCommand('insertHTML',false,'<p data-evidence-link="'+escapeHtml(linkId)+'">'+escapeHtml(text)+' <span class="inline-citation">'+escapeHtml(citation)+'</span></p>');
     editor.dispatchEvent(new Event('input',{bubbles:true}));
