@@ -2674,3 +2674,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:700px){
   .nav-more-items .nav-item{font-size:8px}
 }
+
+.writing-library-context{
+  grid-column:1/-1;display:flex;justify-content:space-between;align-items:flex-start;gap:16px;
+  margin:0 0 12px;padding:13px 15px;border-left:3px solid var(--forest);background:#eef1eb
+}
+.writing-library-context div{min-width:0}.writing-library-context strong,.writing-library-context small{display:block}
+.writing-library-context strong{font-family:"Libre Caslon Text",serif;font-size:14px;font-weight:400;margin:3px 0}
+.writing-library-context small{font-size:8px;color:var(--muted);line-height:1.45;max-width:680px}
+.writing-library-context button,.library-cite-writing{border:1px solid var(--line);background:#fffdf8;color:var(--forest);border-radius:3px;padding:6px 8px;font-size:8px;cursor:pointer}
+.library-cite-writing{margin-top:8px;white-space:nowrap}
+@media(max-width:760px){.writing-library-context{display:block}.writing-library-context button{margin-top:10px}}
