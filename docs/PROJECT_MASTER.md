@@ -29,7 +29,20 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 27: Critical Appraisal & Quality Assessment — implemented.
 - Step 28: Research Data & Analysis Workspace — implemented.
 - Step 29: Submission Readiness & Integrity — implemented and documented.
-- Step 30: Unified Writing Workspace & Academic Ribbon — existing code foundation; reconciliation/refinement in progress.
+- Step 30: Unified Writing Workspace & Academic Ribbon — implemented.
+- Step 31: Guided five-destination product framework — implemented; primary navigation simplified to Home, Research, Ideas, Thesis and Progress while specialist tools remain available contextually.
+- Step 32: Writing Understanding & Language Coach — in progress.
+
+## Step 32 intent
+
+The writing workspace should actively help the researcher express their own thinking more clearly without taking authorship away from them. Beside the manuscript, Quire should:
+- reflect back what it understands the current paragraph to mean, allowing the researcher to detect ambiguity;
+- surface optional grammar, sentence-structure, clarity and vocabulary guidance while the researcher writes;
+- favour precise natural academic English over unnecessarily complex vocabulary;
+- identify overly long sentences, repeated connectors, conversational wording and claims whose certainty may exceed the evidence;
+- keep all proposed wording separate from the manuscript until the researcher explicitly accepts or applies a change;
+- connect deeper paragraph review to the existing Writing Review/evidence workflows;
+- eventually support adaptive guidance based on recurring writing patterns, without presenting a simplistic language score.
 
 ## Step 30 intent
 
@@ -65,7 +78,7 @@ A step is not considered complete only because a JavaScript or documentation fil
 
 ## Future roadmap direction
 
-After Step 30 is reconciled and approved, future numbered steps should be added here before implementation. Likely areas include deeper contextual academic assistance, research provenance/idea tracing, usability consolidation, accessibility/device testing, export fidelity and eventual controlled backend activation. These are roadmap directions, not yet claims of implementation.
+After Step 32, continue consolidating Quire around the five-stage mental model: Discover → Understand → Organise → Write → Review. Likely later areas include research provenance/idea tracing, further usability consolidation, adaptive writing guidance, accessibility/device testing, export fidelity and eventual controlled backend activation. These are roadmap directions, not yet claims of implementation.
 
 ## New-chat recovery
 
