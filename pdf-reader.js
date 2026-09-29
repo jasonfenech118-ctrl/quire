@@ -721,7 +721,11 @@
       await enrichArticleFromPdf(articleId,stored.name);
       await renderPage(1);
       ensureTextIndex(articleId).catch(err=>console.warn('PDF text indexing failed',err));
-      const updated=window.QuireStore?.getArticle(articleId);
+      let updated=window.QuireStore?.getArticle(articleId);
+      if(updated?.readingStatus==='unread'){
+        window.QuireStore.updateArticle(articleId,{readingStatus:'reading'});
+        updated=window.QuireStore?.getArticle(articleId);
+      }
       if(title) title.textContent=updated?.title||titleFromFilename(stored.name);
       if(meta){const bits=[updated?.authors,updated?.year,pdfDoc.numPages+' pages'].filter(Boolean);meta.textContent=bits.join(' · ');}
       refreshHighlightSidebar();
