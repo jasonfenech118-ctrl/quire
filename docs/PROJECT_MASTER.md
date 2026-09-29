@@ -37,6 +37,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 35: Structured Thesis-Value Paper Intelligence — implemented.
 - Step 36: Contradiction & Counter-Evidence Synthesis — implemented.
 - Step 37: Critical Writing Coach — implemented.
+- Step 38: Selected-Passage Reading Assistant — implemented.
 
 ## Step 32 — implemented
 
@@ -105,7 +106,11 @@ The Synthesis workspace now combines researcher-marked contradictory passages wi
 
 Writing Review now prompts for critical engagement when substantive paragraphs cite sources without explicit comparison, present evidence without visible interpretation, or omit limitations/context/alternative explanations. These prompts are non-destructive and only appear when enough paragraph/evidence context exists.
 
-## Agreed future feature backlog — after Step 37
+## Step 38 — implemented
+
+Selected PDF text now exposes an **Explain** action. The reader keeps the exact source passage/page visible and offers separate plain-reading, academic-reading, thesis-relevance and limitation/context prompts. Local mode explicitly avoids presenting an unverified paraphrase as authoritative technical meaning.
+
+## Agreed future feature backlog — after Step 38
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
