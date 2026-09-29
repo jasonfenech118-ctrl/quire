@@ -2790,3 +2790,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .synthesis-disagreements{display:grid;gap:6px;margin-top:8px}
 .synthesis-disagreements button{display:grid;gap:2px;text-align:left;border:1px solid var(--line);background:#fff;padding:8px;cursor:pointer}
 .synthesis-disagreements button strong{font-size:8px}.synthesis-disagreements button small{font-size:7px;color:var(--muted)}
+
+
+/* ---------- Step 41: living argument map ---------- */
+.thesis-map-graph{grid-template-columns:240px 260px 240px 270px 280px 300px 320px;min-width:2350px}
+.thesis-map-node.node-argument{border-left:3px solid #8b6f8f;background:#fcf8fc}
+.thesis-map-node.node-claim{border-left:3px solid #6f7e9b;background:#f8f9fc}
