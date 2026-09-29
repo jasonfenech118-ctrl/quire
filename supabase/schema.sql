@@ -686,3 +686,34 @@ for all using (
 with check (
   exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
 );
+
+
+-- Step 27: submission readiness custom checklist
+create table if not exists public.submission_items (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  title text not null,
+  category text not null default 'Institution / local requirements',
+  completed boolean not null default false,
+  note text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_submission_items_project on public.submission_items(project_id);
+
+drop trigger if exists trg_submission_items_updated_at on public.submission_items;
+create trigger trg_submission_items_updated_at
+before update on public.submission_items
+for each row execute function public.set_updated_at();
+
+alter table public.submission_items enable row level security;
+
+drop policy if exists "own submission items" on public.submission_items;
+create policy "own submission items" on public.submission_items
+for all using (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+)
+with check (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+);
