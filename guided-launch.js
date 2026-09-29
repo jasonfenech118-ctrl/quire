@@ -131,7 +131,7 @@
   function updateSummary(){
     if(step!==5)return;
     const title=el('launchTitle').value.trim()||'Untitled thesis';
-    const question=el('launchQuestion').value.trim()||'Research question not yet defined';
+    const question=el('launchQuestion').value.trim()||'Research direction still open — the literature can refine it';
     const type=selectedStudyType();
     const typeLabel={
       qualitative:'Qualitative',
@@ -147,7 +147,7 @@
     el('launchSummaryTitle').textContent=title;
     el('launchSummaryQuestion').textContent=question;
     el('launchSummaryType').textContent=typeLabel;
-    el('launchSummaryObjectives').textContent=objectiveCount+' objective'+(objectiveCount===1?'':'s')+' entered';
+    el('launchSummaryObjectives').textContent=objectiveCount+' early line'+(objectiveCount===1?'':'s')+' of enquiry entered';
     el('launchSummaryTimeline').textContent=(Number(el('launchWordTarget').value)||0).toLocaleString()+' word target'+(deadline?' · deadline '+deadline:' · no final deadline yet');
     el('launchSummaryStructure').textContent=chapters.length+' chapter structure';
   }
@@ -166,7 +166,7 @@
     const objectives=['launchObjective1','launchObjective2','launchObjective3']
       .map(id=>el(id).value.trim()).filter(Boolean);
 
-    const project=window.QuireStore.createProject({
+    const input={
       title:el('launchTitle').value.trim(),
       degreeName:el('launchDegree').value.trim(),
       institutionName:el('launchInstitution').value.trim(),
@@ -182,10 +182,15 @@
       proposalDeadline:el('launchProposalDeadline').value||null,
       finalDeadline:el('launchFinalDeadline').value||null,
       startDate:new Date().toISOString().slice(0,10)
-    });
+    };
+
+    const activeId=window.QuireStore.getActiveProjectId?.();
+    const project=window.QuireStore.isStarterProject?.(activeId)
+      ? window.QuireStore.configureStarterProject?.(input,activeId)
+      : window.QuireStore.createProject(input);
 
     if(!project){
-      setMessage('Quire could not create the project.');
+      setMessage('Quire could not prepare the research project.');
       return;
     }
 
@@ -195,7 +200,8 @@
     window.QuireProjects?.render?.();
     window.QuireProgress?.captureNow?.();
     renderReadiness();
-    window.showView?.('overview');
+    window.showView?.('dashboard');
+    window.QuireResearchFoundation?.render?.();
     window.dispatchEvent(new CustomEvent('quire:project-launched',{detail:{projectId:project.id}}));
   }
 
@@ -285,22 +291,27 @@
     const state=window.QuireStore?.getState?.()||{};
     projectId=projectId||window.QuireStore?.getActiveProjectId?.();
     const project=(state.projects||[]).find(p=>p.id===projectId)||null;
-    const setup=(state.studySetups||[]).find(s=>s.projectId===projectId)||null;
     if(!project)return {percent:0,complete:0,total:7,tasks:[]};
 
     const articles=(state.articles||[]).filter(x=>x.projectId===projectId);
-    const sections=(state.sections||[]).filter(x=>x.projectId===projectId);
-    const evidence=(state.evidenceLinks||[]).filter(x=>x.projectId===projectId);
-    const objectives=(state.objectives||[]).filter(x=>x.projectId===projectId&&x.status!=='archived');
+    const reviewed=articles.filter(x=>x.readingStatus==='reviewed');
+    const plan=(state.searchPlans||[]).find(x=>x.projectId===projectId)||{};
+    const searchStarted=(plan.concepts||[]).some(c=>(c.terms||[]).length)||(plan.databases||[]).length>0||(state.searchRuns||[]).some(x=>x.projectId===projectId);
+    const compared=articles.filter(article=>{
+      const d=article.citationData?.synthesis||{};
+      return ['design','sample','methods','findings','limitations','relevance'].some(key=>String(d[key]||'').trim());
+    }).length;
+    const gaps=(state.analysisItems||[]).filter(x=>x.projectId===projectId&&x.kind==='gap_signal');
+    const hasTopic=Boolean(String(project.title||'').trim()&&!['untitled thesis','research project'].includes(String(project.title||'').trim().toLowerCase()));
 
     const tasks=[
-      {id:'question',label:'Define the research question',done:Boolean(String(project.researchQuestion||'').trim()),target:'setup',hint:'Clarify what the project is trying to answer.'},
-      {id:'design',label:'Choose the study design',done:Boolean(setup?.studyType),target:'setup',hint:'Qualitative, quantitative, mixed methods or systematic review.'},
-      {id:'objectives',label:'Define at least one objective',done:objectives.length>0,target:'map',hint:'Give the project a clear set of research objectives.'},
-      {id:'target',label:'Set the thesis word target',done:Number(project.wordTarget)>0,target:'setup',hint:'Give progress calculations a meaningful target.'},
-      {id:'deadline',label:'Set the final deadline',done:Boolean(project.finalDeadline),target:'setup',hint:'This unlocks timeline and pace calculations.'},
-      {id:'source',label:'Add the first research source',done:articles.length>0,target:'library',hint:'Upload a PDF, add a DOI, or import references.'},
-      {id:'evidence',label:'Connect evidence to the thesis',done:evidence.some(e=>e.sectionId||e.chapterId||e.objectiveId||e.themeId),target:'map',hint:'Link a source or highlight to where it will be used.'}
+      {id:'topic',label:'Define the research area',done:hasTopic,target:'setup',hint:'Start with the broad area you want to explore.'},
+      {id:'search',label:'Plan how to search the field',done:Boolean(searchStarted),target:'searchscreen',hint:'Develop concepts, keywords and sources before narrowing too early.'},
+      {id:'sources',label:'Build the literature base',done:articles.length>0,target:'library',hint:'Collect relevant papers from across the field.'},
+      {id:'reading',label:'Read across several papers',done:reviewed.length>=3,target:'library',hint:'Read broadly enough to compare findings, methods and limitations.'},
+      {id:'compare',label:'Compare papers across the field',done:compared>=2,target:'synthesis',hint:'Look for recurring themes, disagreement and methodological limitations.'},
+      {id:'gap',label:'Record and test possible gaps',done:gaps.length>0,target:'synthesis',hint:'Treat gaps as hypotheses to test with further searching.'},
+      {id:'question',label:'Refine the working research question',done:Boolean(String(project.researchQuestion||'').trim()&&gaps.length>0),target:'setup',hint:'Refine the question after the literature starts revealing what is missing.'}
     ];
     const complete=tasks.filter(t=>t.done).length;
     return {percent:Math.round(complete/tasks.length*100),complete,total:tasks.length,tasks};
