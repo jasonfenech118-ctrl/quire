@@ -27,7 +27,7 @@ Do not remove the existing advanced modules. Hide complexity contextually and re
 
 Status: **reconciliation/refinement in progress**.
 
-Latest saved refinement: Step 30 now has a continuous writing loop. The ribbon preserves the active section and citation insertion point; Library/Reader/Review can show a global “Return to writing” control; evidence discovery’s “Add reference” now inserts a real inline citation; manuscript Copilot requests are handled in Writing Review without silently changing manuscript text; and the stale Step 11 evidence placeholder was replaced with current guidance.
+Latest saved refinement: Step 30’s continuous writing loop is now wired end-to-end at code level. Search my library performs a real contextual filter from the selected claim and offers “Cite in writing”; zero matches lead naturally to scholarly evidence discovery; citation insertion preserves the writing position; Library/Reader/Review expose a global return path to the originating section; and manuscript Copilot requests are handled in Writing Review without silent manuscript edits.
 
 Do not start Step 31 yet.
 
