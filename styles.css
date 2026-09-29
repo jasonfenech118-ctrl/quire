@@ -217,6 +217,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 .collection.active{background:#e9e3d9;color:var(--ink);font-weight:600}
 .collection.add{margin-top:10px;color:var(--forest)}
 .article-list{display:grid;gap:9px}
+.library-empty-onboarding{padding:30px;max-width:860px}
+.library-empty-onboarding h3{font-family:"Libre Caslon Text",serif;font-size:25px;font-weight:400;margin:7px 0 10px}
+.library-empty-onboarding p{font-size:11px;line-height:1.65;color:var(--muted);max-width:720px}
+.library-empty-onboarding>small{display:block;margin-top:14px;font-size:8px;line-height:1.5;color:var(--muted)}
+.library-empty-actions{display:flex;flex-wrap:wrap;gap:8px;margin-top:18px}
 .article-card{
   background:rgba(255,253,248,.82);border:1px solid var(--line);border-radius:4px;padding:18px;
   display:flex;justify-content:space-between;gap:20px;align-items:center;transition:.18s ease
