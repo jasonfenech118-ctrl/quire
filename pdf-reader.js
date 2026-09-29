@@ -127,18 +127,53 @@
     if(next) next.disabled=!pdfDoc||currentPage>=pdfDoc.numPages;
   }
 
+  async function renderOcrTextLayer(layer,viewport,pageNumber){
+    if(!currentArticleId) return false;
+    const index=await PdfStore.getTextIndex(currentArticleId).catch(()=>null);
+    const page=index?.pages?.find(p=>Number(p.page)===Number(pageNumber));
+    const segments=Array.isArray(page?.segments)?page.segments.filter(s=>s?.text&&s?.rect):[];
+    if(!segments.length) return false;
+
+    for(const segment of segments){
+      const rect=segment.rect;
+      const span=document.createElement('span');
+      span.textContent=segment.text+' ';
+      span.dataset.ocr='true';
+      span.style.left=(rect.x*viewport.width)+'px';
+      span.style.top=(rect.y*viewport.height)+'px';
+      span.style.width=(rect.w*viewport.width)+'px';
+      span.style.height=(rect.h*viewport.height)+'px';
+      span.style.fontSize=Math.max(5,rect.h*viewport.height*.92)+'px';
+      span.style.fontFamily='sans-serif';
+      span.style.lineHeight=Math.max(5,rect.h*viewport.height)+'px';
+      span.style.transformOrigin='0 0';
+      layer.appendChild(span);
+
+      const targetWidth=Math.max(1,rect.w*viewport.width);
+      const measured=span.getBoundingClientRect().width;
+      if(targetWidth>0&&measured>0) span.style.transform='scaleX('+(targetWidth/measured)+')';
+    }
+    layer.dataset.source='ocr';
+    return true;
+  }
+
   async function renderTextLayer(page,viewport){
     const layer=document.getElementById('pdfTextLayer');
-    if(!layer) return;
+    if(!layer) return 'none';
     layer.innerHTML='';
+    layer.dataset.source='';
     layer.style.width=viewport.width+'px';
     layer.style.height=viewport.height+'px';
 
     const textContent=await page.getTextContent();
     const styles=textContent.styles||{};
+    const items=(textContent.items||[]).filter(item=>String(item.str||'').trim());
 
-    for(const item of textContent.items){
-      if(!item.str) continue;
+    if(!items.length){
+      return (await renderOcrTextLayer(layer,viewport,page.pageNumber))?'ocr':'none';
+    }
+
+    for(const item of items){
       const tx=window.pdfjsLib.Util.transform(viewport.transform,item.transform);
       const angle=Math.atan2(tx[1],tx[0]);
       const fontHeight=Math.hypot(tx[2],tx[3]);
@@ -160,9 +195,11 @@
       const measured=span.getBoundingClientRect().width;
       const transforms=[];
       if(angle) transforms.push('rotate('+angle+'rad)');
-      if(targetWidth>0 && measured>0) transforms.push('scaleX('+(targetWidth/measured)+')');
+      if(targetWidth>0&&measured>0) transforms.push('scaleX('+(targetWidth/measured)+')');
       if(transforms.length) span.style.transform=transforms.join(' ');
     }
+    layer.dataset.source='pdf';
+    return 'pdf';
   }
 
   function colorClass(color){
@@ -752,6 +789,7 @@
     init,importFile,attachFileToArticle,openArticle,renderPage,renderHighlights,refreshHighlightSidebar,
     focusEvidence,ensureTextIndex,getTextIndex:(articleId)=>PdfStore.getTextIndex(articleId),
     getDocument:()=>pdfDoc,getTextIndexVersion:()=>TEXT_INDEX_VERSION,
+    getCurrentPage:()=>currentPage,
     getCurrentArticleId:()=>currentArticleId,pendingArticleId:null
   };
 
