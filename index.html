@@ -31,6 +31,7 @@
         <button class="nav-item" data-view="overview"><span>◈</span> Thesis Overview</button>
         <button class="nav-item" data-view="library"><span>▤</span> Research Library</button>
         <button class="nav-item" data-view="searchscreen"><span>⌕</span> Search & Screening</button>
+        <button class="nav-item" data-view="appraisal"><span>✓</span> Critical Appraisal</button>
         <button class="nav-item" data-view="synthesis"><span>≋</span> Synthesis</button>
         <button class="nav-item" data-view="reader"><span>◫</span> Article Reader</button>
         <button class="nav-item" data-view="map"><span>⌘</span> Thesis Map</button>
@@ -460,6 +461,96 @@
         </div>
       </section>
 
+
+
+      <section id="appraisal" class="view">
+        <div class="page-heading compact appraisal-heading">
+          <div>
+            <span class="eyebrow">CRITICAL APPRAISAL</span>
+            <h1>Judge the evidence before you rely on it.</h1>
+            <p>Record methodological strengths, concerns and applicability without reducing a study to a simplistic quality score.</p>
+          </div>
+          <div class="appraisal-heading-actions">
+            <select id="appraisalScope" aria-label="Appraisal paper scope">
+              <option value="all">All library papers</option>
+              <option value="included">Included after screening</option>
+            </select>
+            <button class="soft-btn" id="openAppraisalPaperBtn" type="button">Open selected paper</button>
+            <button class="primary-btn" id="saveAppraisalBtn" type="button">Save appraisal</button>
+          </div>
+        </div>
+
+        <div class="appraisal-stats">
+          <div><strong id="appraisalIncluded">0</strong><span>Included papers</span></div>
+          <div><strong id="appraisalCompleted">0</strong><span>Appraisals completed</span></div>
+          <div><strong id="appraisalLower">0</strong><span>Lower concern</span></div>
+          <div><strong id="appraisalSome">0</strong><span>Some concerns</span></div>
+          <div><strong id="appraisalMajor">0</strong><span>Major concerns</span></div>
+        </div>
+
+        <div class="appraisal-layout">
+          <aside class="appraisal-list-panel">
+            <div class="appraisal-list-head">
+              <div><span class="eyebrow">PAPERS</span><strong id="appraisalPaperCount">0 papers</strong></div>
+              <input id="appraisalSearch" type="search" placeholder="Search papers…">
+            </div>
+            <div id="appraisalArticleList" class="appraisal-article-list"></div>
+          </aside>
+
+          <main class="appraisal-editor-panel">
+            <div id="appraisalEditorEmpty" class="appraisal-editor-empty">
+              <strong>Select a paper to appraise</strong>
+              <p>The appraisal stays linked to that exact Research Library record.</p>
+            </div>
+
+            <div id="appraisalEditor" hidden>
+              <div class="appraisal-paper-head">
+                <div>
+                  <span class="eyebrow">SELECTED PAPER</span>
+                  <h2 id="appraisalArticleTitle">Paper title</h2>
+                  <p id="appraisalArticleMeta"></p>
+                </div>
+                <small id="appraisalSaveState">Autosave</small>
+              </div>
+
+              <div class="appraisal-tool-row">
+                <label><span>Appraisal domain set</span>
+                  <select id="appraisalTool">
+                    <option value="generic">Generic structured appraisal</option>
+                    <option value="qualitative">Qualitative study appraisal</option>
+                    <option value="rct">Randomised trial appraisal</option>
+                    <option value="observational">Observational study appraisal</option>
+                    <option value="systematic">Systematic review appraisal</option>
+                    <option value="mixed">Mixed-methods appraisal</option>
+                  </select>
+                </label>
+                <label><span>Overall judgement</span>
+                  <select id="appraisalOverall">
+                    <option value="not_started">Not appraised</option>
+                    <option value="lower_concern">Lower concern</option>
+                    <option value="some_concerns">Some concerns</option>
+                    <option value="major_concerns">Major concerns</option>
+                    <option value="unclear">Unclear</option>
+                  </select>
+                </label>
+              </div>
+
+              <div class="appraisal-caution">
+                <strong>Structured appraisal, not an official checklist</strong>
+                <p>Use your university, protocol or review team's required CASP/JBI/MMAT/RoB tool when one is specified. Quire records your reasoning and can sit alongside that formal assessment.</p>
+              </div>
+
+              <div id="appraisalDomains" class="appraisal-domains"></div>
+
+              <div class="appraisal-summary-grid">
+                <label><span>Study strengths</span><textarea id="appraisalStrengths" rows="5" placeholder="What increases confidence in this study?"></textarea></label>
+                <label><span>Important limitations</span><textarea id="appraisalLimitations" rows="5" placeholder="Bias, confounding, missing data, weak reporting, design limitations…"></textarea></label>
+                <label class="wide"><span>Applicability to this thesis</span><textarea id="appraisalApplicability" rows="4" placeholder="How directly does this study apply to your population, setting, intervention, question or argument?"></textarea></label>
+              </div>
+            </div>
+          </main>
+        </div>
+      </section>
 
       <section id="synthesis" class="view">
         <div class="page-heading compact">
@@ -1795,6 +1886,7 @@
   <script src="citations.js"></script>
   <script src="inline-references.js"></script>
   <script src="search-screening.js"></script>
+  <script src="appraisal.js"></script>
   <script src="synthesis.js"></script>
   <script src="methodology.js"></script>
   <script src="writing-review.js"></script>
