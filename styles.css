@@ -3126,3 +3126,37 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .research-decision-summary{display:block}
   .research-decision-summary small{display:block;margin-top:3px}
 }
+
+
+/* ---------- Step 63: Search Review Checkpoint ---------- */
+.search-review-checkpoint{margin:0 0 16px;border:1px solid var(--line);background:#faf7f1;padding:16px 18px}
+.search-checkpoint-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.search-checkpoint-head h2{font-family:"Libre Caslon Text",serif;font-size:20px;font-weight:400;margin:5px 0}
+.search-checkpoint-head p{font-size:9px;color:var(--muted);line-height:1.55;max-width:760px;margin:0}
+.search-checkpoint-signals{display:grid;grid-template-columns:repeat(5,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:13px 0}
+.search-checkpoint-signals>div{background:#fff;padding:9px}
+.search-checkpoint-signals strong,.search-checkpoint-signals span{display:block}
+.search-checkpoint-signals strong{font-family:"Libre Caslon Text",serif;font-size:17px;font-weight:400}
+.search-checkpoint-signals span{font-size:7px;color:var(--muted);margin-top:3px}
+.search-checkpoint-latest{margin-top:10px}
+.search-checkpoint-empty{border:1px dashed var(--line);padding:11px;background:#fff}
+.search-checkpoint-empty strong,.search-checkpoint-empty small{display:block}
+.search-checkpoint-empty strong{font-size:8px}.search-checkpoint-empty small{font-size:7px;color:var(--muted);margin-top:3px;line-height:1.45}
+.search-checkpoint-card{border-left:3px solid var(--forest);background:#fff;border-top:1px solid var(--line);border-right:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px}
+.search-checkpoint-card>div>strong,.search-checkpoint-card>div>small{display:block}
+.search-checkpoint-card>div>strong{font-family:"Libre Caslon Text",serif;font-size:15px;font-weight:400;margin:4px 0}
+.search-checkpoint-card>div>small,.search-checkpoint-card>small{font-size:7px;color:var(--muted);line-height:1.45;display:block;margin-top:4px}
+.search-checkpoint-card p{font-size:8px;line-height:1.5;margin:8px 0}
+.search-checkpoint-boundary-inline{border-top:1px solid #eee6dc;padding-top:7px}
+.search-checkpoint-modal{width:min(760px,96vw)}
+.search-checkpoint-intro{font-size:9px;color:var(--muted);line-height:1.5}
+.search-checkpoint-boundary{border-left:2px solid var(--gold);background:#f2ebdf;padding:10px 12px;margin-top:12px}
+.search-checkpoint-boundary strong,.search-checkpoint-boundary small{display:block}
+.search-checkpoint-boundary strong{font-size:8px}.search-checkpoint-boundary small{font-size:7px;color:var(--muted);line-height:1.45;margin-top:3px}
+@media(max-width:900px){
+  .search-checkpoint-signals{grid-template-columns:1fr 1fr}
+}
+@media(max-width:700px){
+  .search-checkpoint-head{display:block}
+  .search-checkpoint-head .soft-btn{margin-top:10px}
+}
