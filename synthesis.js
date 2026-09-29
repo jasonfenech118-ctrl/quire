@@ -47,6 +47,13 @@
     }));
   }
 
+  function appraisalBadge(articleId){
+    const appraisal=window.QuireStore.getAppraisal?.(articleId);
+    const judgement=appraisal?.overallJudgement||'not_started';
+    const label=window.QuireAppraisal?.getJudgementLabel?.(judgement)||'Not appraised';
+    return '<span class="synthesis-appraisal-badge '+judgement+'">'+escapeHtml(label)+'</span>';
+  }
+
   function fieldCell(article,key){
     const value=dataFor(article)[key]||'';
     return '<td><textarea data-synthesis-field="'+key+'" data-synthesis-article="'+article.id+'" placeholder="Add '+key+'…">'+escapeHtml(value)+'</textarea></td>';
@@ -57,7 +64,7 @@
     const rows=articles().filter(a=>selected.has(a.id));
     if(!rows.length){table.innerHTML='<tbody><tr><td>Select papers to compare.</td></tr></tbody>';return;}
     table.innerHTML='<thead><tr><th>Paper</th><th>Design</th><th>Sample</th><th>Methods</th><th>Key findings</th><th>Limitations</th><th>Thesis relevance</th></tr></thead><tbody>'+
-      rows.map(a=>'<tr><th><strong>'+escapeHtml(label(a))+'</strong><small>'+escapeHtml(a.title)+'</small><button type="button" data-synthesis-seed="'+a.id+'">Use annotations</button></th>'+
+      rows.map(a=>'<tr><th><strong>'+escapeHtml(label(a))+'</strong><small>'+escapeHtml(a.title)+'</small>'+appraisalBadge(a.id)+'<button type="button" data-synthesis-seed="'+a.id+'">Use annotations</button></th>'+
         ['design','sample','methods','findings','limitations','relevance'].map(k=>fieldCell(a,k)).join('')+'</tr>').join('')+
       '</tbody>';
     table.querySelectorAll('textarea').forEach(t=>t.addEventListener('change',()=>saveField(t.dataset.synthesisArticle,t.dataset.synthesisField,t.value)));
@@ -94,6 +101,7 @@
     document.getElementById('refreshSynthesisBtn')?.addEventListener('click',render);
     window.addEventListener('quire:project-switched',()=>{selected=new Set();render();});
     window.addEventListener('quire:annotation-changed',renderInsights);
+    window.addEventListener('quire:appraisal-changed',()=>{renderMatrix();renderInsights();});
     render();
   }
   function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
