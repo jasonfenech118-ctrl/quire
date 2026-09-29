@@ -416,6 +416,7 @@
       aiProtectVoice:Boolean(data.aiProtectVoice),
       aiEvidenceLinks:Boolean(data.aiEvidenceLinks),
       designDetails:{
+        ...(setup.designDetails || {}),
         qualDesign:data.qualDesign || '',qualSampling:data.qualSampling || '',qualCollection:data.qualCollection || '',qualSampleSize:data.qualSampleSize || '',
         quantDesign:data.quantDesign || '',quantSampling:data.quantSampling || '',quantCollection:data.quantCollection || '',quantSampleSize:data.quantSampleSize || '',
         mixedDesign:data.mixedDesign || '',mixedPriority:data.mixedPriority || '',mixedIntegration:data.mixedIntegration || '',
@@ -453,6 +454,24 @@
       row.dueDate=dueDate;
       row.updatedAt=nowIso();
     });
+  }
+
+
+  function getMethodWorkspace(projectId){
+    const state=getState();projectId=projectId||getActiveProjectId(state);
+    const setup=state.studySetups.find(s=>s.projectId===projectId);
+    return clone(setup?.designDetails?.workspace || {});
+  }
+
+  function saveMethodWorkspace(workspace={},projectId){
+    const state=getState();projectId=projectId||getActiveProjectId(state);
+    let setup=state.studySetups.find(s=>s.projectId===projectId);
+    if(!setup){
+      const ts=nowIso();setup={id:uid('setup'),projectId,designDetails:{},createdAt:ts,updatedAt:ts};state.studySetups.push(setup);
+    }
+    setup.designDetails={...(setup.designDetails||{}),workspace:{...(setup.designDetails?.workspace||{}),...workspace}};
+    setup.updatedAt=nowIso();writeState(state);
+    return clone(setup.designDetails.workspace);
   }
 
   function getLatestProgress(projectId){
@@ -882,6 +901,8 @@
     setActiveProject,
     getStudySetupData,
     saveStudySetupData,
+    getMethodWorkspace,
+    saveMethodWorkspace,
     getLatestProgress,
     saveProgressSnapshot,
     listArticles,
