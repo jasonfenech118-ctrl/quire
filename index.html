@@ -85,6 +85,21 @@
       </header>
 
 
+
+      <div id="researchJourney" class="research-journey" aria-label="Research journey">
+        <div class="journey-intro"><span class="eyebrow">YOUR RESEARCH JOURNEY</span><strong id="journeyPrompt">Know where you are. Know what comes next.</strong></div>
+        <div class="journey-steps">
+          <button type="button" data-journey-view="setup"><span>1</span><strong>Plan</strong><small>Question & method</small></button>
+          <button type="button" data-journey-view="searchscreen"><span>2</span><strong>Find</strong><small>Search & screen</small></button>
+          <button type="button" data-journey-view="reader"><span>3</span><strong>Read</strong><small>Papers & highlights</small></button>
+          <button type="button" data-journey-view="appraisal"><span>4</span><strong>Understand</strong><small>Appraise & analyse</small></button>
+          <button type="button" data-journey-view="map"><span>5</span><strong>Organise</strong><small>Themes & evidence</small></button>
+          <button type="button" data-journey-view="chapters"><span>6</span><strong>Write</strong><small>Build the thesis</small></button>
+          <button type="button" data-journey-view="review"><span>7</span><strong>Check</strong><small>Claims & language</small></button>
+          <button type="button" data-journey-view="export"><span>8</span><strong>Finish</strong><small>Review & export</small></button>
+        </div>
+      </div>
+
       <section id="projects" class="view">
         <div class="page-heading">
           <div>
@@ -839,19 +854,63 @@
               <button class="text-btn danger-text" id="deleteSectionBtn" type="button">Delete section</button>
             </div>
             <div class="section-word-progress"><span id="sectionWordBar"></span></div>
-            <div class="editor-toolbar">
-              <button type="button" data-editor-command="bold"><strong>B</strong></button>
-              <button type="button" data-editor-command="italic"><em>I</em></button>
-              <button type="button" data-editor-command="underline"><u>U</u></button>
-              <span></span>
-              <button type="button" data-editor-command="formatBlock" data-editor-value="h2">H2</button>
-              <button type="button" data-editor-command="formatBlock" data-editor-value="h3">H3</button>
-              <button type="button" data-editor-command="formatBlock" data-editor-value="blockquote">“</button>
-              <button type="button" data-editor-command="insertUnorderedList">• List</button>
-              <span class="editor-toolbar-separator"></span>
-              <button type="button" class="insert-reference-btn" id="insertReferenceBtn">§ Insert reference</button>
-              <button type="button" class="editor-supervision-btn" id="openSectionFeedbackBtn">☷ Feedback <b id="sectionFeedbackBadge"></b></button>
-              <button type="button" class="editor-version-btn" id="openSectionVersionsBtn">↶ Versions</button>
+            <div class="writing-ribbon" id="writingRibbon">
+              <div class="ribbon-tabs" role="tablist" aria-label="Writing tools">
+                <button type="button" class="active" data-ribbon-tab="home">Home</button>
+                <button type="button" data-ribbon-tab="insert">Insert</button>
+                <button type="button" data-ribbon-tab="references">References</button>
+                <button type="button" data-ribbon-tab="evidence">Evidence</button>
+                <button type="button" data-ribbon-tab="review">Review</button>
+                <button type="button" data-ribbon-tab="copilot">Copilot</button>
+              </div>
+              <div class="ribbon-panels">
+                <div class="ribbon-panel active" data-ribbon-panel="home">
+                  <div class="ribbon-group"><small>Text</small><div>
+                    <button type="button" data-editor-command="bold" title="Bold"><strong>B</strong></button>
+                    <button type="button" data-editor-command="italic" title="Italic"><em>I</em></button>
+                    <button type="button" data-editor-command="underline" title="Underline"><u>U</u></button>
+                  </div></div>
+                  <div class="ribbon-group"><small>Structure</small><div>
+                    <button type="button" data-editor-command="formatBlock" data-editor-value="h2">Heading</button>
+                    <button type="button" data-editor-command="formatBlock" data-editor-value="h3">Subheading</button>
+                    <button type="button" data-editor-command="insertUnorderedList">• List</button>
+                  </div></div>
+                  <div class="ribbon-group"><small>History</small><div><button type="button" id="openSectionVersionsBtn">↶ Versions</button></div></div>
+                </div>
+                <div class="ribbon-panel" data-ribbon-panel="insert">
+                  <div class="ribbon-group"><small>Insert</small><div>
+                    <button type="button" data-editor-command="formatBlock" data-editor-value="blockquote">“ Quotation</button>
+                    <button type="button" id="ribbonInsertReferenceBtn">§ Citation</button>
+                  </div></div>
+                </div>
+                <div class="ribbon-panel" data-ribbon-panel="references">
+                  <div class="ribbon-group wide"><small>Cite what you already know</small><div>
+                    <button type="button" class="ribbon-primary" id="insertReferenceBtn">§ Add reference</button>
+                    <button type="button" id="ribbonFindLibraryBtn">⌕ Search my library</button>
+                    <button type="button" id="ribbonFindEvidenceBtn">◎ Find evidence</button>
+                  </div><p>Start with your own papers. Search scholarly sources only when your library does not support the claim.</p></div>
+                </div>
+                <div class="ribbon-panel" data-ribbon-panel="evidence">
+                  <div class="ribbon-group wide"><small>Check the claim</small><div>
+                    <button type="button" id="ribbonCheckClaimBtn">✓ Check against source</button>
+                    <button type="button" id="ribbonOpenEvidenceBtn">Connected evidence</button>
+                  </div><p>Compare your wording with the source before relying on it.</p></div>
+                </div>
+                <div class="ribbon-panel" data-ribbon-panel="review">
+                  <div class="ribbon-group"><small>Academic writing</small><div>
+                    <button type="button" id="ribbonImproveWritingBtn">Improve clarity</button>
+                    <button type="button" id="ribbonReviewSectionBtn">Review section</button>
+                  </div></div>
+                  <div class="ribbon-group"><small>Supervisor</small><div><button type="button" id="openSectionFeedbackBtn">☷ Feedback <b id="sectionFeedbackBadge"></b></button></div></div>
+                </div>
+                <div class="ribbon-panel" data-ribbon-panel="copilot">
+                  <div class="ribbon-group wide"><small>Ask Quire about this paragraph</small><div>
+                    <button type="button" id="ribbonExplainBtn">Explain my argument</button>
+                    <button type="button" id="ribbonChallengeBtn">Challenge my reasoning</button>
+                    <button type="button" id="ribbonFindGapBtn">What evidence is missing?</button>
+                  </div><p>Copilot suggestions stay separate from your manuscript until you choose to use them.</p></div>
+                </div>
+              </div>
             </div>
             <div id="liveSectionEditor" class="editor live-editor" contenteditable="true" data-placeholder="Start writing this section…"></div>
           </div>
@@ -2030,6 +2089,8 @@
   <script src="projects.js"></script>
   <script src="chapter-editor.js"></script>
   <script src="evidence-writing.js"></script>
+  <script src="research-journey.js"></script>
+  <script src="writing-ribbon.js"></script>
   <script src="thesis-map.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
