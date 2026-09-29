@@ -42,6 +42,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 40: Persistent Ideas & Provenance — implemented.
 - Step 41: Living Argument Map — implemented.
 - Step 42: Supervisor Review Package — implemented.
+- Step 43: End-of-Session Checkpoint — implemented.
 
 ## Step 32 — implemented
 
@@ -130,7 +131,11 @@ The existing Thesis Map now includes persistent ready-for-thesis ideas as **Argu
 
 Supervision can now build a review package from recorded project data: changes since the latest review round, unresolved feedback/questions, thesis sections with no recorded evidence link, and active revision actions. The package is downloadable and explicitly does not determine academic quality or supervisor priorities. QA caught and fixed a missing local helper before the step was closed.
 
-## Agreed future feature backlog — after Step 42
+## Step 43 — implemented
+
+Home now supports an explicit **End session** checkpoint stored locally per project. It records recent thesis work and notes, unresolved feedback and ready ideas, then provides a direct resume destination for the next session. It has no backend dependency.
+
+## Agreed future feature backlog — after Step 43
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
