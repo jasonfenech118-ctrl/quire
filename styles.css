@@ -2344,7 +2344,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 }
 
 
-/* ---------- Step 26: research data & analysis ---------- */
+/* ---------- Step 28: research data & analysis ---------- */
 .analysis-heading{align-items:end}
 .analysis-heading-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
 .analysis-type-badge{border:1px solid #b8c8bc;background:#edf3ee;color:var(--forest);border-radius:12px;padding:6px 8px;font-size:7px}
