@@ -53,11 +53,11 @@
   function reset(){
     step=1;templateTouched=false;
     [
-      'launchTitle','launchDegree','launchInstitution','launchSupervisor','launchQuestion',
+      'launchTitle','launchDegree','launchInstitution','launchSupervisor','launchQuestion','launchProblem','launchAim','launchRequirements',
       'launchObjective1','launchObjective2','launchObjective3','launchPopulation','launchSetting',
-      'launchProposalDeadline','launchFinalDeadline'
+      'launchProposalDeadline','launchFinalDeadline','launchReferenceStyle'
     ].forEach(id=>{if(el(id))el(id).value='';});
-    if(el('launchWordTarget'))el('launchWordTarget').value='20000';
+    if(el('launchWordTarget'))el('launchWordTarget').value='';
     document.querySelectorAll('input[name="launchStudyType"]').forEach(r=>r.checked=false);
     document.querySelector('input[name="launchStudyType"][value=""]')?.setAttribute('checked','checked');
     const undecided=document.querySelector('input[name="launchStudyType"][value=""]');
@@ -85,7 +85,7 @@
   }
 
   function showStep(next){
-    step=Math.max(1,Math.min(5,next));
+    step=Math.max(1,Math.min(6,next));
     document.querySelectorAll('[data-launch-step]').forEach(panel=>panel.hidden=Number(panel.dataset.launchStep)!==step);
     document.querySelectorAll('[data-launch-dot]').forEach(dot=>{
       const n=Number(dot.dataset.launchDot);
@@ -93,11 +93,11 @@
       dot.classList.toggle('done',n<step);
     });
     el('launchBackBtn').hidden=step===1;
-    el('launchNextBtn').hidden=step===5;
-    el('finishLaunchBtn').hidden=step!==5;
+    el('launchNextBtn').hidden=step===6;
+    el('finishLaunchBtn').hidden=step!==6;
     setMessage('');
     updateSummary();
-    el('launchStepLabel').textContent='Step '+step+' of 5';
+    el('launchStepLabel').textContent='Step '+step+' of 6';
   }
 
   function validateStep(){
@@ -111,7 +111,7 @@
 
   function next(){
     if(!validateStep())return;
-    if(step===3&&!templateTouched)setTemplate(templateForStudy());
+    if(step===4&&!templateTouched)setTemplate(templateForStudy());
     showStep(step+1);
   }
 
@@ -129,7 +129,7 @@
   }
 
   function updateSummary(){
-    if(step!==5)return;
+    if(step!==6)return;
     const title=el('launchTitle').value.trim()||'Untitled thesis';
     const question=el('launchQuestion').value.trim()||'Research direction still open — the literature can refine it';
     const type=selectedStudyType();
@@ -149,7 +149,8 @@
     el('launchSummaryType').textContent=typeLabel;
     el('launchSummaryObjectives').textContent=objectiveCount+' early line'+(objectiveCount===1?'':'s')+' of enquiry entered';
     el('launchSummaryTimeline').textContent=(Number(el('launchWordTarget').value)||0).toLocaleString()+' word target'+(deadline?' · deadline '+deadline:' · no final deadline yet');
-    el('launchSummaryStructure').textContent=chapters.length+' chapter structure';
+    if(el('launchSummaryStructure'))el('launchSummaryStructure').textContent=chapters.length+' chapter structure';
+    const next=el('launchNextStep');if(next)next.textContent=type?'Continue with your research plan':'Begin exploring the literature';
   }
 
   function chapters(){
@@ -179,6 +180,11 @@
       population:el('launchPopulation').value.trim(),
       studySetting:el('launchSetting').value.trim(),
       wordTarget:Number(el('launchWordTarget').value)||null,
+      researchStage:document.querySelector('input[name="launchStage"]:checked')?.value||'topic',
+      researchProblem:el('launchProblem')?.value.trim()||'',
+      researchAim:el('launchAim')?.value.trim()||'',
+      referenceStyle:el('launchReferenceStyle')?.value||'',
+      universityRequirements:el('launchRequirements')?.value.trim()||'',
       proposalDeadline:el('launchProposalDeadline').value||null,
       finalDeadline:el('launchFinalDeadline').value||null,
       startDate:new Date().toISOString().slice(0,10)
@@ -200,6 +206,7 @@
     window.QuireProjects?.render?.();
     window.QuireProgress?.captureNow?.();
     renderReadiness();
+    localStorage.setItem('quire:guided-setup:'+project.id,'complete');
     window.showView?.('dashboard');
     window.QuireResearchFoundation?.render?.();
     window.dispatchEvent(new CustomEvent('quire:project-launched',{detail:{projectId:project.id}}));
@@ -364,6 +371,7 @@
 
   function bind(){
     el('closeGuidedLaunchModal')?.addEventListener('click',close);
+    el('openThesisSetupGuideBtn')?.addEventListener('click',open);
     el('cancelGuidedLaunch')?.addEventListener('click',close);
     el('launchBackBtn')?.addEventListener('click',back);
     el('launchNextBtn')?.addEventListener('click',next);
@@ -396,18 +404,30 @@
       'launchWordTarget','launchFinalDeadline'
     ].forEach(id=>el(id)?.addEventListener('input',updateSummary));
 
-    window.addEventListener('quire:project-switched',()=>{renderReadiness();renderGuide();});
+    window.addEventListener('quire:project-switched',()=>{renderReadiness();renderGuide();renderThesisSetupGuide();});
     window.addEventListener('quire:store-changed',()=>{
       if(el('overview')?.classList.contains('active'))renderReadiness();
-      renderGuide();
+      renderGuide();renderThesisSetupGuide();
     });
 
     renderStructurePreview();
     renderReadiness();
+    renderThesisSetupGuide();
     renderGuide();
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireGuidedLaunch={open,close,renderReadiness,readiness,projectReadiness,renderGuide};
+  function renderThesisSetupGuide(){
+    const store=window.QuireStore;if(!store)return;
+    const pid=store.getActiveProjectId?.(),setup=store.getStudySetupData?.(pid)||{},project=store.getActiveProject?.()||{};
+    const values=[project.title&&project.title!=='Untitled thesis',project.degreeName,project.institutionName,project.researchQuestion,setup.studyType,project.wordTarget,project.finalDeadline];
+    const complete=values.filter(Boolean).length,pct=Math.round(complete/values.length*100);
+    const bar=el('thesisSetupGuideBar');if(bar)bar.style.width=pct+'%';
+    const status=el('thesisSetupGuideStatus');if(status)status.textContent=pct>=85?'Thesis foundation is well defined':pct?'Thesis setup is in progress':'Thesis setup not completed';
+    const meta=el('thesisSetupGuideMeta');if(meta)meta.textContent=complete+' of '+values.length+' core parameters currently defined.';
+    const btn=el('openThesisSetupGuideBtn');if(btn)btn.textContent=pct?'Continue guided setup →':'Start guided setup →';
+  }
+
+  window.QuireGuidedLaunch={open,close,renderReadiness,readiness,projectReadiness,renderGuide,renderThesisSetupGuide};
   window.QuireLaunch={open,close,readiness:projectReadiness,renderGuide};
 })();
