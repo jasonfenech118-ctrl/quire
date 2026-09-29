@@ -3184,3 +3184,54 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .research-rationale-head{display:block}
   .research-rationale-head button{margin-top:10px}
 }
+
+
+/* ---------- Step 65: Literature Discovery from Search Plan ---------- */
+.literature-discovery-panel{margin:0 0 16px;border:1px solid var(--line);background:#fbf8f2;padding:18px}
+.literature-discovery-panel[hidden]{display:none}
+.literature-discovery-head{display:flex;justify-content:space-between;gap:20px;align-items:flex-start}
+.literature-discovery-head h2{font-family:"Libre Caslon Text",serif;font-size:22px;font-weight:400;margin:5px 0}
+.literature-discovery-head p{font-size:9px;color:var(--muted);line-height:1.55;max-width:760px;margin:0}
+.literature-discovery-controls{display:grid;grid-template-columns:minmax(0,1fr) 150px auto;gap:10px;align-items:end;margin-top:15px}
+.literature-discovery-controls label{display:grid;gap:5px}
+.literature-discovery-controls label>span{font-size:7px;font-weight:700;color:var(--muted)}
+.literature-discovery-controls textarea,.literature-discovery-controls select{
+  width:100%;border:1px solid var(--line);background:#fff;padding:9px;font-size:9px;resize:vertical
+}
+.literature-discovery-boundary{border-left:2px solid var(--gold);background:#f3ecdf;padding:10px 12px;margin:12px 0}
+.literature-discovery-boundary strong,.literature-discovery-boundary small{display:block}
+.literature-discovery-boundary strong{font-size:8px}
+.literature-discovery-boundary small{font-size:7px;color:var(--muted);line-height:1.45;margin-top:3px}
+.literature-discovery-toolbar{display:flex;justify-content:space-between;align-items:center;gap:14px;border-top:1px solid #e8e0d5;border-bottom:1px solid #e8e0d5;padding:9px 0}
+.literature-discovery-toolbar>span{font-size:8px;color:var(--muted)}
+.literature-discovery-toolbar>div{display:flex;gap:7px}
+.literature-discovery-results{display:grid;gap:7px;margin-top:10px}
+.literature-discovery-empty,.literature-discovery-loading,.literature-discovery-error{
+  border:1px dashed var(--line);background:#fff;padding:14px
+}
+.literature-discovery-empty strong,.literature-discovery-empty small,.literature-discovery-error strong,.literature-discovery-error small{display:block}
+.literature-discovery-empty strong,.literature-discovery-error strong{font-size:9px}
+.literature-discovery-empty small,.literature-discovery-error small{font-size:7px;color:var(--muted);line-height:1.45;margin-top:4px}
+.literature-discovery-loading{font-size:8px;color:var(--muted)}
+.literature-candidate{
+  display:grid;grid-template-columns:28px minmax(0,1fr) 120px;gap:10px;align-items:start;
+  border:1px solid var(--line);background:#fff;padding:12px
+}
+.literature-candidate.duplicate{background:#f6f2eb;opacity:.8}
+.candidate-select{padding-top:4px}.candidate-select input{accent-color:var(--forest)}
+.candidate-label{font-size:6.5px;font-weight:700;letter-spacing:.1em;color:var(--forest)}
+.literature-candidate.duplicate .candidate-label{color:var(--muted)}
+.candidate-body h3{font-family:"Libre Caslon Text",serif;font-size:15px;font-weight:400;line-height:1.4;margin:4px 0}
+.candidate-meta{font-size:7.5px;color:var(--muted);margin:0}
+.candidate-abstract{font-size:8px;line-height:1.5;margin:8px 0}
+.candidate-details{display:flex;flex-wrap:wrap;gap:7px}
+.candidate-details span{font-size:6.5px;color:var(--muted);border:1px solid #e8e0d5;padding:3px 5px}
+.candidate-actions{display:grid;gap:5px}
+.candidate-actions button{border:0;background:transparent;color:var(--forest);font-size:7px;font-weight:700;text-align:left;cursor:pointer}
+@media(max-width:850px){
+  .literature-discovery-controls{grid-template-columns:1fr}
+  .literature-discovery-toolbar{display:block}
+  .literature-discovery-toolbar>div{margin-top:8px;flex-wrap:wrap}
+  .literature-candidate{grid-template-columns:28px 1fr}
+  .candidate-actions{grid-column:2}
+}
