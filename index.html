@@ -860,12 +860,12 @@
             <div class="section-word-progress"><span id="sectionWordBar"></span></div>
             <div class="writing-ribbon" id="writingRibbon">
               <div class="ribbon-tabs" role="tablist" aria-label="Writing tools">
-                <button type="button" class="active" data-ribbon-tab="home">Home</button>
-                <button type="button" data-ribbon-tab="insert">Insert</button>
-                <button type="button" data-ribbon-tab="references">References</button>
-                <button type="button" data-ribbon-tab="evidence">Evidence</button>
-                <button type="button" data-ribbon-tab="review">Review</button>
-                <button type="button" data-ribbon-tab="copilot">AI Assist</button>
+                <button type="button" class="active" role="tab" aria-selected="true" tabindex="0" data-ribbon-tab="home">Home</button>
+                <button type="button" role="tab" aria-selected="false" tabindex="-1" data-ribbon-tab="insert">Insert</button>
+                <button type="button" role="tab" aria-selected="false" tabindex="-1" data-ribbon-tab="references">References</button>
+                <button type="button" role="tab" aria-selected="false" tabindex="-1" data-ribbon-tab="evidence">Evidence</button>
+                <button type="button" role="tab" aria-selected="false" tabindex="-1" data-ribbon-tab="review">Review</button>
+                <button type="button" role="tab" aria-selected="false" tabindex="-1" data-ribbon-tab="copilot">AI Assist</button>
               </div>
               <div class="ribbon-panels">
                 <div class="ribbon-panel active" data-ribbon-panel="home">
@@ -884,12 +884,12 @@
                 <div class="ribbon-panel" data-ribbon-panel="insert">
                   <div class="ribbon-group"><small>Insert</small><div>
                     <button type="button" data-editor-command="formatBlock" data-editor-value="blockquote">“ Quotation</button>
-                    <button type="button" id="ribbonInsertReferenceBtn">§ Citation</button>
+                    <button type="button" id="ribbonInsertReferenceBtn">§ Insert citation</button>
                   </div></div>
                 </div>
                 <div class="ribbon-panel" data-ribbon-panel="references">
                   <div class="ribbon-group wide"><small>Cite what you already know</small><div>
-                    <button type="button" class="ribbon-primary" id="insertReferenceBtn">§ Add reference</button>
+                    <button type="button" class="ribbon-primary" id="insertReferenceBtn">§ Insert citation</button>
                     <button type="button" id="ribbonFindLibraryBtn">⌕ Search my library</button>
                     <button type="button" id="ribbonFindEvidenceBtn">◎ Find evidence</button>
                   </div><p>Start with your own papers. Search scholarly sources only when your library does not support the claim.</p></div>
