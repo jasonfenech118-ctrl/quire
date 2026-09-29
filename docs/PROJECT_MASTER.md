@@ -45,6 +45,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 43: End-of-Session Checkpoint — implemented.
 - Step 44: Integrated Value & UX Audit — implemented.
 - Step 45: Better Idea Capture & Source-to-Idea Handoffs — implemented.
+- Step 46: Research Memory Answer Builder — implemented.
 
 ## Step 32 — implemented
 
@@ -145,7 +146,11 @@ The integrated audit checked syntax for the newly touched workflow modules, veri
 
 Idea capture now uses an in-app provenance-aware modal rather than browser prompts. Selected PDF passages can be sent directly to Ideas with article ID, page, source label and excerpt preserved.
 
-## Added-value roadmap after Step 45
+## Step 46 — implemented
+
+Global Research Memory now includes an expandable **What Quire already knows about this** view. It groups retrieved workspace excerpts by provenance and explicitly states that it is assembling stored records rather than generating new factual claims.
+
+## Added-value roadmap after Step 46
 
 A second product review identified the next high-value frontend milestones:
 
