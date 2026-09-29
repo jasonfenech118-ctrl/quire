@@ -273,6 +273,7 @@
       source:'legacy',
       createdAt:ts
     });
+    syncMilestonesFromSetup(state,id);
     state.activeProjectId=id;
     writeState(state);
     return clone(state.projects.find(p=>p.id===id));
@@ -288,6 +289,7 @@
       if(Object.prototype.hasOwnProperty.call(patch,key)) project[key]=patch[key];
     });
     project.updatedAt=nowIso();
+    if(Object.prototype.hasOwnProperty.call(patch,'finalDeadline')) syncMilestonesFromSetup(state,projectId);
     writeState(state);
     return clone(project);
   }
@@ -525,7 +527,7 @@
     const articles=state.articles.filter(a=>a.projectId===projectId && a.readingStatus!=='archived');
     const chapters=state.chapters.filter(ch=>ch.projectId===projectId);
     const sections=state.sections.filter(sec=>sec.projectId===projectId);
-    const milestones=state.milestones.filter(m=>m.projectId===projectId && m.status!=='skipped');
+    const milestones=state.milestones.filter(m=>m.projectId===projectId && m.status!=='skipped' && (m.dueDate || m.status==='complete'));
     const highlights=state.highlights.filter(h=>h.projectId===projectId);
     const notes=state.notes.filter(n=>n.projectId===projectId);
     const evidence=state.evidenceLinks.filter(e=>e.projectId===projectId);
