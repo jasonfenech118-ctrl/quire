@@ -826,3 +826,24 @@ window.addEventListener('quire:annotation-changed',()=>{
 });
 window.addEventListener('quire:store-changed',updateResearchDeskCounts);
 updateResearchDeskCounts();
+
+
+// ---------- Step 5: DOI / scholarly metadata import ----------
+document.getElementById('openMetadataImport')?.addEventListener('click',()=>{
+  modal.hidden=true;
+  window.QuireMetadata?.open?.();
+});
+
+document.getElementById('readerMetadataBtn')?.addEventListener('click',()=>{
+  window.QuireMetadata?.open?.();
+});
+
+window.addEventListener('quire:metadata-saved',async e=>{
+  renderLibraryArticles();
+  updateResearchDeskCounts();
+  const articleId=e.detail?.articleId;
+  if(e.detail?.applied && articleId && window.QuirePdfReader?.getCurrentArticleId?.()===articleId){
+    try{await window.QuirePdfReader.openArticle(articleId);}catch(err){console.warn(err);}
+  }
+  showToast(e.detail?.applied ? 'Article metadata updated' : 'Article added to your research library');
+});
