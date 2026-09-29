@@ -76,6 +76,24 @@
     return String(text).toLowerCase().replace(/[^a-z0-9]+/g,' ').split(/\s+/).filter(x=>x.length>4&&!stop.has(x));
   }
 
+  function possibleDisagreements(rows){
+    const neg=/\b(no|not|without|did not|does not|failed to|no association|no difference|lower|decreased|reduced)\b/i;
+    const pool=rows.map(a=>{
+      const state=window.QuireStore.getState();
+      const marked=state.highlights.filter(h=>h.articleId===a.id&&['key_finding','contradictory'].includes(h.category)).map(h=>h.highlightedText);
+      const text=[dataFor(a).findings,...marked].filter(Boolean).join(' ');
+      return {article:a,text,negative:neg.test(text),terms:new Set(terms(text))};
+    }).filter(x=>x.text);
+    const pairs=[];
+    for(let i=0;i<pool.length;i++)for(let j=i+1;j<pool.length;j++){
+      const shared=[...pool[i].terms].filter(t=>pool[j].terms.has(t));
+      if(shared.length>=2 && pool[i].negative!==pool[j].negative){
+        pairs.push({a:pool[i].article,b:pool[j].article,shared:shared.slice(0,5)});
+      }
+    }
+    return pairs.slice(0,5);
+  }
+
   function renderInsights(){
     const mount=document.getElementById('synthesisInsights');if(!mount)return;
     const rows=articles().filter(a=>selected.has(a.id));
@@ -90,10 +108,16 @@
     });
     const state=window.QuireStore.getState();
     const contradictions=state.highlights.filter(h=>selected.has(h.articleId)&&h.category==='contradictory').length;
+    const disagreements=possibleDisagreements(rows);
     mount.innerHTML=
       '<div class="synthesis-insight"><span class="eyebrow">COMMON SIGNALS</span><strong>'+(common.length?escapeHtml(common.join(', ')):'No repeated finding terms yet')+'</strong><p>Repeated terms are a navigation aid, not a conclusion that studies agree.</p></div>'+
-      '<div class="synthesis-insight"><span class="eyebrow">CONTRADICTORY EVIDENCE</span><strong>'+contradictions+' marked passages</strong><p>Passages you classified as contradictory across the selected papers.</p></div>'+
+      '<div class="synthesis-insight"><span class="eyebrow">COUNTER-EVIDENCE & DISAGREEMENT</span><strong>'+contradictions+' researcher-marked · '+disagreements.length+' possible contrast'+(disagreements.length===1?'':'s')+'</strong><p>Quire looks for selected papers discussing similar terms with differing direction or negation. These are prompts to compare context, population and methods—not proof that the studies contradict one another.</p>'+
+      (disagreements.length?'<div class="synthesis-disagreements">'+disagreements.map(d=>'<button type="button" data-compare-disagreement="'+escapeHtml(d.a.id)+'|'+escapeHtml(d.b.id)+'"><strong>'+escapeHtml(label(d.a))+' ↔ '+escapeHtml(label(d.b))+'</strong><small>Shared signals: '+escapeHtml(d.shared.join(', '))+'</small></button>').join('')+'</div>':'')+'</div>'+
       '<div class="synthesis-insight"><span class="eyebrow">MATRIX GAPS</span><strong>'+missing.length+' fields incomplete</strong><p>'+escapeHtml(missing.slice(0,6).join(' · ')||'Core comparison fields are populated.')+'</p></div>';
+    mount.querySelectorAll('[data-compare-disagreement]').forEach(btn=>btn.addEventListener('click',()=>{
+      const [a,b]=btn.dataset.compareDisagreement.split('|');
+      selected=new Set([a,b]);renderSelector();renderMatrix();renderInsights();
+    }));
   }
 
   function render(){renderSelector();renderMatrix();renderInsights();}
@@ -106,5 +130,5 @@
   }
   function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireSynthesis={render};
+  window.QuireSynthesis={render,possibleDisagreements};
 })();
