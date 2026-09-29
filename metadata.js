@@ -200,6 +200,10 @@
     if(!articleId) throw new Error('No PDF article is currently open.');
     const existing=window.QuireStore.getArticle(articleId);
     if(!existing) throw new Error('The open article could not be found.');
+    const duplicate=duplicateFor(item);
+    if(duplicate && duplicate.id!==articleId){
+      throw new Error('That DOI already belongs to another article in this thesis. Open the existing library record instead of creating a duplicate.');
+    }
     return window.QuireStore.updateArticle(articleId,{
       ...item,
       citationData:mergedCitation(existing.citationData,item.citationData)
@@ -256,9 +260,14 @@
     document.getElementById('applyMetadataToCurrent')?.addEventListener('click',()=>{
       const item=results[selectedIndex];
       if(!item) return;
-      const article=applyToArticle(window.QuirePdfReader?.getCurrentArticleId?.(),item);
-      window.dispatchEvent(new CustomEvent('quire:metadata-saved',{detail:{articleId:article.id,applied:true}}));
-      close();
+      try{
+        const article=applyToArticle(window.QuirePdfReader?.getCurrentArticleId?.(),item);
+        window.dispatchEvent(new CustomEvent('quire:metadata-saved',{detail:{articleId:article.id,applied:true}}));
+        close();
+      }catch(err){
+        const target=document.getElementById('metadataDuplicate');
+        if(target){target.hidden=false;target.textContent=err.message;}
+      }
     });
   }
 
