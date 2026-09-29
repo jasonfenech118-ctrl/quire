@@ -1,4 +1,4 @@
-/* Quire Critical Appraisal — Step 25 */
+/* Quire Critical Appraisal — Step 27 */
 (function(){
   let selectedArticleId=null;
   let scope='all';
