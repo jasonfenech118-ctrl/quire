@@ -243,7 +243,7 @@
     const collections=[
       'projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes',
       'articleThemes','evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages',
-      'reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals',
+      'reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals','analysisItems',
       'migrationHistory'
     ];
     collections.forEach(key=>{if(!Array.isArray(state[key])) state[key]=[];});
@@ -331,7 +331,7 @@
     [
       'projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes',
       'evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages','reviewRounds','feedbackItems',
-      'sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals'
+      'sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals','analysisItems'
     ].forEach(dedupeById);
 
     const projectIds=new Set(state.projects.map(p=>p.id).filter(Boolean));
@@ -343,7 +343,7 @@
     const projectOwned=[
       'studySetups','objectives','chapters','sections','articles','highlights','notes','themes','evidenceLinks',
       'milestones','progressSnapshots','aiThreads','reviewRounds','feedbackItems','sectionVersions',
-      'searchPlans','searchRuns','screeningRecords','appraisals'
+      'searchPlans','searchRuns','screeningRecords','appraisals','analysisItems'
     ];
     projectOwned.forEach(key=>{
       const before=state[key].length;
@@ -446,6 +446,17 @@
     if(state.sectionVersions.length!==versionBefore) issue('sectionVersions',null,'Section versions referenced deleted sections.','Removed orphan versions.');
     state.sectionVersions.forEach(row=>{
       if(row.reviewRoundId&&!reviewIds.has(row.reviewRoundId)){issue('sectionVersions',row.id,'A version referenced a missing review round.','Cleared review-round reference.');row.reviewRoundId=null;}
+    });
+
+    state.analysisItems.forEach(row=>{
+      if(row.objectiveId&&!objectiveIds.has(row.objectiveId)){
+        issue('analysisItems',row.id,'Analysis item referenced a missing objective.','Cleared objective reference.');
+        row.objectiveId=null;
+      }
+      if(row.sectionId&&!sectionIds.has(row.sectionId)){
+        issue('analysisItems',row.id,'Analysis item referenced a missing section.','Cleared section reference.');
+        row.sectionId=null;
+      }
     });
 
     const planIds=new Set(state.searchPlans.map(x=>x.id));
