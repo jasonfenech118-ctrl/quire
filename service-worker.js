@@ -1,4 +1,4 @@
-const CACHE='quire-shell-v27';
+const CACHE='quire-shell-v28';
 const SHELL=[
   './','./index.html','./styles.css','./manifest.webmanifest','./quire-icon.svg',
   './data-model.js','./guided-launch.js','./projects.js','./chapter-editor.js','./evidence-writing.js',
@@ -6,7 +6,9 @@ const SHELL=[
   './writing-ribbon.js','./writing-companion.js','./claim-awareness.js','./writing-growth.js',
   './evidence-discovery.js','./thesis-map.js','./cloud.js','./pdf-reader.js','./ocr.js','./metadata.js',
   './copilot.js','./references.js','./citations.js','./inline-references.js','./search-screening.js',
-  './appraisal.js','./analysis-workspace.js','./synthesis.js','./methodology.js','./writing-review.js',
+  './gap-search.js','./appraisal.js','./analysis-workspace.js','./synthesis.js','./gap-explorer.js',
+  './question-evolution.js','./contribution-builder.js','./paper-contribution.js','./research-decisions.js',
+  './search-checkpoint.js','./research-rationale-pack.js','./methodology.js','./writing-review.js',
   './evidence-check.js','./supervision.js','./submission-readiness.js','./thesis-export.js',
   './progress-intelligence.js','./app.js','./product-polish.js'
 ]
