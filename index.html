@@ -347,6 +347,7 @@
           </div>
           <div class="search-screen-actions">
             <button class="soft-btn" id="searchOpenReferencesBtn" type="button">⇄ Import references</button>
+            <button class="soft-btn" id="exportSearchAuditBtn" type="button">↓ Export audit CSV</button>
             <button class="primary-btn" id="newSearchRunBtn" type="button">＋ Log search run</button>
           </div>
         </div>
@@ -389,7 +390,11 @@
               <small>Database syntax differs. Treat this as the reproducible core strategy and adapt field tags/subject headings for each database.</small>
             </div>
 
-            <label class="search-wide-field"><span>Limits / filters</span><textarea id="searchLimits" rows="3" placeholder="Date range, language, humans, study type…"></textarea></label>
+            <div class="search-eligibility-grid">
+              <label class="search-wide-field"><span>Inclusion criteria</span><textarea id="searchInclusionCriteria" rows="4" placeholder="Population, concept/intervention, study designs, setting, date/language rules…"></textarea></label>
+              <label class="search-wide-field"><span>Exclusion criteria</span><textarea id="searchExclusionCriteria" rows="4" placeholder="Wrong population, irrelevant concept, ineligible design, duplicate, unavailable full text…"></textarea></label>
+            </div>
+            <label class="search-wide-field"><span>Limits / filters</span><textarea id="searchLimits" rows="3" placeholder="Database-applied limits: date range, language, humans, study type…"></textarea></label>
             <label class="search-wide-field"><span>Strategy notes</span><textarea id="searchPlanNotes" rows="3" placeholder="Subject headings, database-specific adaptations, peer review of search strategy…"></textarea></label>
           </section>
 
@@ -421,6 +426,18 @@
             <span>Paper</span><span>Title / abstract</span><span>Full text</span><span>Reason</span><span>Note</span>
           </div>
           <div id="screeningRows" class="screening-rows"></div>
+          <datalist id="screeningExclusionReasons">
+            <option value="Wrong population"></option>
+            <option value="Wrong intervention / exposure"></option>
+            <option value="Wrong outcome / concept"></option>
+            <option value="Wrong study design"></option>
+            <option value="Not primary research"></option>
+            <option value="Duplicate"></option>
+            <option value="Outside date range"></option>
+            <option value="Wrong language"></option>
+            <option value="Full text unavailable"></option>
+            <option value="Other"></option>
+          </datalist>
         </section>
       </section>
 
