@@ -335,6 +335,14 @@
       const current=window.QuirePdfReader?.getCurrentArticleId?.();
       if(e.detail?.articleId===current) setBusy(false);
     });
+    window.addEventListener('quire:text-index-empty',e=>{
+      const current=window.QuirePdfReader?.getCurrentArticleId?.();
+      if(e.detail?.articleId===current){
+        setBusy(false);
+        const status=document.getElementById('copilotStatusLabel');
+        if(status) status.textContent='No text found · OCR needed';
+      }
+    });
     updateStatus();
   }
 
