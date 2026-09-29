@@ -651,7 +651,7 @@ with check (
 );
 
 
--- Step 26: de-identified research analysis items
+-- Step 28: de-identified research analysis items
 create table if not exists public.analysis_items (
   id text primary key default gen_random_uuid()::text,
   project_id text not null references public.thesis_projects(id) on delete cascade,
