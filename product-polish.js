@@ -82,7 +82,7 @@
         title:truncate(f.comment,82),meta:'Supervisor feedback'+(section?' · '+section.title:''),
         text:[f.comment,f.selectedText,f.researcherResponse,f.category,section?.title].join(' ')
       });
-    }));
+    });
 
     return rows;
   }
