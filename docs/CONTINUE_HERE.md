@@ -6,6 +6,70 @@
 
 **Step 56 — Manual Frontend Validation Gate — pending.**
 
+### Live Step 56 status — updated during browser validation
+
+- **Step 56.1 Primary navigation:** PASSED by the user in the live GitHub Pages app.
+- A live first-time-user check then exposed a major UX problem: **Start fresh** cleared content but the experience still felt like an existing thesis and could drop the user too close to writing.
+- This finding has now been addressed in code and **requires a live retest before Step 56.2 continues**.
+
+#### Research-first onboarding direction now implemented
+
+Quire must not imply **one paper → start writing**.
+
+The early research journey is now:
+
+**Research area → Search & collect → Read across papers → Compare & appraise → Explore possible gaps → Refine the question → Build the argument → Write → Review**
+
+Key principles:
+- A new project begins with a **broad research area / working topic**, not a forced final research question.
+- The research question and objectives are allowed to evolve as the literature develops.
+- Quire encourages broad reading and cross-paper comparison before suggesting drafting.
+- A research gap is treated as a **possible gap signal to test**, never as something Quire invents or confirms automatically.
+- The possible-gap action is guarded until multiple papers have actually been reviewed and compared.
+- The clean starter project is reconfigured in place instead of silently creating a duplicate project.
+- After guided setup, Quire returns to **Home**, not directly to the thesis editor.
+
+#### Research Review Progress now implemented
+
+The former simplistic **reviewed articles / total articles** percentage has been replaced by a transparent, process-based metric.
+
+**Research Review Progress** is weighted across:
+- Search foundation — 15%
+- Collection & screening — 15%
+- Reading & extraction — 25%
+- Critical appraisal — 15%
+- Comparison & synthesis — 20%
+- Coverage & gap exploration — 10%
+
+The app explicitly states that this percentage measures the review process recorded in Quire and **does not mean that the researcher has read that percentage of all literature that exists**.
+
+A separate non-numeric **Literature Maturity** signal is shown:
+- Needs broader searching
+- Developing
+- Beginning to stabilise
+
+“Beginning to stabilise” is explicitly not presented as proof of saturation.
+
+The review score is now used by the Progress data model as well as the visible Home/Progress UI so future progress snapshots stay consistent.
+
+#### Immediate next live test
+
+1. Wait for GitHub Pages to deploy the latest commits.
+2. Hard-refresh Quire.
+3. Use **Start fresh** again if needed.
+4. Confirm the app opens on **Home** with:
+   - “Start your research.”
+   - “Begin with the area you want to explore.”
+   - Research Foundation guidance.
+   - Research Review Progress at 0% for a blank project.
+   - Literature Maturity = Needs broader searching.
+   - Possible-gap action unavailable until papers have been read and compared.
+5. Open the guided project setup and confirm it asks for a **research area / working topic**, not a final fixed question.
+6. Finish setup and confirm Quire returns to **Home** rather than Thesis.
+
+Only after that live retest should Step 56.2 continue with the real Research → PDF workflow.
+
+
 Step 22 backend activation remains deliberately deferred. Do not activate Supabase or touch the separate Customer Roster project.
 
 Primary destinations: **Home → Research → Ideas → Thesis → Progress**
