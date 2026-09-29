@@ -36,6 +36,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 34: Claim-Level Evidence Confidence — implemented.
 - Step 35: Structured Thesis-Value Paper Intelligence — implemented.
 - Step 36: Contradiction & Counter-Evidence Synthesis — implemented.
+- Step 37: Critical Writing Coach — implemented.
 
 ## Step 32 — implemented
 
@@ -100,7 +101,11 @@ The Article Reader now includes **Why do I care?**, a grounded thesis-value anal
 
 The Synthesis workspace now combines researcher-marked contradictory passages with cautious cross-paper contrast detection. Possible disagreements require overlapping finding terms plus differing direction/negation, can be opened as a focused paper pair, and are explicitly presented as comparison prompts rather than proof that studies truly contradict one another.
 
-## Agreed future feature backlog — after Step 36
+## Step 37 — implemented
+
+Writing Review now prompts for critical engagement when substantive paragraphs cite sources without explicit comparison, present evidence without visible interpretation, or omit limitations/context/alternative explanations. These prompts are non-destructive and only appear when enough paragraph/evidence context exists.
+
+## Agreed future feature backlog — after Step 37
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
