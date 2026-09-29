@@ -149,6 +149,12 @@
     suggestions=analyseSection(section);
     renderDocument();
     renderSuggestions();
+    window.dispatchEvent(new CustomEvent('quire:workflow-handoff',{detail:{
+      title:suggestions.some(s=>s.type==='evidence')?'Review found a claim worth checking':'Writing review complete',
+      copy:suggestions.some(s=>s.type==='evidence')?'Check the evidence behind the flagged claim before treating the paragraph as finished.':'Return to the thesis and continue developing the next point while this section is fresh.',
+      action:suggestions.some(s=>s.type==='evidence')?'Check evidence':'Continue writing',
+      view:suggestions.some(s=>s.type==='evidence')?'review':'chapters'
+    }}));
   }
 
   function handleWritingCopilot(detail={}){
