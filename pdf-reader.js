@@ -229,11 +229,20 @@
     renderCitationFocus();
     const surface=document.getElementById('pdfPageSurface');
     if(surface) surface.scrollIntoView({behavior:'smooth',block:'center'});
+    const focusKey=(citation.contextId||'')+'|'+Number(citation.page)+'|'+(citation.excerpt||'');
+    activeCitationFocus.focusKey=focusKey;
     window.setTimeout(()=>{
-      if(activeCitationFocus && activeCitationFocus.page===Number(citation.page)){
+      if(activeCitationFocus?.focusKey===focusKey){
         document.querySelectorAll('.copilot-citation-focus').forEach(el=>el.classList.remove('active'));
       }
-    },2200);
+    },1800);
+    window.setTimeout(()=>{
+      if(activeCitationFocus?.focusKey===focusKey){
+        activeCitationFocus=null;
+        const layer=document.getElementById('pdfCitationLayer');
+        if(layer) layer.innerHTML='';
+      }
+    },3200);
   }
 
   async function renderPage(number){
