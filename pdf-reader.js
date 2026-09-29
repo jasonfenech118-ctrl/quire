@@ -591,6 +591,8 @@
 
   async function extractTextIndex(articleId){
     if(!pdfDoc || articleId!==currentArticleId) throw new Error('Open the article before indexing its text.');
+    const previous=await PdfStore.getTextIndex(articleId).catch(()=>null);
+    const previousPages=new Map((previous?.pages||[]).map(p=>[Number(p.page),p]));
     const pages=[];
     for(let pageNumber=1;pageNumber<=pdfDoc.numPages;pageNumber++){
       const page=await pdfDoc.getPage(pageNumber);
@@ -618,7 +620,12 @@
         text+=item.hasEOL?'\n':' ';
       }
       text=text.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ').trim();
-      pages.push({page:pageNumber,text,segments});
+      const previousPage=previousPages.get(pageNumber);
+      if(previousPage?.ocr && String(previousPage.text||'').trim().length>text.length){
+        pages.push(previousPage);
+      }else{
+        pages.push({page:pageNumber,text,segments,ocr:false});
+      }
       window.dispatchEvent(new CustomEvent('quire:text-index-progress',{detail:{articleId,page:pageNumber,total:pdfDoc.numPages}}));
     }
     await PdfStore.saveTextIndex(articleId,pages);
@@ -637,17 +644,30 @@
     return {articleId,version:TEXT_INDEX_VERSION,pages,updatedAt:new Date().toISOString()};
   }
 
+  function indexCoversDocument(index,expectedPages){
+    if(!index || index.version!==TEXT_INDEX_VERSION || !Array.isArray(index.pages) || !index.pages.length) return false;
+    if(!expectedPages) return index.pages.some(p=>Array.isArray(p.segments));
+    const pageSet=new Set(index.pages.map(p=>Number(p.page)));
+    for(let page=1;page<=expectedPages;page++) if(!pageSet.has(page)) return false;
+    return true;
+  }
+
   async function ensureTextIndex(articleId,{force=false}={}){
+    const article=window.QuireStore?.getArticle?.(articleId);
+    const expectedBeforeOpen=Number(article?.citationData?.pageCount)||null;
     if(!force){
       const existing=await PdfStore.getTextIndex(articleId);
-      if(existing?.version===TEXT_INDEX_VERSION && existing?.pages?.length && existing.pages.some(p=>Array.isArray(p.segments))) return existing;
+      if(indexCoversDocument(existing,expectedBeforeOpen)) return existing;
       if(textIndexPromises.has(articleId)) return textIndexPromises.get(articleId);
     }
     const work=(async()=>{
       if(articleId!==currentArticleId || !pdfDoc){
         await openArticle(articleId);
         const afterOpen=await PdfStore.getTextIndex(articleId);
-        if(afterOpen?.version===TEXT_INDEX_VERSION && afterOpen?.pages?.length && afterOpen.pages.some(p=>Array.isArray(p.segments)) && !force) return afterOpen;
+        if(indexCoversDocument(afterOpen,pdfDoc?.numPages||expectedBeforeOpen) && !force) return afterOpen;
+      }else if(!force){
+        const current=await PdfStore.getTextIndex(articleId);
+        if(indexCoversDocument(current,pdfDoc.numPages)) return current;
       }
       const result=await extractTextIndex(articleId);
       const hasText=result.pages.some(p=>String(p.text||'').trim().length>0);
