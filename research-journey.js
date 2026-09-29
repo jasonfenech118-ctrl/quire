@@ -31,10 +31,11 @@
       return ['design','sample','methods','findings','limitations','relevance'].some(key=>String(d[key]||'').trim());
     });
     const gaps=analysis.filter(x=>x.kind==='gap_signal');
+    const viableGaps=gaps.filter(x=>!['set_aside','challenged'].includes(String(x.payload?.gapStatus||'emerging')));
     const words=sections.reduce((n,x)=>n+(Number(x.currentWordCount)||0),0);
     const review=window.QuireResearchFoundation?.reviewProgress?.(projectId)||{score:0};
     const maturity=window.QuireResearchFoundation?.maturity?.(projectId)||{key:'broad',label:'Needs broader searching'};
-    return {projectId,project,articles,highlights,notes,sections,evidence,analysis,reviewed,compared,gaps,words,review,maturity};
+    return {projectId,project,articles,highlights,notes,sections,evidence,analysis,reviewed,compared,gaps,viableGaps,words,review,maturity};
   }
 
   function recommendation(view){
@@ -54,7 +55,10 @@
     if(s.compared.length<2){
       return {stage:'organise',title:'Start comparing papers side by side',copy:'Pull findings, methods and limitations together so recurring patterns and disagreements become visible.',action:'Compare papers',view:'synthesis'};
     }
-    if(!s.gaps.length){
+    if(!s.viableGaps.length){
+      if(s.gaps.length){
+        return {stage:'organise',title:'Your previous gap direction was challenged or set aside',copy:'Return to cross-paper comparison and search for a better-supported direction rather than forcing the earlier gap.',action:'Reassess the literature gap',view:'synthesis'};
+      }
       return {stage:'organise',title:'Look for possible gaps—but do not confirm one yet',copy:'Use cross-paper comparison to identify unanswered issues, under-studied populations, inconsistent findings or repeated limitations, then test them with further searching.',action:'Explore the literature gap',view:'synthesis'};
     }
     if(!String(s.project.researchQuestion||'').trim()){
