@@ -151,6 +151,48 @@
     renderSuggestions();
   }
 
+  function handleWritingCopilot(detail={}){
+    if(detail.sectionId) activeSectionId=detail.sectionId;
+    renderSelector();renderDocument();
+    const section=sections().find(s=>s.id===activeSectionId);
+    const focus=String(detail.selectedText||detail.paragraph||'').trim();
+    const prompt=String(detail.prompt||'').toLowerCase();
+    suggestions=section?analyseSection(section):[];
+
+    let message='Review this passage alongside the section-level suggestions. Quire keeps this guidance separate from the manuscript until you choose an edit.';
+    let type='copilot';
+    if(prompt.includes('improve the academic clarity')){
+      message='Focus on precision, sentence length, unnecessary intensifiers and claims that sound stronger than the evidence. The review below proposes only changes it can identify locally; no wording is inserted automatically.';
+    }else if(prompt.includes('explain the argument')){
+      const first=sentenceList(focus)[0]||focus;
+      message=first
+        ? 'The apparent lead proposition is: “'+shorten(first,180)+'” Check that the sentences which follow provide a clear reason, evidence or transition rather than introducing a separate idea.'
+        : 'Select a paragraph with text so Quire can trace its lead proposition and supporting reasoning.';
+    }else if(prompt.includes('challenge this paragraph')){
+      message=/\b(all|always|never|proves?|clearly|undoubtedly|causes?)\b/i.test(focus)
+        ? 'This passage contains broad or definitive wording. Test whether the cited evidence supports that strength of claim, the same population and the same context; consider plausible alternative explanations.'
+        : 'Stress-test this passage: what assumption connects the evidence to the conclusion, what alternative explanation could fit, and does the cited population/context match the claim?';
+    }else if(prompt.includes('still need evidence')){
+      type='evidence';
+      message='Run the evidence audit below for claim-level citation gaps. Prioritise factual, causal, comparative and generalisable statements; reflective or signposting sentences may not need a citation.';
+      setTimeout(()=>document.getElementById('runEvidenceCheck')?.click(),0);
+    }else if(prompt.includes('accurately supported')){
+      type='evidence';
+      message='Use the evidence audit to compare the wording with saved source passages. Related evidence is not automatically full support; verify direction, population, context and page-level wording before relying on the citation.';
+      setTimeout(()=>document.getElementById('runEvidenceCheck')?.click(),0);
+    }
+
+    suggestions.unshift({
+      id:'copilot_context_'+Date.now(),
+      type,
+      original:focus,
+      replacement:null,
+      message,
+      status:'open'
+    });
+    renderSuggestions();
+  }
+
   function bind(){
     renderSelector();renderDocument();renderSuggestions();
     document.getElementById('runWritingReview')?.addEventListener('click',review);
@@ -160,6 +202,7 @@
     window.addEventListener('quire:project-switched',()=>{
       activeSectionId=null;suggestions=[];renderSelector();renderDocument();renderSuggestions();
     });
+    window.addEventListener('quire:writing-copilot-request',e=>handleWritingCopilot(e.detail||{}));
     window.addEventListener('quire:store-changed',()=>{
       if(document.getElementById('review')?.classList.contains('active'))renderSelector();
     });
@@ -167,5 +210,5 @@
 
   function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireWritingReview={review,analyseSection};
+  window.QuireWritingReview={review,analyseSection,handleWritingCopilot};
 })();
