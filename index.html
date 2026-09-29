@@ -330,7 +330,7 @@
             <button class="collection add">＋ New collection</button>
           </aside>
 
-          <div class="article-list">
+          <div id="articleListMount" class="article-list"></div>\n\n          <div class="article-list">
             <article class="article-card" data-open-reader>
               <div class="article-main">
                 <div class="pdf-thumb">PDF</div>
@@ -376,40 +376,57 @@
       <section id="reader" class="view reader-view">
         <div class="reader-top">
           <button class="back-btn" data-go="library">← Library</button>
-          <div class="reader-title"><strong>Living with a stoma: self-management needs…</strong><small>Andersson et al., 2025</small></div>
-          <div class="reader-actions"><button class="soft-btn small">Cite</button><button class="soft-btn small">⋯</button></div>
+          <div class="reader-title">
+            <strong id="readerArticleTitle">PDF reader</strong>
+            <small id="readerArticleMeta">Open an article from your library</small>
+          </div>
+          <div class="reader-actions">
+            <button class="soft-btn small" id="replacePdfBtn" type="button">Replace PDF</button>
+            <button class="soft-btn small" type="button">⋯</button>
+          </div>
         </div>
 
         <div class="reader-layout">
           <aside class="reader-left">
-            <button class="reader-tab active">Pages</button>
-            <button class="reader-tab">Highlights</button>
-            <div class="page-thumb active"><span>1</span><div></div></div>
-            <div class="page-thumb"><span>2</span><div></div></div>
-            <div class="page-thumb"><span>3</span><div></div></div>
+            <div class="reader-side-tabs">
+              <button class="reader-tab active" type="button">Pages</button>
+              <button class="reader-tab" type="button" disabled title="Highlights arrive in Step 4">Highlights</button>
+            </div>
+            <div id="pageThumbs" class="page-thumbs" aria-label="PDF pages"></div>
           </aside>
 
           <div class="pdf-stage">
             <div class="pdf-toolbar">
-              <span>Page 4 / 12</span>
-              <div><button>−</button><span>110%</span><button>＋</button></div>
-              <button>⛶</button>
-            </div>
-            <article class="paper">
-              <span class="journal">JOURNAL OF CLINICAL NURSING</span>
-              <h1>Living with a stoma: self-management needs and educational priorities</h1>
-              <p class="authors">P. Andersson, M. Clarke, R. Patel</p>
-              <h4>Abstract</h4>
-              <p>Individuals adapting to a newly formed stoma require practical knowledge, confidence and access to timely specialist support. This qualitative study explored the educational priorities described by adults during the first six months following discharge.</p>
-              <h4>Results</h4>
-              <p>Participants described a transition from dependence to self-management. <mark class="highlight" id="sampleHighlight">Confidence increased when education was repeated, practical and tailored to the person's changing needs.</mark> Participants particularly valued opportunities to rehearse appliance changes and discuss complications before discharge.</p>
-              <p>Uncertainty was most pronounced when written information differed from advice received verbally. Follow-up contact with a stoma care nurse was described as an important source of reassurance and problem solving.</p>
-              <div class="highlight-note">
-                <span>My note</span>
-                <p>This could support the argument that education should be staged rather than delivered only once before discharge.</p>
-                <small>Linked to: Chapter 2 › Patient education</small>
+              <div class="pdf-toolbar-group">
+                <button id="prevPage" type="button" title="Previous page">←</button>
+                <span id="pageIndicator">Page — / —</span>
+                <button id="nextPage" type="button" title="Next page">→</button>
               </div>
-            </article>
+              <div class="pdf-toolbar-group">
+                <button id="zoomOut" type="button" title="Zoom out">−</button>
+                <span id="zoomIndicator">110%</span>
+                <button id="zoomIn" type="button" title="Zoom in">＋</button>
+                <button id="fitWidth" type="button">Fit width</button>
+              </div>
+              <button id="pdfFullscreen" type="button" title="Full screen">⛶</button>
+            </div>
+
+            <div id="pdfLoadingState" class="pdf-state" hidden>
+              <div class="pdf-loader"></div>
+              <strong>Opening PDF…</strong>
+              <small id="pdfLoadingMessage">Preparing the document.</small>
+            </div>
+
+            <div id="pdfEmptyState" class="pdf-state">
+              <div class="empty-pdf-icon">PDF</div>
+              <strong>No PDF open</strong>
+              <small id="pdfEmptyMessage">Upload a research article or open one from your library.</small>
+              <button class="primary-btn" id="attachPdfBtn" type="button">Choose PDF</button>
+            </div>
+
+            <div id="pdfCanvasWrap" class="pdf-canvas-wrap" hidden>
+              <canvas id="pdfCanvas" aria-label="PDF page"></canvas>
+            </div>
           </div>
 
           <aside class="copilot-panel">
@@ -421,10 +438,10 @@
               <button data-ai="critique">Critique</button>
             </div>
             <div id="aiResponse" class="ai-response">
-              <span class="eyebrow">ARTICLE OVERVIEW</span>
-              <p>This paper explores educational needs after stoma formation, with a particular emphasis on how repeated, practical teaching supports confidence and self-management.</p>
-              <div class="evidence-callout"><strong>Useful for your thesis</strong><p>It directly supports your theme on <em>patient education and confidence after discharge</em>.</p></div>
-              <small>AI-generated. Check against the original paper.</small>
+              <span class="eyebrow">REAL PDF READER</span>
+              <p>Your uploaded PDF is now rendered directly inside Quire. In the AI stage, Copilot will work from the actual text of this document.</p>
+              <div class="evidence-callout"><strong>Next PDF feature</strong><p>Step 4 will add selectable highlights and persistent notes linked to exact pages.</p></div>
+              <small>The PDF currently stays on this device. Cloud file storage can be added when a Quire Supabase project is ready.</small>
             </div>
             <div class="copilot-input docked">
               <input id="readerPrompt" placeholder="Ask about this paper…" />
@@ -868,8 +885,9 @@
 
   <input id="fileInput" type="file" accept=".pdf" hidden />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="data-model.js"></script>
-  <script src="cloud.js"></script>
+  <script src="cloud.js"></script>\n  <script src="pdf-reader.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
