@@ -4,6 +4,7 @@
   let relationshipFilter='all';
   let viewMode='connections';
   let resizeTimer=null;
+  let dirty=true;
 
   function state(){
     const all=window.QuireStore.getState();
@@ -156,7 +157,7 @@
     if(type==='question') return !String(s.project?.researchQuestion||'').trim();
     if(type==='chapter') return c.evidence===0;
     if(type==='section') return c.evidence===0;
-    if(type==='article') return c.connections===0;
+    if(type==='article') return c.evidence===0;
     return c.primary===0;
   }
 
@@ -460,6 +461,7 @@
   }
 
   function render(){
+    dirty=false;
     renderGraph();
     const s=state(),data=buildGraphData(s);
     if(selectedNode){
@@ -486,16 +488,27 @@
       render();
     }));
 
-    window.addEventListener('quire:project-switched',()=>{selectedNode=null;render();});
-    window.addEventListener('quire:cloud-pulled',render);
-    window.addEventListener('quire:annotation-changed',render);
-    window.addEventListener('quire:store-changed',()=>{
-      clearTimeout(resizeTimer);
-      resizeTimer=setTimeout(render,80);
+    document.querySelector('[data-view="map"]')?.addEventListener('click',()=>{
+      if(dirty) requestAnimationFrame(render);
+      else requestAnimationFrame(()=>{
+        const s=state();drawEdges(buildGraphData(s));
+      });
     });
-    window.addEventListener('resize',()=>{
+    window.addEventListener('quire:project-switched',()=>{selectedNode=null;dirty=true;if(document.getElementById('map')?.classList.contains('active'))render();});
+    window.addEventListener('quire:cloud-pulled',()=>{dirty=true;if(document.getElementById('map')?.classList.contains('active'))render();});
+    window.addEventListener('quire:annotation-changed',()=>{dirty=true;if(document.getElementById('map')?.classList.contains('active'))render();});
+    window.addEventListener('quire:store-changed',()=>{
+      dirty=true;
+      if(!document.getElementById('map')?.classList.contains('active'))return;
       clearTimeout(resizeTimer);
       resizeTimer=setTimeout(render,120);
+    });
+    window.addEventListener('resize',()=>{
+      if(!document.getElementById('map')?.classList.contains('active'))return;
+      clearTimeout(resizeTimer);
+      resizeTimer=setTimeout(()=>{
+        const s=state();drawEdges(buildGraphData(s));
+      },120);
     });
     render();
   }
