@@ -133,6 +133,7 @@ See `docs/reference-manager.md`.
 - Step 22 — Real Cloud Backend — code complete, activation pending
 - Step 23 — Final Product Polish ✅
 - Step 24 — Literature Search & Screening ✅
+- Step 25 — Critical Appraisal & Quality Assessment ✅
 - Step 24 — Guided Project Launch ✅
 
 ### Step 17 — OCR for scanned PDFs
