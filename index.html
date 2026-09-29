@@ -8,9 +8,13 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Libre+Caslon+Text:wght@400;700&display=swap" rel="stylesheet">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" href="quire-icon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <a class="skip-link" href="#mainContent">Skip to main content</a>
+  <div id="quireLiveRegion" class="sr-only" aria-live="polite" aria-atomic="true"></div>
   <div class="app-shell">
     <aside class="sidebar">
       <div class="brand">
@@ -57,15 +61,19 @@
       </button>
     </aside>
 
-    <main class="main">
+    <main class="main" id="mainContent" tabindex="-1">
       <header class="topbar">
+        <button id="mobileNavBtn" class="mobile-nav-btn" type="button" aria-label="Open navigation">☰</button>
         <div class="mobile-brand">quire</div>
         <div class="search">
           <span>⌕</span>
-          <input id="globalSearch" type="search" placeholder="Search articles, notes, chapters…" />
+          <input id="globalSearch" type="search" placeholder="Search articles, notes, chapters…" autocomplete="off" aria-label="Search this thesis" aria-controls="globalSearchResults" />
           <kbd>⌘ K</kbd>
+          <div id="globalSearchResults" class="global-search-results" hidden></div>
         </div>
         <div class="top-actions">
+          <span id="connectivityStatus" class="connectivity-status" data-state="online">Online</span>
+          <button class="icon-btn shortcuts-btn" id="openShortcutsBtn" type="button" title="Keyboard shortcuts" aria-label="Keyboard shortcuts">?</button>
           <button class="cloud-status-btn" id="cloudStatusBtn" type="button" title="Account & cloud sync"><span id="cloudStatusDot"></span><span id="cloudStatusLabel">Local</span></button>
           <button class="primary-btn" id="newItemBtn">＋ New</button>
         </div>
@@ -1140,6 +1148,24 @@
 
 
 
+
+  <div id="shortcutsModal" class="modal-backdrop" hidden>
+    <div class="modal shortcuts-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">KEYBOARD SHORTCUTS</span><h2>Move around Quire quickly</h2></div>
+        <button id="closeShortcutsModal" type="button">×</button>
+      </div>
+      <div class="shortcut-grid">
+        <div><kbd>Ctrl / ⌘</kbd><kbd>K</kbd><span>Search this thesis</span></div>
+        <div><kbd>Ctrl / ⌘</kbd><kbd>S</kbd><span>Save current work</span></div>
+        <div><kbd>Ctrl / ⌘</kbd><kbd>/</kbd><span>Open this shortcuts panel</span></div>
+        <div><kbd>Esc</kbd><span>Close the active dialog or search results</span></div>
+        <div><kbd>↑</kbd><kbd>↓</kbd><span>Move through search results</span></div>
+        <div><kbd>Enter</kbd><span>Open selected search result</span></div>
+      </div>
+    </div>
+  </div>
+
   <div id="reviewRoundModal" class="modal-backdrop" hidden>
     <div class="modal review-round-modal">
       <div class="modal-head">
@@ -1533,6 +1559,22 @@
         </div>
       </section>
 
+
+      <section class="account-section">
+        <span class="eyebrow">BACKUP & SYSTEM CHECK</span>
+        <h3>Keep a portable copy of your workspace</h3>
+        <p>Download a structured Quire backup or restore one later. PDF binaries are stored separately and are not included in the JSON backup.</p>
+        <div class="sync-action-grid">
+          <button class="soft-btn" id="downloadBackupBtn" type="button"><strong>↓ Download backup</strong><small>Projects, writing, research links, feedback and settings data</small></button>
+          <button class="soft-btn" id="restoreBackupBtn" type="button"><strong>↑ Restore backup</strong><small>Validate and replace the current structured workspace</small></button>
+        </div>
+        <div class="account-button-row">
+          <button class="text-btn" id="runDiagnosticsBtn" type="button">Run browser diagnostics</button>
+          <span id="diagnosticsSummary" class="diagnostics-summary"></span>
+        </div>
+        <div id="diagnosticsResults" class="diagnostics-results"></div>
+      </section>
+
       <section id="authSignedOutPanel" class="account-section" hidden>
         <span class="eyebrow">SIGN IN</span>
         <h3>Use Quire across your devices</h3>
@@ -1564,6 +1606,7 @@
 
   <input id="fileInput" type="file" accept=".pdf" hidden />
   <input id="referenceFileInput" type="file" accept=".bib,.ris,application/x-bibtex,application/x-research-info-systems,text/plain" hidden />
+  <input id="backupFileInput" type="file" accept=".json,application/json" hidden />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="data-model.js"></script>
@@ -1587,5 +1630,6 @@
   <script src="thesis-export.js"></script>
   <script src="progress-intelligence.js"></script>
   <script src="app.js"></script>
+  <script src="product-polish.js"></script>
 </body>
 </html>
