@@ -30,6 +30,7 @@
         <button class="nav-item" data-view="projects"><span>▦</span> My Research <b id="projectCount" class="nav-count">1</b></button>
         <button class="nav-item" data-view="overview"><span>◈</span> Thesis Overview</button>
         <button class="nav-item" data-view="library"><span>▤</span> Research Library</button>
+        <button class="nav-item" data-view="searchscreen"><span>⌕</span> Search & Screening</button>
         <button class="nav-item" data-view="synthesis"><span>≋</span> Synthesis</button>
         <button class="nav-item" data-view="reader"><span>◫</span> Article Reader</button>
         <button class="nav-item" data-view="map"><span>⌘</span> Thesis Map</button>
@@ -362,6 +363,93 @@
             </article>
           </aside>
         </div>
+      </section>
+
+
+      <section id="searchscreen" class="view">
+        <div class="page-heading compact search-screen-heading">
+          <div>
+            <span class="eyebrow">LITERATURE SEARCH & SCREENING</span>
+            <h1>Make the literature search reproducible.</h1>
+            <p>Build the search strategy, log every search and screen the same papers already held in your Research Library.</p>
+          </div>
+          <div class="search-screen-actions">
+            <button class="soft-btn" id="searchOpenReferencesBtn" type="button">⇄ Import references</button>
+            <button class="primary-btn" id="newSearchRunBtn" type="button">＋ Log search run</button>
+          </div>
+        </div>
+
+        <div class="search-flow-strip">
+          <div><strong id="searchFlowIdentified">0</strong><span>Records identified</span></div>
+          <div><strong id="searchFlowLibrary">0</strong><span>Library records</span></div>
+          <div><strong id="searchFlowScreened">0</strong><span>Title/abstract screened</span></div>
+          <div><strong id="searchFlowFullText">0</strong><span>Full text assessed</span></div>
+          <div><strong id="searchFlowIncluded">0</strong><span>Included</span></div>
+        </div>
+        <p id="searchFlowDetail" class="search-flow-detail"></p>
+
+        <div class="search-strategy-grid">
+          <section class="search-plan-panel">
+            <div class="search-panel-head">
+              <div><span class="eyebrow">SEARCH STRATEGY</span><h2>Concepts & Boolean logic</h2></div>
+              <small id="searchPlanSaveState">Autosave</small>
+            </div>
+
+            <div class="search-plan-meta">
+              <label><span>Question framework</span>
+                <select id="searchFramework">
+                  <option value="custom">Custom</option>
+                  <option value="pico">PICO</option>
+                  <option value="pcc">PCC</option>
+                  <option value="spider">SPIDER</option>
+                </select>
+              </label>
+              <label><span>Databases / sources</span><input id="searchDatabases" type="text" placeholder="PubMed, CINAHL, Scopus…"></label>
+            </div>
+
+            <div id="searchConcepts" class="search-concepts"></div>
+            <button class="text-btn search-add-concept" id="addSearchConceptBtn" type="button">＋ Add another concept</button>
+
+            <div class="generated-query-box">
+              <div><span class="eyebrow">GENERIC BOOLEAN STRING</span><small id="searchQueryTermCount">0 terms</small></div>
+              <textarea id="generatedSearchQuery" rows="6" readonly placeholder="Add search terms to generate a Boolean string."></textarea>
+              <button class="soft-btn" id="copySearchQueryBtn" type="button">Copy search string</button>
+              <small>Database syntax differs. Treat this as the reproducible core strategy and adapt field tags/subject headings for each database.</small>
+            </div>
+
+            <label class="search-wide-field"><span>Limits / filters</span><textarea id="searchLimits" rows="3" placeholder="Date range, language, humans, study type…"></textarea></label>
+            <label class="search-wide-field"><span>Strategy notes</span><textarea id="searchPlanNotes" rows="3" placeholder="Subject headings, database-specific adaptations, peer review of search strategy…"></textarea></label>
+          </section>
+
+          <section class="search-log-panel">
+            <div class="search-panel-head">
+              <div><span class="eyebrow">SEARCH LOG</span><h2>What was actually searched</h2></div>
+              <span id="searchRunCount">0 runs</span>
+            </div>
+            <div id="searchRunsList" class="search-runs-list"></div>
+          </section>
+        </div>
+
+        <section class="screening-panel">
+          <div class="screening-panel-head">
+            <div><span class="eyebrow">SCREENING</span><h2>Title/abstract → full text</h2></div>
+            <div class="screening-tools">
+              <span id="screeningVisibleCount">0 shown</span>
+              <input id="screeningSearch" type="search" placeholder="Search screening queue…">
+            </div>
+          </div>
+          <div class="screening-filter-tabs">
+            <button type="button" class="active" data-screening-filter="all">All</button>
+            <button type="button" data-screening-filter="pending">Pending</button>
+            <button type="button" data-screening-filter="included">Included</button>
+            <button type="button" data-screening-filter="maybe">Maybe</button>
+            <button type="button" data-screening-filter="excluded">Excluded</button>
+          </div>
+          <div class="screening-columns">
+            <span>Paper</span><span>Title / abstract</span><span>Full text</span><span>Reason</span><span>Note</span>
+          </div>
+          <div id="screeningRows" class="screening-rows"></div>
+        </section>
       </section>
 
       <section id="library" class="view">
@@ -1122,6 +1210,31 @@
 
 
 
+
+  <div id="searchRunModal" class="modal-backdrop" hidden>
+    <div class="modal search-run-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">SEARCH LOG</span><h2>Record a database search</h2></div>
+        <button id="closeSearchRunModal" type="button">×</button>
+      </div>
+      <p class="search-run-intro">Log the strategy exactly as it was run in that database. The generated Boolean string is prefilled but can be adapted to database-specific syntax.</p>
+      <div class="form-grid">
+        <label class="field"><span>Database / source</span><input id="searchRunDatabase" type="text" placeholder="e.g. PubMed"></label>
+        <label class="field"><span>Date searched</span><input id="searchRunDate" type="date"></label>
+        <label class="field wide"><span>Exact query used</span><textarea id="searchRunQuery" rows="6"></textarea></label>
+        <label class="field"><span>Results returned</span><input id="searchRunResults" type="number" min="0" step="1"></label>
+        <label class="field"><span>Imported to Quire</span><input id="searchRunImported" type="number" min="0" step="1"></label>
+        <label class="field"><span>Duplicates removed</span><input id="searchRunDuplicates" type="number" min="0" step="1"></label>
+        <label class="field wide"><span>Notes</span><textarea id="searchRunNotes" rows="3" placeholder="Field tags, filters, export file, deviations from the main strategy…"></textarea></label>
+      </div>
+      <small id="searchRunMessage" class="search-run-message"></small>
+      <div class="account-button-row search-run-actions">
+        <button class="soft-btn" id="cancelSearchRun" type="button">Cancel</button>
+        <button class="primary-btn" id="saveSearchRun" type="button">Save search run</button>
+      </div>
+    </div>
+  </div>
+
   <div id="shortcutsModal" class="modal-backdrop" hidden>
     <div class="modal shortcuts-modal">
       <div class="modal-head">
@@ -1800,6 +1913,7 @@
   <script src="references.js"></script>
   <script src="citations.js"></script>
   <script src="inline-references.js"></script>
+  <script src="search-screening.js"></script>
   <script src="synthesis.js"></script>
   <script src="methodology.js"></script>
   <script src="writing-review.js"></script>
