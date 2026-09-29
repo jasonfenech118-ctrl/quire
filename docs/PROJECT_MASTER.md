@@ -35,6 +35,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 33: Claim-Aware Writing & Evidence Intelligence Foundation — implemented.
 - Step 34: Claim-Level Evidence Confidence — implemented.
 - Step 35: Structured Thesis-Value Paper Intelligence — implemented.
+- Step 36: Contradiction & Counter-Evidence Synthesis — implemented.
 
 ## Step 32 — implemented
 
@@ -95,7 +96,11 @@ Claim cards now expose a qualitative **Why this status?** evidence-confidence pr
 
 The Article Reader now includes **Why do I care?**, a grounded thesis-value analysis that retrieves exact passages for Study, Findings, Limitations, Thesis relevance and Possible destination. Relevance/destination are explicitly presented as researcher-facing suggestions rather than claims made by the source.
 
-## Agreed future feature backlog — after Step 35
+## Step 36 — implemented
+
+The Synthesis workspace now combines researcher-marked contradictory passages with cautious cross-paper contrast detection. Possible disagreements require overlapping finding terms plus differing direction/negation, can be opened as a focused paper pair, and are explicitly presented as comparison prompts rather than proof that studies truly contradict one another.
+
+## Agreed future feature backlog — after Step 36
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
