@@ -1,8 +1,9 @@
 /* Quire PDF Reader v2 — real PDF rendering, text selection, highlights and notes */
 (function(){
   const DB_NAME='quire-pdfs';
-  const DB_VERSION=1;
+  const DB_VERSION=2;
   const STORE_NAME='pdfs';
+  const TEXT_STORE_NAME='text-index';
   let dbPromise=null;
 
   let pdfDoc=null;
@@ -24,6 +25,7 @@
       request.onupgradeneeded=()=>{
         const db=request.result;
         if(!db.objectStoreNames.contains(STORE_NAME)) db.createObjectStore(STORE_NAME,{keyPath:'articleId'});
+        if(!db.objectStoreNames.contains(TEXT_STORE_NAME)) db.createObjectStore(TEXT_STORE_NAME,{keyPath:'articleId'});
       };
       request.onsuccess=()=>resolve(request.result);
       request.onerror=()=>reject(request.error || new Error('Could not open local PDF storage.'));
@@ -58,7 +60,35 @@
     },
     async get(articleId){return transact('readonly',store=>store.get(articleId));},
     async has(articleId){return Boolean((await this.get(articleId))?.blob);},
-    async remove(articleId){return transact('readwrite',store=>store.delete(articleId));}
+    async remove(articleId){return transact('readwrite',store=>store.delete(articleId));},
+    async saveTextIndex(articleId,pages){
+      const db=await openDb();
+      return new Promise((resolve,reject)=>{
+        const tx=db.transaction(TEXT_STORE_NAME,'readwrite');
+        const store=tx.objectStore(TEXT_STORE_NAME);
+        const request=store.put({articleId,pages,updatedAt:new Date().toISOString()});
+        request.onsuccess=()=>resolve(request.result);
+        request.onerror=()=>reject(request.error);
+      });
+    },
+    async getTextIndex(articleId){
+      const db=await openDb();
+      return new Promise((resolve,reject)=>{
+        const tx=db.transaction(TEXT_STORE_NAME,'readonly');
+        const request=tx.objectStore(TEXT_STORE_NAME).get(articleId);
+        request.onsuccess=()=>resolve(request.result||null);
+        request.onerror=()=>reject(request.error);
+      });
+    },
+    async removeTextIndex(articleId){
+      const db=await openDb();
+      return new Promise((resolve,reject)=>{
+        const tx=db.transaction(TEXT_STORE_NAME,'readwrite');
+        const request=tx.objectStore(TEXT_STORE_NAME).delete(articleId);
+        request.onsuccess=()=>resolve();
+        request.onerror=()=>reject(request.error);
+      });
+    }
   };
 
   function ensurePdfJs(){
@@ -464,6 +494,45 @@
     if(!pages) refreshHighlightSidebar();
   }
 
+
+  async function extractTextIndex(articleId){
+    if(!pdfDoc || articleId!==currentArticleId) throw new Error('Open the article before indexing its text.');
+    const pages=[];
+    for(let pageNumber=1;pageNumber<=pdfDoc.numPages;pageNumber++){
+      const page=await pdfDoc.getPage(pageNumber);
+      const content=await page.getTextContent();
+      let text='';
+      for(const item of content.items){
+        if(!item.str) continue;
+        text+=item.str;
+        text+=item.hasEOL?'\n':' ';
+      }
+      text=text.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ').trim();
+      pages.push({page:pageNumber,text});
+      window.dispatchEvent(new CustomEvent('quire:text-index-progress',{detail:{articleId,page:pageNumber,total:pdfDoc.numPages}}));
+    }
+    await PdfStore.saveTextIndex(articleId,pages);
+    const article=window.QuireStore?.getArticle(articleId);
+    if(article){
+      window.QuireStore.updateArticle(articleId,{
+        citationData:{...(article.citationData||{}),textIndexedAt:new Date().toISOString(),textPageCount:pages.length}
+      });
+    }
+    window.dispatchEvent(new CustomEvent('quire:text-index-ready',{detail:{articleId,pages:pages.length}}));
+    return {articleId,pages,updatedAt:new Date().toISOString()};
+  }
+
+  async function ensureTextIndex(articleId,{force=false}={}){
+    if(!force){
+      const existing=await PdfStore.getTextIndex(articleId);
+      if(existing?.pages?.length) return existing;
+    }
+    if(articleId!==currentArticleId || !pdfDoc){
+      await openArticle(articleId);
+    }
+    return extractTextIndex(articleId);
+  }
+
   async function enrichArticleFromPdf(articleId,fileName){
     try{
       const metadata=await pdfDoc.getMetadata();
@@ -503,6 +572,7 @@
       currentPage=1;scale=1.1;setReaderState('ready');buildThumbnails();
       await enrichArticleFromPdf(articleId,stored.name);
       await renderPage(1);
+      ensureTextIndex(articleId).catch(err=>console.warn('PDF text indexing failed',err));
       const updated=window.QuireStore?.getArticle(articleId);
       if(title) title.textContent=updated?.title||titleFromFilename(stored.name);
       if(meta){const bits=[updated?.authors,updated?.year,pdfDoc.numPages+' pages'].filter(Boolean);meta.textContent=bits.join(' · ');}
@@ -527,7 +597,9 @@
       await PdfStore.save(article.id,file);await openArticle(article.id);
       return window.QuireStore.getArticle(article.id);
     }catch(err){
-      await PdfStore.remove(article.id).catch(()=>{});window.QuireStore.removeArticle(article.id);throw err;
+      await PdfStore.remove(article.id).catch(()=>{});
+      await PdfStore.removeTextIndex(article.id).catch(()=>{});
+      window.QuireStore.removeArticle(article.id);throw err;
     }
   }
 
@@ -586,6 +658,7 @@
   window.QuirePdfStore=PdfStore;
   window.QuirePdfReader={
     init,importFile,attachFileToArticle,openArticle,renderPage,renderHighlights,refreshHighlightSidebar,
+    ensureTextIndex,getTextIndex:(articleId)=>PdfStore.getTextIndex(articleId),
     getCurrentArticleId:()=>currentArticleId,pendingArticleId:null
   };
 
