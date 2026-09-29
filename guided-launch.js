@@ -302,6 +302,7 @@
       return ['design','sample','methods','findings','limitations','relevance'].some(key=>String(d[key]||'').trim());
     }).length;
     const gaps=(state.analysisItems||[]).filter(x=>x.projectId===projectId&&x.kind==='gap_signal');
+    const viableGaps=gaps.filter(x=>!['set_aside','challenged'].includes(String(x.payload?.gapStatus||'emerging')));
     const hasTopic=Boolean(String(project.title||'').trim()&&!['untitled thesis','research project'].includes(String(project.title||'').trim().toLowerCase()));
 
     const tasks=[
@@ -311,7 +312,7 @@
       {id:'reading',label:'Read across several papers',done:reviewed.length>=3,target:'library',hint:'Read broadly enough to compare findings, methods and limitations.'},
       {id:'compare',label:'Compare papers across the field',done:compared>=2,target:'synthesis',hint:'Look for recurring themes, disagreement and methodological limitations.'},
       {id:'gap',label:'Record and test possible gaps',done:gaps.length>0,target:'synthesis',hint:'Treat gaps as hypotheses to test with further searching.'},
-      {id:'question',label:'Refine the working research question',done:Boolean(String(project.researchQuestion||'').trim()&&gaps.length>0),target:'setup',hint:'Refine the question after the literature starts revealing what is missing.'}
+      {id:'question',label:'Refine the working research question',done:Boolean(String(project.researchQuestion||'').trim()&&viableGaps.length>0),target:'setup',hint:'Refine the question after the literature starts revealing what is missing.'}
     ];
     const complete=tasks.filter(t=>t.done).length;
     return {percent:Math.round(complete/tasks.length*100),complete,total:tasks.length,tasks};
