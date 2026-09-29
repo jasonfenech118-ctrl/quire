@@ -404,9 +404,20 @@
     renderDashboardMilestones(milestones);
   }
 
+  function renderReaderReviewStatus(articleId=window.QuirePdfReader?.getCurrentArticleId?.()){
+    const button=el('readerReviewStatusBtn');
+    if(!button)return;
+    const article=articleId?window.QuireStore?.getArticle?.(articleId):null;
+    if(!article){button.textContent='Mark reviewed';button.disabled=true;return;}
+    button.disabled=false;
+    button.textContent=article.readingStatus==='reviewed'?'✓ Reviewed':'Mark reviewed';
+    button.classList.toggle('reviewed',article.readingStatus==='reviewed');
+  }
+
   function renderAll(){
     renderOverview();
     renderDashboard();
+    renderReaderReviewStatus();
     window.QuireProjects?.render?.();
   }
 
@@ -431,6 +442,15 @@
       captureNow();renderAll();
       window.dispatchEvent(new CustomEvent('quire:progress-refreshed'));
     });
+    el('readerReviewStatusBtn')?.addEventListener('click',()=>{
+      const articleId=window.QuirePdfReader?.getCurrentArticleId?.();
+      const article=articleId?window.QuireStore?.getArticle?.(articleId):null;
+      if(!article)return;
+      window.QuireStore.updateArticle(articleId,{readingStatus:article.readingStatus==='reviewed'?'reading':'reviewed'});
+      renderReaderReviewStatus(articleId);
+      scheduleCapture();
+    });
+    window.addEventListener('quire:pdf-opened',e=>renderReaderReviewStatus(e.detail?.articleId));
     window.addEventListener('quire:project-switched',()=>{setTimeout(()=>{captureNow();renderAll();},0);});
     window.addEventListener('quire:cloud-pulled',()=>{setTimeout(()=>{captureNow();renderAll();},0);});
     window.addEventListener('quire:store-changed',()=>{
