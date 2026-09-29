@@ -70,6 +70,14 @@ This step does **not** require Supabase. PDF binaries remain local until a Quire
 
 See `docs/pdf-reader.md`.
 
+## Step 4 — Persistent PDF highlights & notes ✅
+
+Quire's PDF reader now supports selectable text, persistent coloured highlights, attached research notes, a Highlights sidebar, and evidence links to themes, objectives and chapters.
+
+Annotations remember the exact source page and normalised PDF location so they can be restored after reopening or zooming the paper.
+
+See `docs/highlights-notes.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -79,10 +87,9 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Next build stage
 
-1. Persistent PDF highlights and notes
-2. Article metadata / DOI import
-3. AI summarisation grounded in uploaded papers
-4. Page-level citations for AI answers
-5. Reference-manager integration
+1. Article metadata / DOI import
+2. AI summarisation grounded in uploaded papers
+3. Page-level citations for AI answers
+4. Reference-manager integration
 
 © Quire prototype.
