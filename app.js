@@ -605,7 +605,14 @@ async function renderLibraryArticles(){
   }
 
   if(!articles.length){
-    mount.innerHTML='<div class="project-panel"><span class="eyebrow">FILTERED LIBRARY</span><h3>No matching papers</h3><p>Try another status filter or theme collection.</p></div>';
+    if(writingLibraryQuery){
+      mount.innerHTML='<div class="writing-library-context"><div><span class="eyebrow">FROM YOUR WRITING</span><strong>No clear match in your library</strong><small>'+escapeHtml(writingLibraryQuery.slice(0,220))+'</small></div><button type="button" id="clearWritingLibraryQuery">Show full library</button></div>'+
+        '<div class="project-panel"><h3>Broaden the evidence search</h3><p>Your current library does not contain an obvious metadata match for this claim. Search scholarly candidates, then inspect the paper before citing it.</p><button class="primary-btn" id="libraryDiscoverEvidence" type="button">Find scholarly evidence</button></div>';
+      document.getElementById('clearWritingLibraryQuery')?.addEventListener('click',()=>{writingLibraryQuery='';renderLibraryArticles();});
+      document.getElementById('libraryDiscoverEvidence')?.addEventListener('click',()=>window.dispatchEvent(new CustomEvent('quire:discover-evidence',{detail:{claim:writingLibraryQuery,source:'library-empty'}})));
+    }else{
+      mount.innerHTML='<div class="project-panel"><span class="eyebrow">FILTERED LIBRARY</span><h3>No matching papers</h3><p>Try another status filter or theme collection.</p></div>';
+    }
     return;
   }
 
