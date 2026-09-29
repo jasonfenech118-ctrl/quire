@@ -654,6 +654,8 @@
               <button type="button" data-editor-command="formatBlock" data-editor-value="h3">H3</button>
               <button type="button" data-editor-command="formatBlock" data-editor-value="blockquote">“</button>
               <button type="button" data-editor-command="insertUnorderedList">• List</button>
+              <span class="editor-toolbar-separator"></span>
+              <button type="button" class="insert-reference-btn" id="insertReferenceBtn">§ Insert reference</button>
             </div>
             <div id="liveSectionEditor" class="editor live-editor" contenteditable="true" data-placeholder="Start writing this section…"></div>
           </div>
@@ -1019,6 +1021,42 @@
 
 
 
+
+  <div id="inlineReferenceModal" class="modal-backdrop" hidden>
+    <div class="modal inline-reference-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">INSERT REFERENCE</span><h2>Cite without leaving your writing</h2></div>
+        <button id="closeInlineReferenceModal" type="button">×</button>
+      </div>
+
+      <div class="inline-reference-context">
+        <div><span>Current citation style</span><strong id="inlineReferenceStyle">Harvard</strong></div>
+        <button class="text-btn" id="inlineReferenceOpenBibliography" type="button">Citation settings →</button>
+      </div>
+
+      <label class="inline-reference-search">
+        <span>Search your Research Library</span>
+        <input id="inlineReferenceSearch" type="search" autocomplete="off" placeholder="Author, title, year or DOI…">
+      </label>
+      <div class="inline-reference-result-head"><strong>Library</strong><span id="inlineReferenceCount">0 references</span></div>
+      <div id="inlineReferenceLibrary" class="inline-reference-library"></div>
+
+      <section class="inline-reference-add">
+        <div class="inline-reference-add-head">
+          <div><span class="eyebrow">NOT IN YOUR LIBRARY?</span><h3>Add by DOI or article title</h3></div>
+        </div>
+        <div class="inline-reference-remote-search">
+          <input id="inlineReferenceRemoteQuery" type="text" autocomplete="off" placeholder="Paste a DOI or search the article title…">
+          <button class="soft-btn" id="inlineReferenceRemoteSearch" type="button">Find reference</button>
+        </div>
+        <small id="inlineReferenceRemoteMessage" class="inline-reference-remote-message"></small>
+        <div id="inlineReferenceRemoteResults" class="inline-reference-remote-results"></div>
+      </section>
+
+      <small class="inline-reference-footnote">The citation is inserted at your cursor and remains linked to the exact library record. Quire will include it in the thesis bibliography.</small>
+    </div>
+  </div>
+
   <div id="bibliographyModal" class="modal-backdrop" hidden>
     <div class="modal bibliography-modal">
       <div class="modal-head">
@@ -1358,6 +1396,7 @@
   <script src="copilot.js"></script>
   <script src="references.js"></script>
   <script src="citations.js"></script>
+  <script src="inline-references.js"></script>
   <script src="synthesis.js"></script>
   <script src="methodology.js"></script>
   <script src="writing-review.js"></script>
