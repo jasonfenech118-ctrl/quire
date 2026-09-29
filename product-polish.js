@@ -186,7 +186,7 @@
   function sanitizeBackupState(input){
     if(!input||!Array.isArray(input.projects))throw new Error('This is not a valid Quire workspace backup.');
     const state=JSON.parse(JSON.stringify(input));
-    const arrays=['projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes','articleThemes','evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages','reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals'];
+    const arrays=['projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes','articleThemes','evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages','reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals','analysisItems'];
     arrays.forEach(key=>{if(!Array.isArray(state[key]))state[key]=[];});
     const sanitizeHtml=html=>{
       const root=document.createElement('div');root.innerHTML=String(html||'');
