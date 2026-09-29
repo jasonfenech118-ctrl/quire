@@ -816,6 +816,13 @@
     document.querySelectorAll('[data-highlight-color]').forEach(btn=>btn.addEventListener('click',()=>savePendingHighlight(btn.dataset.highlightColor)));
     document.getElementById('highlightWithNoteBtn')?.addEventListener('mousedown',e=>e.preventDefault());
     document.getElementById('highlightWithNoteBtn')?.addEventListener('click',openNoteModalForSelection);
+    document.getElementById('explainSelectionBtn')?.addEventListener('mousedown',e=>e.preventDefault());
+    document.getElementById('explainSelectionBtn')?.addEventListener('click',()=>{
+      if(!pendingSelection)return;
+      const detail={...pendingSelection};
+      hideSelectionToolbar();clearNativeSelection();
+      window.dispatchEvent(new CustomEvent('quire:explain-passage',{detail}));
+    });
     document.getElementById('pagesTab')?.addEventListener('click',()=>switchReaderSide('pages'));
     document.getElementById('highlightsTab')?.addEventListener('click',()=>switchReaderSide('highlights'));
 
@@ -840,7 +847,7 @@
     focusEvidence,ensureTextIndex,getTextIndex:(articleId)=>PdfStore.getTextIndex(articleId),
     getDocument:()=>pdfDoc,getTextIndexVersion:()=>TEXT_INDEX_VERSION,
     getCurrentPage:()=>currentPage,
-    getCurrentArticleId:()=>currentArticleId,pendingArticleId:null
+    getCurrentArticleId:()=>currentArticleId,getPendingSelection:()=>pendingSelection?{...pendingSelection}:null,pendingArticleId:null
   };
 
   document.addEventListener('DOMContentLoaded',init);
