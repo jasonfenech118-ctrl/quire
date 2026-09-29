@@ -23,13 +23,16 @@ The primary user-facing framework is **Home → Research → Ideas → Thesis �
 - Replaced the competing eight-step research strip with one five-stage mental model: **Discover → Understand → Organise → Write → Review**.
 - The research-flow strip now derives a **Sensible next step** from actual project state (papers, highlights/notes, evidence links and writing) instead of acting as static navigation.
 - Five-stage flow is responsive and keeps specialist tools underneath the simpler user-facing framework.
+- Contextual workflow handoffs are now event-driven: highlight captured → **Organise evidence**; evidence assigned to a destination → **Use it in writing**; evidence linked to a thesis section → **Continue writing**; writing review → **Check evidence** when evidence issues are detected, otherwise **Continue writing**.
+- The agreed future feature set is preserved in PROJECT_MASTER under four areas: Intelligent Writing, Evidence Intelligence, Research Memory and Guided Thesis Workflow.
 
 ## Next exact work
 
-1. Add event-driven handoffs after common completed actions (paper highlighted/noted → Organise; evidence linked → Write; paragraph reviewed → evidence check/continue writing).
-2. QA Step 32 on empty paragraphs, short notes and longer academic paragraphs, then decide whether the writing companion should be collapsible.
-3. Review Home and More tools for any remaining duplicated paths that undermine the five-stage model.
-4. Keep Step 32 frontend-first and local. Do not activate Supabase.
+1. QA Step 32 on empty paragraphs, short notes and longer academic paragraphs; verify handoffs do not become noisy or misleading.
+2. Decide whether the writing companion should be collapsible and remember that preference locally.
+3. Review Home and More tools for remaining duplicated paths that undermine the five-stage model.
+4. Complete Step 32 only after the simplified flow and writing companion work coherently together.
+5. Keep Step 32 frontend-first and local. Do not activate Supabase.
 
 ## Product principles to preserve
 
