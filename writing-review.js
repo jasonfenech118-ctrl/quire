@@ -144,7 +144,9 @@
     const content=replaceTextInHtml(section.content||'',s.original,s.replacement);
     const count=(textOf(content).match(/\b[\w’'-]+\b/g)||[]).length;
     window.QuireStore.updateSection(section.id,{content,currentWordCount:count});
-    s.status='accepted';renderDocument();renderSuggestions();
+    s.status='accepted';
+    window.dispatchEvent(new CustomEvent('quire:writing-suggestion-accepted',{detail:{type:s.type,original:s.original,replacement:s.replacement,message:s.message,sectionId:section.id}}));
+    renderDocument();renderSuggestions();
   }
   function dismiss(id){
     const s=suggestions.find(x=>x.id===id);
