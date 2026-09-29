@@ -9,7 +9,7 @@
   };
   const STAGES=[
     {id:'discover',label:'Discover',copy:'Find useful research and bring the right papers into your project.',view:'library'},
-    {id:'understand',label:'Understand',copy:'Read, highlight and decide what each source actually contributes.',view:'reader'},
+    {id:'understand',label:'Understand',copy:'Read, highlight and decide what each source actually contributes.',view:'library'},
     {id:'organise',label:'Organise',copy:'Turn evidence and your own thinking into themes, arguments and destinations.',view:'brainstorm'},
     {id:'write',label:'Write',copy:'Develop the thesis with your evidence and writing companion beside you.',view:'chapters'},
     {id:'review',label:'Review',copy:'Check meaning, language, claims, evidence and readiness before finalising.',view:'review'}
@@ -30,8 +30,8 @@
   function recommendation(view){
     const s=state();
     if(!s.articles.length)return {stage:'discover',title:'Start with one useful paper',copy:'Add or find a paper connected to your research question. You do not need to organise the whole thesis first.',action:'Open Research',view:'library'};
-    if(!s.highlights.length&&!s.notes.length)return {stage:'understand',title:'Understand a paper before collecting more',copy:'Open one paper, highlight the exact passages that matter and capture what they mean for your question.',action:'Read a paper',view:'reader'};
-    if(!s.evidence.length)return {stage:'organise',title:'Give the evidence a destination',copy:'Connect a useful passage or note to a theme, claim or thesis section so it does not become an isolated highlight.',action:'Organise evidence',view:'map'};
+    if(!s.highlights.length&&!s.notes.length)return {stage:'understand',title:'Understand a paper before collecting more',copy:'Open one paper from your Research Library, then highlight the exact passages that matter and capture what they mean for your question.',action:'Open Research',view:'library'};
+    if(!s.evidence.length)return {stage:'organise',title:'Give the evidence a destination',copy:'Connect a useful passage or note to a theme, argument or thesis destination so it does not become an isolated highlight.',action:'Open Ideas',view:'brainstorm'};
     if(!s.words)return {stage:'write',title:'Turn one organised idea into a paragraph',copy:'Start small. Write the point in your own words with the linked evidence beside you.',action:'Start writing',view:'chapters'};
     if(view==='chapters')return {stage:'review',title:'Check the paragraph you just developed',copy:'Confirm Quire understood your meaning, improve the English only where useful, then verify the evidence behind factual claims.',action:'Review writing',view:'review'};
     return {stage:'write',title:'Keep the research and writing connected',copy:'Return to the thesis and develop the next evidence-backed point. Review it when the idea is complete.',action:'Continue writing',view:'chapters'};
