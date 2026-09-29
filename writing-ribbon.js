@@ -24,15 +24,34 @@
   }
   function rememberWritingContext(){
     writingContext={
-      sectionId:writingContext?.sectionId||window.QuireChapterEditor?.getCurrentSectionId?.()||null,
+      sectionId:window.QuireChapterEditor?.getActive?.().sectionId||window.QuireChapterEditor?.getCurrentSectionId?.()||null,
       selection:selectedText(),
       paragraph:paragraphText()
     };
+    updateReturnControl(document.querySelector('.view.active')?.id||'chapters');
     return writingContext;
   }
+  function updateReturnControl(viewId){
+    const btn=document.getElementById('returnToWritingBtn');
+    if(!btn)return;
+    const show=Boolean(writingContext?.sectionId)&&viewId!=='chapters';
+    btn.hidden=!show;
+    const label=document.getElementById('returnToWritingLabel');
+    if(label&&show){
+      const section=(window.QuireStore?.getState?.().sections||[]).find(s=>s.id===writingContext.sectionId);
+      label.textContent=section?.title?('Back to '+section.title):'Back to your section';
+    }
+  }
   function returnToWriting(){
+    const sectionId=writingContext?.sectionId;
     window.showView?.('chapters');
-    setTimeout(()=>editor()?.focus(),80);
+    if(sectionId){
+      setTimeout(()=>{
+        window.QuireChapterEditor?.openSection?.(sectionId);
+        editor()?.focus();
+      },80);
+    }else setTimeout(()=>editor()?.focus(),80);
+    updateReturnControl('chapters');
   }
   function openReference(){
     rememberWritingContext();
@@ -95,8 +114,9 @@
     document.getElementById('ribbonFindGapBtn')?.addEventListener('click',()=>openCopilotWith('Identify factual or interpretive claims in this paragraph that still need evidence, and explain what type of source would support each claim.'));
     document.getElementById('returnToWritingBtn')?.addEventListener('click',returnToWriting);
     window.addEventListener('quire:return-to-writing',returnToWriting);
+    window.addEventListener('quire:view-changed',e=>updateReturnControl(e.detail?.viewId));
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireWritingRibbon={selectedText,paragraphText,rememberWritingContext,returnToWriting,getContext:()=>writingContext};
+  window.QuireWritingRibbon={selectedText,paragraphText,rememberWritingContext,returnToWriting,getContext:()=>writingContext,updateReturnControl};
 })();
