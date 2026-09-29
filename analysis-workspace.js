@@ -1,4 +1,4 @@
-/* Quire Research Data & Analysis Workspace — Step 26 */
+/* Quire Research Data & Analysis Workspace — Step 28 */
 (function(){
   let editingId=null;
   let currentKindFilter='all';
