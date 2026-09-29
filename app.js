@@ -54,12 +54,13 @@ fileInput.addEventListener('change', async e => {
 });
 
 document.querySelectorAll('.prompt-chip').forEach(chip => chip.addEventListener('click', () => {
-  document.getElementById('dashboardPrompt').value = chip.textContent;
+  const input=document.getElementById('dashboardPrompt');
+  if(input)input.value = chip.textContent;
 }));
 
-document.getElementById('dashboardAsk').addEventListener('click', () => {
+document.getElementById('dashboardAsk')?.addEventListener('click', () => {
   const input = document.getElementById('dashboardPrompt');
-  if(!input.value.trim()) return;
+  if(!input?.value.trim()) return;
   showView('brainstorm');
   showToast('Copilot prompt opened in Brainstorm');
 });
