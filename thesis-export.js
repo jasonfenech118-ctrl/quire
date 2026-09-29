@@ -203,6 +203,48 @@
       '</style></head><body>'+body+'</body></html>';
   }
 
+  function submissionPackMarkdown(){
+    const state=window.QuireStore.getState(),project=window.QuireStore.getActiveProject()||{},pid=window.QuireStore.getActiveProjectId();
+    window.QuireReadiness?.evaluate?.();
+    const readiness=window.QuireReadiness?.markdown?.()||'# Readiness\n\nReadiness module unavailable.';
+    const citation=window.QuireCitations?.diagnostics?.()||{};
+    const feedback=(state.feedbackItems||[]).filter(x=>x.projectId===pid&&x.status!=='resolved');
+    const rounds=(state.reviewRounds||[]).filter(x=>x.projectId===pid);
+    const settings=currentSettings();
+    return [
+      '# Quire submission pack',
+      '',
+      '**Project:** '+(project.title||'Untitled thesis'),
+      '**Generated:** '+new Date().toLocaleString(),
+      '**Candidate:** '+(settings.authorName||'Not set'),
+      '**Submission date:** '+(settings.submissionDate||'Not set'),
+      '**Citation style:** '+(window.QuireCitations?.getStyle?.()||'Not set'),
+      '',
+      '> Companion preflight material only. University requirements, supervisor approval, academic merit and similarity/plagiarism interpretation remain external human/institutional decisions.',
+      '',
+      '## Reference integrity snapshot',
+      '',
+      '- Library references: '+(citation.total??'—'),
+      '- Cited references: '+(citation.usedCount??'—'),
+      '- Unused library items: '+(citation.unused?.length??'—'),
+      '- References missing core metadata: '+(citation.missing?.length??'—'),
+      '',
+      '## Supervision & revision snapshot',
+      '',
+      '- Review rounds: '+rounds.length,
+      '- Unresolved feedback items: '+feedback.length,
+      ...feedback.slice(0,10).map(x=>'- '+String(x.comment||'Feedback item').replace(/\s+/g,' ').slice(0,180)),
+      '',
+      readiness
+    ].join('\n');
+  }
+  function downloadSubmissionPack(){
+    persist();
+    const project=window.QuireStore.getActiveProject()||{};
+    const blob=new Blob([submissionPackMarkdown()],{type:'text/markdown;charset=utf-8'}),url=URL.createObjectURL(blob),a=document.createElement('a');
+    a.href=url;a.download=safeFile(project.title||'thesis')+'-submission-pack.md';document.body.appendChild(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),1000);
+  }
+
   function downloadWord(){
     persist();renderPreview();
     const project=window.QuireStore.getActiveProject()||{};
@@ -233,6 +275,7 @@
       window.QuireCitations?.setStyle?.(e.target.value);
       renderPreview();
     });
+    document.getElementById('downloadSubmissionPackBtn')?.addEventListener('click',downloadSubmissionPack);
     document.getElementById('downloadWordBtn')?.addEventListener('click',downloadWord);
     document.getElementById('printPdfBtn')?.addEventListener('click',printPdf);
     document.getElementById('refreshExportPreview')?.addEventListener('click',renderPreview);
@@ -245,5 +288,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireExport={renderPreview,downloadWord,printPdf};
+  window.QuireExport={renderPreview,downloadSubmissionPack,submissionPackMarkdown,downloadWord,printPdf};
 })();
