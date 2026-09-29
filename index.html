@@ -545,28 +545,57 @@
       </section>
 
       <section id="map" class="view">
-        <div class="page-heading compact">
-          <div><span class="eyebrow">THESIS MAP</span><h1>See how the argument connects.</h1><p>Trace your research question through objectives, themes, evidence and chapters.</p></div>
-          <button class="primary-btn">＋ Add connection</button>
+        <div class="page-heading compact thesis-map-heading">
+          <div>
+            <span class="eyebrow">LIVE THESIS MAP</span>
+            <h1>See the argument your evidence is building.</h1>
+            <p>The map is generated from the active project's real objectives, themes, papers, evidence links, chapters and sections.</p>
+          </div>
+          <div class="thesis-map-heading-actions">
+            <select id="mapRelationshipFilter" aria-label="Relationship filter">
+              <option value="all">All relationships</option>
+              <option value="supports">Supports</option>
+              <option value="contradicts">Contradicts</option>
+              <option value="contextualises">Contextualises</option>
+              <option value="critiques">Critiques</option>
+              <option value="method">Methodological</option>
+            </select>
+            <button class="primary-btn" id="addMapConnectionBtn" type="button">＋ Add connection</button>
+          </div>
         </div>
-        <div class="map-canvas">
-          <div class="map-node root"><span>RESEARCH QUESTION</span><strong>How can patient education support self-management after stoma formation?</strong></div>
-          <div class="map-line vertical"></div>
-          <div class="map-row objectives">
-            <div class="map-node"><span>OBJECTIVE 1</span><strong>Explore educational needs</strong><small>11 papers</small></div>
-            <div class="map-node"><span>OBJECTIVE 2</span><strong>Identify barriers to self-management</strong><small>9 papers</small></div>
-            <div class="map-node"><span>OBJECTIVE 3</span><strong>Evaluate specialist support</strong><small>8 papers</small></div>
+
+        <div id="thesisMapStats" class="thesis-map-stats"></div>
+
+        <div class="thesis-map-toolbar">
+          <div class="map-mode-switch">
+            <button type="button" class="active" data-map-mode="connections">Connections</button>
+            <button type="button" data-map-mode="gaps">Gaps</button>
           </div>
-          <div class="map-row themes">
-            <div class="theme-node">Patient education <span>8</span></div>
-            <div class="theme-node">Confidence <span>6</span></div>
-            <div class="theme-node">Follow-up <span>5</span></div>
-            <div class="theme-node">Quality of life <span>5</span></div>
+          <p><span class="map-legend-dot structural"></span>Structure <span class="map-legend-dot supports"></span>Evidence <span class="map-legend-dot contradicts"></span>Contradiction <span class="map-legend-dot derived"></span>Derived relationship</p>
+        </div>
+
+        <div class="live-map-layout">
+          <div class="live-map-main">
+            <div class="thesis-map-viewport">
+              <div id="thesisMapGraph" class="thesis-map-graph" data-mode="connections"></div>
+            </div>
+
+            <section class="thesis-map-gap-panel">
+              <div class="section-title compact-title">
+                <div><span class="eyebrow">STRUCTURAL GAPS</span><h2>Where the chain is thin</h2></div>
+                <small>Generated from the current project graph</small>
+              </div>
+              <div id="thesisMapGaps" class="thesis-map-gaps"></div>
+            </section>
           </div>
-          <div class="map-row chapters-map">
-            <div class="chapter-node"><span>CHAPTER 2</span><strong>Literature Review</strong><small>18 linked sources</small></div>
-            <div class="chapter-node"><span>CHAPTER 5</span><strong>Discussion</strong><small>12 linked sources</small></div>
-          </div>
+
+          <aside id="thesisMapInspector" class="thesis-map-inspector">
+            <div class="map-inspector-empty">
+              <span class="eyebrow">MAP INSPECTOR</span>
+              <strong>Select a node</strong>
+              <p>Choose an objective, theme, paper, chapter or section to inspect its connections.</p>
+            </div>
+          </aside>
         </div>
       </section>
 
@@ -987,6 +1016,41 @@
     </div>
   </div>
 
+
+  <div id="mapConnectionModal" class="modal-backdrop" hidden>
+    <div class="modal map-connection-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">THESIS MAP</span><h2>Add an evidence connection</h2></div>
+        <button id="closeMapConnectionModal" type="button">×</button>
+      </div>
+      <p class="map-connection-intro">Connect a paper—or an exact highlight—to the part of your thesis it informs. One connection can link the same evidence to an objective, theme and writing destination.</p>
+
+      <div class="form-grid">
+        <label class="field wide"><span>Evidence source</span><select id="mapConnectionArticle"><option value="">Choose an article</option></select></label>
+        <label class="field wide"><span>Exact highlight (optional)</span><select id="mapConnectionHighlight"><option value="">Article-level connection</option></select></label>
+        <label class="field"><span>Objective</span><select id="mapConnectionObjective"><option value="">No objective</option></select></label>
+        <label class="field"><span>Theme</span><select id="mapConnectionTheme"><option value="">No theme</option></select></label>
+        <label class="field"><span>Chapter</span><select id="mapConnectionChapter"><option value="">No chapter</option></select></label>
+        <label class="field"><span>Section</span><select id="mapConnectionSection"><option value="">No section</option></select></label>
+        <label class="field"><span>Relationship</span>
+          <select id="mapConnectionRelationship">
+            <option value="supports">Supports</option>
+            <option value="contradicts">Contradicts</option>
+            <option value="contextualises">Contextualises</option>
+            <option value="critiques">Critiques</option>
+            <option value="method">Methodological evidence</option>
+          </select>
+        </label>
+        <label class="field wide"><span>Why does this connection matter? (optional)</span><textarea id="mapConnectionRationale" rows="3" placeholder="A brief rationale helps you remember how this evidence contributes to the argument."></textarea></label>
+      </div>
+      <small id="mapConnectionMessage" class="map-connection-message"></small>
+      <div class="account-button-row map-connection-actions">
+        <button class="soft-btn" id="cancelMapConnection" type="button">Cancel</button>
+        <button class="primary-btn" id="saveMapConnection" type="button">Save connection</button>
+      </div>
+    </div>
+  </div>
+
   <div id="evidenceLinkerModal" class="modal-backdrop" hidden>
     <div class="modal evidence-linker-modal">
       <div class="modal-head">
@@ -1265,6 +1329,7 @@
   <script src="projects.js"></script>
   <script src="chapter-editor.js"></script>
   <script src="evidence-writing.js"></script>
+  <script src="thesis-map.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
   <script src="ocr.js"></script>
