@@ -2735,3 +2735,15 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 
 .flow-next-card{transition:background .25s ease,box-shadow .25s ease}
 .flow-next-card.handoff-ready{background:#f3ecdf;box-shadow:0 0 0 6px rgba(178,139,82,.08);border-radius:3px}
+
+
+/* ---------- Step 32: quieter companion and grouped specialist tools ---------- */
+.writing-companion-head>div{display:flex;align-items:center;gap:7px}
+.companion-toggle{border:0;background:transparent;color:var(--forest);font-size:7px;font-weight:700;padding:3px 0;cursor:pointer}
+.writing-companion-body[hidden]{display:none}
+.writing-companion.collapsed{padding-bottom:8px}
+.writing-companion.collapsed .writing-companion-head{margin-bottom:0}
+.grouped-tools{max-height:min(70vh,620px);overflow:auto}
+.nav-tool-group{display:grid;gap:1px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08)}
+.nav-tool-group:last-child{border-bottom:0}
+.nav-tool-group>small{font-size:6px;letter-spacing:.13em;color:#9f978d;padding:5px 12px 3px}
