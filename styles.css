@@ -824,3 +824,56 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
   .selection-toolbar{max-width:calc(100vw - 16px)}
   .reader-left{display:none}
 }
+
+
+/* ---------- Step 5: scholarly metadata / DOI import ---------- */
+.metadata-modal{width:min(940px,96vw);max-height:90vh;overflow:auto}
+.metadata-intro{font-size:10px;color:var(--muted);line-height:1.6;margin:4px 0 14px;max-width:720px}
+.metadata-search-row{display:grid;grid-template-columns:1fr auto;gap:8px;margin-bottom:18px}
+.metadata-search-row input{
+  width:100%;border:1px solid var(--line);border-radius:3px;background:var(--sheet);
+  padding:11px 12px;color:var(--ink);font-size:11px
+}
+.metadata-workspace{display:grid;grid-template-columns:minmax(250px,.8fr) minmax(0,1.2fr);gap:14px;align-items:start}
+.metadata-results{display:grid;gap:7px;max-height:520px;overflow:auto;padding-right:2px}
+.metadata-result{
+  width:100%;border:1px solid var(--line);background:#faf6ef;border-radius:3px;
+  padding:11px 12px;text-align:left;display:flex;justify-content:space-between;gap:12px;align-items:flex-start
+}
+.metadata-result:hover,.metadata-result.active{border-color:#a99d8d;background:#fffdf8}
+.metadata-result>div{min-width:0}
+.metadata-result strong,.metadata-result small{display:block}
+.metadata-result strong{
+  font-family:"Libre Caslon Text",serif;font-size:12px;font-weight:400;line-height:1.35
+}
+.metadata-result small{font-size:8px;color:var(--muted);line-height:1.45;margin-top:5px}
+.metadata-result>span{font-size:7px;color:var(--forest);white-space:nowrap;margin-top:2px}
+.metadata-empty,.metadata-loading,.metadata-error{
+  border:1px dashed var(--line-dark);background:rgba(255,253,248,.6);
+  padding:22px;text-align:center;font-size:9px;color:var(--muted);border-radius:3px
+}
+.metadata-error{color:#8b554f;border-color:#d0aaa5;background:#f8eeec}
+.metadata-preview{background:#fffdf8;border:1px solid var(--line);border-radius:3px;padding:20px;box-shadow:var(--shadow-soft)}
+.metadata-preview[hidden]{display:none}
+.metadata-preview h3{
+  font-family:"Libre Caslon Text",serif;font-size:22px;font-weight:400;line-height:1.3;margin:8px 0
+}
+.metadata-preview>p{font-size:9px;color:var(--muted);line-height:1.5;margin:0 0 14px}
+.metadata-facts{display:grid;grid-template-columns:1fr 100px;gap:1px;background:var(--line);border:1px solid var(--line);margin:14px 0}
+.metadata-facts>div{background:#faf6ef;padding:10px}
+.metadata-facts .wide{grid-column:1/-1}
+.metadata-facts span,.metadata-facts strong{display:block}
+.metadata-facts span{font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted)}
+.metadata-facts strong{font-size:9px;margin-top:4px;word-break:break-word}
+.metadata-abstract{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.metadata-abstract p{font-family:"Libre Caslon Text",serif;font-size:11px;line-height:1.55;max-height:110px;overflow:auto;margin:6px 0}
+.metadata-citation-box{background:#f2ebdf;border-left:2px solid var(--gold);padding:11px 12px;margin-top:13px}
+.metadata-citation-box p{font-size:9px;line-height:1.55;margin:5px 0 0}
+.metadata-duplicate{font-size:8px;line-height:1.45;color:#7d5d32;background:#f6efe0;border:1px solid #dfcfae;padding:8px 9px;margin-top:11px}
+.metadata-actions{display:flex;gap:8px;margin-top:14px;flex-wrap:wrap}
+.metadata-source-note{display:block;color:var(--muted);font-size:7px;line-height:1.5;margin-top:14px}
+@media(max-width:800px){
+  .metadata-search-row,.metadata-workspace{grid-template-columns:1fr}
+  .metadata-results{max-height:260px}
+  #readerMetadataBtn{display:none}
+}
