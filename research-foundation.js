@@ -364,6 +364,17 @@
         '<article><span>POSSIBLE GAPS</span><strong>'+review.counts.gapSignals+'</strong><small>signals still requiring further searching</small></article>';
     }
 
+    const breakdown=document.getElementById('foundationReviewBreakdown');
+    if(breakdown){
+      breakdown.innerHTML=review.components.map(row=>
+        '<article class="foundation-review-row">'+
+          '<div><strong>'+escapeHtml(row.label)+'</strong><small>'+escapeHtml(row.detail)+'</small></div>'+
+          '<div class="foundation-review-meter"><i style="width:'+pct(row.score)+'%"></i></div>'+
+          '<span>'+pct(row.score)+'% · '+row.weight+'% weight</span>'+
+        '</article>'
+      ).join('');
+    }
+
     const gapTitle=document.getElementById('foundationGapTitle');
     const gapCopy=document.getElementById('foundationGapCopy');
     if(ctx.gapSignals.length){
