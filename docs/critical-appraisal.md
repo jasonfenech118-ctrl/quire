@@ -1,6 +1,6 @@
-# Quire Critical Appraisal & Quality Assessment — Step 25
+# Quire Critical Appraisal & Quality Assessment — Step 27
 
-Step 25 adds structured critical appraisal to individual Research Library papers and carries the resulting judgement into Research Synthesis.
+Step 27 adds structured critical appraisal to individual Research Library papers and carries the resulting judgement into Research Synthesis.
 
 ## Principle
 
