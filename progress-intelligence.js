@@ -217,12 +217,19 @@
       live.currentWords>0,
       Array.isArray(setup.analysis)&&setup.analysis.length>0
     ];
+    const firstIncomplete=statuses.findIndex(value=>!value);
     items.forEach((item,index)=>{
       item.classList.remove('done','current');
       const icon=item.querySelector(':scope > span');
-      if(statuses[index]){item.classList.add('done');if(icon)icon.textContent='✓';}
-      else if(index===statuses.findIndex(Boolean) || (index>0&&statuses.slice(0,index).some(Boolean))){item.classList.add('current');if(icon)icon.textContent='→';}
-      else if(icon)icon.textContent='○';
+      if(statuses[index]){
+        item.classList.add('done');
+        if(icon)icon.textContent='✓';
+      }else if(index===firstIncomplete){
+        item.classList.add('current');
+        if(icon)icon.textContent='→';
+      }else if(icon){
+        icon.textContent='○';
+      }
     });
   }
 
