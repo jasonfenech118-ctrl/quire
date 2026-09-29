@@ -1371,6 +1371,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 .map-edge.edge-critiques{stroke:#7f6558;stroke-dasharray:5 3}
 .map-edge.edge-contextualises{stroke:#a58e68}
 .map-edge.edge-method{stroke:#6f7e9b;stroke-dasharray:2 3}
+.map-edge.edge-cites{stroke:#a7a096;stroke-width:1;stroke-dasharray:1 3;opacity:.42}
 .map-edge.structural{stroke:#b7ac9d;stroke-width:1;opacity:.55}
 .map-edge.derived{stroke:#ad9672;stroke-dasharray:4 4;opacity:.48}
 
