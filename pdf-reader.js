@@ -545,7 +545,8 @@
     const maturity=window.QuireResearchFoundation?.maturity?.()||{key:'broad'};
     const activeProject=window.QuireStore.getActiveProject?.()||{};
     const gapSignals=(window.QuireStore.getState?.().analysisItems||[]).filter(item=>item.projectId===window.QuireStore.getActiveProjectId?.()&&item.kind==='gap_signal');
-    const writingReady=review.score>=65&&maturity.key==='stabilising'&&String(activeProject.researchQuestion||'').trim()&&gapSignals.length>0;
+    const viableGaps=gapSignals.filter(item=>['supported','narrowed'].includes(String(item.payload?.gapStatus||'emerging')));
+    const writingReady=review.score>=65&&maturity.key==='stabilising'&&String(activeProject.researchQuestion||'').trim()&&viableGaps.length>0;
 
     let handoff;
     if(writingReady&&(themeId||objectiveId||chapterId)){
