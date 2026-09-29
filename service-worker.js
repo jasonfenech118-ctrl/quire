@@ -1,9 +1,9 @@
 const CACHE='quire-shell-v23';
 const SHELL=[
   './','./index.html','./styles.css','./manifest.webmanifest','./quire-icon.svg',
-  './data-model.js','./launch.js','./projects.js','./chapter-editor.js','./evidence-writing.js','./thesis-map.js',
+  './data-model.js','./guided-launch.js','./projects.js','./chapter-editor.js','./evidence-writing.js','./thesis-map.js',
   './cloud.js','./pdf-reader.js','./ocr.js','./metadata.js','./copilot.js','./references.js',
-  './citations.js','./inline-references.js','./synthesis.js','./methodology.js','./writing-review.js',
+  './citations.js','./inline-references.js','./search-screening.js','./synthesis.js','./methodology.js','./writing-review.js',
   './evidence-check.js','./supervision.js','./thesis-export.js','./progress-intelligence.js',
   './product-polish.js','./app.js'
 ];
