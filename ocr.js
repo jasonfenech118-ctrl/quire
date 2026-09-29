@@ -166,7 +166,10 @@
 
     const pagesToConsider=pageList(pdf,scope);
     const onlyEmpty=document.getElementById('ocrOnlyEmpty')?.checked!==false;
-    const existing=await window.QuirePdfReader.getTextIndex(articleId).catch(()=>null);
+    setStatus('Checking existing text…',0,'Quire will preserve native PDF text and any OCR already completed.');
+    const existing=await window.QuirePdfReader.ensureTextIndex(articleId).catch(
+      ()=>window.QuirePdfReader.getTextIndex(articleId).catch(()=>null)
+    );
     const existingPages=new Map((existing?.pages||[]).map(p=>[Number(p.page),p]));
     const pageNumbers=pagesToConsider.filter(pageNumber=>{
       if(!onlyEmpty) return true;
