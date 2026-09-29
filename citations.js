@@ -72,6 +72,12 @@
         if(h?.articleId) used.add(h.articleId);
       }
     });
+    state.sections.filter(s=>s.projectId===projectId).forEach(section=>{
+      const html=String(section.content||'');
+      const re=/data-citation-article=["']([^"']+)["']/g;
+      let match;
+      while((match=re.exec(html))) if(match[1]) used.add(match[1]);
+    });
     return used;
   }
 
