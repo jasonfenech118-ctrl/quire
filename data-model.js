@@ -487,6 +487,73 @@
     return clone(article);
   }
 
+
+  function referenceDoi(value=''){
+    return String(value||'').trim()
+      .replace(/^doi:\s*/i,'')
+      .replace(/^https?:\/\/(?:dx\.)?doi\.org\//i,'')
+      .replace(/[\s.,;]+$/,'')
+      .toLowerCase();
+  }
+
+  function referenceTitle(value=''){
+    return String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();
+  }
+
+  function upsertArticles(items=[], projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    if(!projectId) throw new Error('No active thesis project.');
+    const report={added:0,updated:0,skipped:0,total:Array.isArray(items)?items.length:0,articles:[]};
+    const ts=nowIso();
+
+    for(const incoming of (Array.isArray(items)?items:[])){
+      if(!incoming?.title){report.skipped++;continue;}
+      const doi=referenceDoi(incoming.doi);
+      const titleKey=referenceTitle(incoming.title);
+      let article=state.articles.find(a=>a.projectId===projectId && doi && referenceDoi(a.doi)===doi);
+      if(!article && titleKey){
+        article=state.articles.find(a=>a.projectId===projectId && referenceTitle(a.title)===titleKey);
+      }
+
+      if(article){
+        for(const key of ['title','authors','journal','year','doi','abstract','sourceUrl']){
+          if(incoming[key]!=null && incoming[key]!=='') article[key]=incoming[key];
+        }
+        article.citationData={...(article.citationData||{})};
+        for(const [key,value] of Object.entries(incoming.citationData||{})){
+          const empty=value==null||value===''||(Array.isArray(value)&&!value.length);
+          if(!empty) article.citationData[key]=value;
+        }
+        article.updatedAt=ts;
+        report.updated++;
+        report.articles.push(clone(article));
+      }else{
+        const created={
+          id:uid('article'),projectId,
+          title:incoming.title||'Untitled article',
+          authors:incoming.authors||'',
+          journal:incoming.journal||'',
+          year:incoming.year||null,
+          doi:incoming.doi||'',
+          abstract:incoming.abstract||'',
+          pdfPath:incoming.pdfPath||'',
+          sourceUrl:incoming.sourceUrl||'',
+          readingStatus:incoming.readingStatus||'unread',
+          aiProcessed:Boolean(incoming.aiProcessed),
+          citationData:incoming.citationData||{},
+          createdAt:ts,updatedAt:ts
+        };
+        state.articles.push(created);
+        report.added++;
+        report.articles.push(clone(created));
+      }
+    }
+
+    if(report.added||report.updated) writeState(state);
+    return report;
+  }
+
   function removeArticle(articleId){
     const state=getState();
     const article=state.articles.find(a=>a.id===articleId);
@@ -697,6 +764,7 @@
     getArticle,
     addArticle,
     updateArticle,
+    upsertArticles,
     removeArticle,
     listHighlights,
     getHighlight,
