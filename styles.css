@@ -1228,3 +1228,28 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
   border:1px solid #c6d0c8;background:#eef3ee;color:var(--forest);text-align:left;border-radius:3px;
   padding:6px 7px;font-size:8px
 }
+
+
+/* ---------- Step 15: research synthesis workspace ---------- */
+.synthesis-layout{display:grid;grid-template-columns:250px minmax(0,1fr);gap:14px;align-items:start}
+.synthesis-picker-panel{border:1px solid var(--line);background:rgba(255,253,248,.78);padding:15px;border-radius:4px;position:sticky;top:88px}
+.synthesis-article-picker{display:grid;gap:5px;margin-top:10px;max-height:650px;overflow:auto}
+.synthesis-pick{display:grid;grid-template-columns:18px 1fr;gap:7px;align-items:start;padding:7px;border-radius:3px}
+.synthesis-pick:hover{background:#f0ebe2}
+.synthesis-pick strong,.synthesis-pick small{display:block}
+.synthesis-pick strong{font-size:8px;line-height:1.35}.synthesis-pick small{font-size:7px;color:var(--muted);margin-top:3px}
+.synthesis-main{min-width:0}
+.synthesis-table-wrap{overflow:auto;border:1px solid var(--line);background:#fffdf8}
+.synthesis-matrix{border-collapse:collapse;min-width:1250px;width:100%}
+.synthesis-matrix th,.synthesis-matrix td{border-right:1px solid var(--line);border-bottom:1px solid var(--line);vertical-align:top;padding:8px}
+.synthesis-matrix thead th{font-size:7px;text-transform:uppercase;letter-spacing:.1em;color:var(--muted);background:#eee8de;position:sticky;top:0}
+.synthesis-matrix tbody th{width:180px;text-align:left;background:#faf6ef}
+.synthesis-matrix tbody th strong,.synthesis-matrix tbody th small{display:block}
+.synthesis-matrix tbody th strong{font-size:9px}.synthesis-matrix tbody th small{font-size:7px;color:var(--muted);line-height:1.35;margin:4px 0}
+.synthesis-matrix tbody th button{border:0;background:transparent;color:var(--forest);font-size:7px;padding:3px 0}
+.synthesis-matrix textarea{width:170px;min-height:100px;border:0;background:transparent;resize:vertical;font-size:8px;line-height:1.45;color:var(--ink);outline:0}
+.synthesis-insights{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
+.synthesis-insight{border:1px solid var(--line);background:#fffdf8;padding:14px}
+.synthesis-insight strong{display:block;font-family:"Libre Caslon Text",serif;font-size:15px;font-weight:400;line-height:1.4;margin:6px 0}
+.synthesis-insight p{font-size:8px;line-height:1.45;color:var(--muted);margin:0}
+@media(max-width:900px){.synthesis-layout{grid-template-columns:1fr}.synthesis-picker-panel{position:static}.synthesis-insights{grid-template-columns:1fr}}
