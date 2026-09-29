@@ -130,14 +130,19 @@ See `docs/reference-manager.md`.
 - Step 19 — Progress Intelligence ✅
 - Step 20 — Supervisor & Revision Workflow ✅
 - Step 21 — Thesis Export ✅
-- Step 22 — Real Cloud Backend — code complete, activation pending
+- Step 22 — Real Cloud Backend — code complete; activation deliberately deferred
 - Step 23 — Final Product Polish ✅
 - Step 24 — Guided Project Launch ✅
 - Step 25 — Data Integrity & Migration Hardening ✅
 - Step 26 — Literature Search & Screening Workflow ✅
-- Step 26 — Literature Search & Screening ✅
 - Step 27 — Critical Appraisal & Quality Assessment ✅
 - Step 28 — Research Data & Analysis Workspace ✅
+- Step 29 — Submission Readiness & Integrity ✅
+- Step 30 — Unified Writing Workspace & Academic Ribbon 🟡 existing foundation under reconciliation
+
+**Frontend-first rule:** Quire is currently being developed and refined locally. Do not activate or modify the external Supabase backend until the frontend workflow is reviewed and approved. Step 22 means the integration code exists; it does not mean a Supabase project is currently connected.
+
+**Continuity rule:** Before starting a new numbered step, reconcile the repository against `docs/PROJECT_MASTER.md` and `docs/CONTINUE_HERE.md`. Do not mark a step complete merely because a file exists; confirm that its UI is wired, its core interactions work, and its documentation matches the implementation.
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -240,6 +245,8 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–28 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 29 — Submission Readiness**.
+Steps 1–29 have implementation in the repository. Step 22 is code-complete but external Supabase activation is deliberately deferred while Quire remains frontend-first. Step 30 already has a writing-ribbon/evidence-discovery foundation in the codebase and is currently being reconciled and refined rather than rebuilt from scratch.
+
+Before continuing beyond Step 30, review `docs/PROJECT_MASTER.md` and `docs/CONTINUE_HERE.md` so unfinished work is not skipped.
 
 © Quire prototype.
