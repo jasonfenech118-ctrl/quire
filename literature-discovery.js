@@ -5,7 +5,7 @@
   let lastQuery='';
   let lastGapId='';
 
-  function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&#039;','"':'&quot;'}[s]||s));}
+  function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
   function normalTitle(v){return String(v||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
   function doiKey(v){return String(v||'').trim().toLowerCase();}
   function projectId(){return window.QuireStore?.getActiveProjectId?.();}
