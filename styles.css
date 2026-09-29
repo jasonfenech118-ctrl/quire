@@ -2784,3 +2784,9 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .confidence-factor strong{font-size:7px}.confidence-factor small{font-size:7px;line-height:1.35}
 .confidence-factor.positive{border-left-color:#718b73}.confidence-factor.caution{border-left-color:#a96858}.confidence-factor.context{border-left-color:#b28b52}
 .confidence-profile>p{font-size:6.5px!important;color:var(--muted)!important;margin:7px 0 0!important}
+
+
+/* ---------- Step 36: counter-evidence comparison ---------- */
+.synthesis-disagreements{display:grid;gap:6px;margin-top:8px}
+.synthesis-disagreements button{display:grid;gap:2px;text-align:left;border:1px solid var(--line);background:#fff;padding:8px;cursor:pointer}
+.synthesis-disagreements button strong{font-size:8px}.synthesis-disagreements button small{font-size:7px;color:var(--muted)}
