@@ -34,6 +34,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 32: Writing Understanding & Language Coach + Guided Research Flow — implemented.
 - Step 33: Claim-Aware Writing & Evidence Intelligence Foundation — implemented.
 - Step 34: Claim-Level Evidence Confidence — implemented.
+- Step 35: Structured Thesis-Value Paper Intelligence — implemented.
 
 ## Step 32 — implemented
 
@@ -90,7 +91,11 @@ Step 33 reuses and exposes the existing Evidence Check primitives instead of cre
 
 Claim cards now expose a qualitative **Why this status?** evidence-confidence profile. It shows citation presence, matching saved passages, section linkage, appraisal context and possible direction/negation conflicts separately. Quire explicitly does not combine these signals into a validity or scientific-certainty score.
 
-## Agreed future feature backlog — after Step 34
+## Step 35 — implemented
+
+The Article Reader now includes **Why do I care?**, a grounded thesis-value analysis that retrieves exact passages for Study, Findings, Limitations, Thesis relevance and Possible destination. Relevance/destination are explicitly presented as researcher-facing suggestions rather than claims made by the source.
+
+## Agreed future feature backlog — after Step 35
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
