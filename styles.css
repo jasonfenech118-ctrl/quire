@@ -3160,3 +3160,27 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .search-checkpoint-head{display:block}
   .search-checkpoint-head .soft-btn{margin-top:10px}
 }
+
+
+/* ---------- Step 64: Supervisor Research Rationale Pack ---------- */
+.research-rationale-package{margin-bottom:12px;border:1px solid var(--line);background:#f9f5ee;padding:14px}
+.research-rationale-head{display:flex;justify-content:space-between;gap:14px;align-items:flex-start}
+.research-rationale-head h3{font-family:"Libre Caslon Text",serif;font-size:18px;font-weight:400;margin:4px 0}
+.research-rationale-head p{font-size:8px;color:var(--muted);margin:0}
+.research-rationale-head button{border:0;background:var(--forest);color:#fff;padding:7px 10px;font-size:8px;cursor:pointer}
+.research-rationale-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);border:1px solid var(--line);margin:12px 0}
+.research-rationale-grid section{background:#fff;padding:10px}
+.research-rationale-grid strong,.research-rationale-grid span,.research-rationale-grid small{display:block}
+.research-rationale-grid strong{font-family:"Libre Caslon Text",serif;font-size:19px;font-weight:400}
+.research-rationale-grid span{font-size:7px;margin-top:3px}
+.research-rationale-grid small{font-size:6.5px;color:var(--muted);margin-top:3px}
+.research-rationale-preview{display:grid;grid-template-columns:150px 1fr;gap:6px 12px;border-top:1px solid #e9e1d5;padding-top:10px}
+.research-rationale-preview strong{font-size:7px;color:var(--muted)}
+.research-rationale-preview p{font-size:8px;line-height:1.45;margin:0}
+.research-rationale-package>small{display:block;font-size:7px;color:var(--muted);margin-top:10px}
+@media(max-width:800px){
+  .research-rationale-grid{grid-template-columns:1fr 1fr}
+  .research-rationale-preview{grid-template-columns:1fr}
+  .research-rationale-head{display:block}
+  .research-rationale-head button{margin-top:10px}
+}
