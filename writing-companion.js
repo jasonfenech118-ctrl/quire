@@ -3,6 +3,7 @@
    It never edits manuscript content automatically. */
 (function(){
   let timer=null;
+  const PATTERN_KEY='quire_writing_patterns_v1';
 
   function editor(){return document.getElementById('liveSectionEditor');}
   function clean(text=''){return String(text).replace(/\s+/g,' ').trim();}
@@ -84,6 +85,36 @@
     return proposal;
   }
 
+  function patternSnapshot(text){
+    const ss=sentences(text);
+    return {
+      samples:text?1:0,
+      longSentences:ss.filter(s=>words(s).length>32).length,
+      repeatedAnd:(text.match(/\band\b/gi)||[]).length>=4?1:0,
+      conversational:/\b(really|very|a lot|good|bad|big|thing|things)\b/i.test(text)?1:0,
+      strongClaims:/\b(proves?|always|never|definitely|clearly|obviously)\b/i.test(text)?1:0
+    };
+  }
+  function recordPatterns(text){
+    if(words(text).length<20)return;
+    let saved={samples:0,longSentences:0,repeatedAnd:0,conversational:0,strongClaims:0};
+    try{saved={...saved,...JSON.parse(localStorage.getItem(PATTERN_KEY)||'{}')};}catch(_){}
+    const snap=patternSnapshot(text);
+    Object.keys(saved).forEach(k=>saved[k]=(Number(saved[k])||0)+(Number(snap[k])||0));
+    localStorage.setItem(PATTERN_KEY,JSON.stringify(saved));
+  }
+  function recurringPattern(){
+    let p={};
+    try{p=JSON.parse(localStorage.getItem(PATTERN_KEY)||'{}');}catch(_){}
+    if((p.samples||0)<4)return '';
+    const notes=[];
+    if((p.longSentences||0)>=3)notes.push('long linked sentences');
+    if((p.repeatedAnd||0)>=3)notes.push('repeated use of “and” to connect ideas');
+    if((p.conversational||0)>=3)notes.push('general or conversational wording');
+    if((p.strongClaims||0)>=3)notes.push('strong certainty wording');
+    return notes.length?'A recurring pattern in your recent writing is '+notes.slice(0,2).join(' and ')+'. Quire will keep highlighting this gently; this is not a language score.':'';
+  }
+
   function render(force=false){
     const text=currentParagraph();
     const state=document.getElementById('writingCompanionState');
@@ -91,7 +122,7 @@
     const mount=document.getElementById('writingLanguageSuggestions');
     if(!understood||!mount)return;
     if(state)state.textContent=text?(force?'Reviewed':'Live'):'Ready';
-    understood.textContent=understanding(text);
+    understood.textContent=understanding(text)+(recurringPattern()?' '+recurringPattern():'');
     mount.innerHTML=languageSuggestions(text).map(x=>'<div class="language-suggestion"><strong>'+escapeHtml(x.title)+'</strong><small>'+escapeHtml(x.body)+'</small></div>').join('');
   }
 
@@ -99,7 +130,7 @@
     clearTimeout(timer);
     const state=document.getElementById('writingCompanionState');
     if(state)state.textContent='Reading…';
-    timer=setTimeout(()=>render(false),650);
+    timer=setTimeout(()=>{const text=currentParagraph();recordPatterns(text);render(false);},650);
   }
 
   function deeperReview(){
@@ -127,5 +158,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireWritingCompanion={render,currentParagraph,understanding,languageSuggestions,reviewCategories,proposedWording};
+  window.QuireWritingCompanion={render,currentParagraph,understanding,languageSuggestions,reviewCategories,proposedWording,recurringPattern};
 })();
