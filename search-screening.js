@@ -177,7 +177,7 @@
       document.getElementById('searchRunMessage').textContent='Enter the database or source searched.';
       return;
     }
-    window.QuireStore.addSearchRun({
+    const run=window.QuireStore.addSearchRun({
       databaseName,
       searchedAt:document.getElementById('searchRunDate').value||null,
       queryText:document.getElementById('searchRunQuery').value.trim(),
@@ -188,6 +188,7 @@
     });
     document.getElementById('searchRunModal').hidden=true;
     render();
+    window.dispatchEvent(new CustomEvent('quire:search-run-saved',{detail:{run}}));
   }
 
   function screenDecisionClass(value){
