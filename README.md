@@ -134,6 +134,7 @@ See `docs/reference-manager.md`.
 - Step 23 — Final Product Polish ✅
 - Step 24 — Literature Search & Screening ✅
 - Step 25 — Critical Appraisal & Quality Assessment ✅
+- Step 26 — Research Data & Analysis Workspace ✅
 - Step 24 — Guided Project Launch ✅
 - Step 25 — Data Integrity & Migration Hardening ✅
 
