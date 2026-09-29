@@ -58,18 +58,7 @@ When an endpoint is configured, Quire sends a small grounded context package:
 }
 ```
 
-The endpoint should return:
-
-```json
-{
-  "title": "Grounded summary",
-  "answer": "A synthesis based only on the supplied contexts.",
-  "citations": [
-    {"page": 3, "excerpt": "optional short evidence excerpt"},
-    {"page": 7, "excerpt": "optional short evidence excerpt"}
-  ]
-}
-```
+The Step 7 endpoint contract now uses **claim-level context IDs**. See `claim-level-citations.md` for schema version 2. The endpoint returns `claims[]`, and each claim names the supplied `context_ids` that directly support it.
 
 If the configured endpoint fails, Quire falls back to local grounded mode.
 
@@ -107,6 +96,6 @@ Quire therefore:
 - labels local extractive mode clearly;
 - treats critical appraisal as a starting point rather than an authoritative methodological judgment.
 
-## Next build stage
+## Step 7 implemented
 
-Step 7 should strengthen citation granularity so individual AI claims can be linked to exact source passages rather than only a set of supporting pages.
+Copilot now links individual claims to exact retrieved passages and can visually focus those passages in the PDF. See `claim-level-citations.md`.
