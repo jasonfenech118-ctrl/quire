@@ -2732,3 +2732,6 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .flow-next-card{margin-top:10px;display:block}
   .flow-next-card .soft-btn{margin-top:8px;width:100%}
 }
+
+.flow-next-card{transition:background .25s ease,box-shadow .25s ease}
+.flow-next-card.handoff-ready{background:#f3ecdf;box-shadow:0 0 0 6px rgba(178,139,82,.08);border-radius:3px}
