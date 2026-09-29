@@ -850,3 +850,20 @@ window.addEventListener('quire:references-exported',e=>{
   const label=d.format==='bib'?'BibTeX':'RIS';
   showToast((d.count||0)+' references exported as '+label);
 });
+
+
+// ---------- Step 9: multi-project switching ----------
+window.addEventListener('quire:project-switched',()=>{
+  restoreStudySetup();
+  updateStudyTypeUI();
+  renderProjectOverview();
+  renderLibraryArticles();
+  updateResearchDeskCounts();
+  const active=window.QuireStore?.getActiveProject?.();
+  if(active){
+    const heroQuestion=document.querySelector('.hero-card h2');
+    if(heroQuestion) heroQuestion.textContent=active.researchQuestion||'Define your research question in Study Setup.';
+    const sideTitle=document.getElementById('sidebarThesisTitle');
+    if(sideTitle) sideTitle.textContent=active.title||'Untitled thesis';
+  }
+});
