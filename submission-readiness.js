@@ -53,6 +53,30 @@
     out.push(mk('question-drift','Project foundation','Research-question alignment reflection',driftIdeas.length||driftSections.length?'review':'clear',
       driftIdeas.length||driftSections.length?plural(driftIdeas.length,'ready argument')+' and '+plural(driftSections.length,'substantive section')+' share no obvious key terms with the saved question/objectives. Review relevance manually; different terminology can still be fully appropriate.':'Ready arguments and substantive sections share at least some terminology with the saved question/objectives.','map','Thesis Map'));
 
+    const sectionPlain=sections.map(s=>{const d=document.createElement('div');d.innerHTML=s.content||'';return {section:s,text:(d.innerText||'').replace(/\s+/g,' ').trim()};});
+    const claimRows=sectionPlain.flatMap(row=>(row.text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[]).map(sentence=>({section:row.section,text:sentence.trim(),norm:norm(sentence)})).filter(x=>x.text.length>45));
+    const repeated=[];
+    for(let i=0;i<claimRows.length;i++)for(let j=i+1;j<claimRows.length;j++){
+      if(claimRows[i].section.id===claimRows[j].section.id)continue;
+      const a=claimRows[i].norm.split(' ').filter(x=>x.length>4),b=new Set(claimRows[j].norm.split(' ').filter(x=>x.length>4));
+      const ratio=a.length?[...new Set(a)].filter(x=>b.has(x)).length/Math.max(1,new Set(a).size):0;
+      if(ratio>=.75)repeated.push([claimRows[i],claimRows[j]]);
+    }
+    out.push(mk('cross-repeat','Writing & structure','Cross-section claim repetition',repeated.length?'review':'clear',
+      repeated.length?plural(repeated.length,'high-overlap claim pair')+' appear across different sections. Check whether repetition is purposeful or should be synthesised/referenced once.':'No strong repeated-claim wording detected across sections.','chapters','Chapters'));
+    const uncoveredObjectives=objectives.filter(o=>substantiveSections.length&&sectionPlain.filter(x=>(Number(x.section.currentWordCount)||0)>=120).every(x=>overlap(o.title+' '+x.text)===0));
+    out.push(mk('objective-coverage','Writing & structure','Objective coverage reflection',uncoveredObjectives.length?'review':'clear',
+      uncoveredObjectives.length?plural(uncoveredObjectives.length,'objective')+' have no obvious terminology overlap with substantive writing. Check coverage manually.':'Each objective has at least some terminology overlap with substantive writing, or there is not enough writing yet to assess.','chapters','Chapters'));
+    const neg=/\b(no|not|without|did not|does not|failed to|no association|no difference|lower|reduced)\b/i;
+    const possibleOpposition=[];
+    for(let i=0;i<claimRows.length;i++)for(let j=i+1;j<claimRows.length;j++){
+      if(claimRows[i].section.id===claimRows[j].section.id||neg.test(claimRows[i].text)===neg.test(claimRows[j].text))continue;
+      const a=new Set(claimRows[i].norm.split(' ').filter(x=>x.length>5)),b=new Set(claimRows[j].norm.split(' ').filter(x=>x.length>5));
+      if([...a].filter(x=>b.has(x)).length>=3)possibleOpposition.push([claimRows[i],claimRows[j]]);
+    }
+    out.push(mk('cross-opposition','Writing & structure','Possible cross-section tension',possibleOpposition.length?'review':'clear',
+      possibleOpposition.length?plural(possibleOpposition.length,'statement pair')+' discuss overlapping terms with differing negation/direction. Compare context before deciding whether there is a real contradiction.':'No obvious opposite-direction statement pairs detected across sections.','review','Writing Review'));
+
     const emptyChapters=chapters.filter(ch=>!sections.some(s=>s.chapterId===ch.id));
     out.push(mk('chapters','Writing & structure','Chapter structure',chapters.length&&emptyChapters.length===0?'clear':'review',
       !chapters.length?'No chapters exist.':emptyChapters.length?plural(emptyChapters.length,'chapter')+' currently have no sections.':'Every chapter has at least one section.','chapters','Chapters'));
