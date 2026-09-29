@@ -751,6 +751,7 @@
   window.QuirePdfReader={
     init,importFile,attachFileToArticle,openArticle,renderPage,renderHighlights,refreshHighlightSidebar,
     focusEvidence,ensureTextIndex,getTextIndex:(articleId)=>PdfStore.getTextIndex(articleId),
+    getDocument:()=>pdfDoc,getTextIndexVersion:()=>TEXT_INDEX_VERSION,
     getCurrentArticleId:()=>currentArticleId,pendingArticleId:null
   };
 
