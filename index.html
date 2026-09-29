@@ -63,7 +63,7 @@
 
       <button class="thesis-mini thesis-mini-button" data-go="overview">
         <span class="eyebrow">CURRENT THESIS</span>
-        <strong id="sidebarThesisTitle">Patient education and stoma self-management</strong>
+        <strong id="sidebarThesisTitle">Untitled research project</strong>
         <div class="progress-line"><span id="sidebarProgressBar" style="width: 0%"></span></div>
         <small id="sidebarProgressText">0% progress · Open project →</small>
       </button>
@@ -101,7 +101,7 @@
       <div id="researchJourney" class="research-journey guided-flow" aria-label="Research workflow">
         <div class="journey-intro">
           <span class="eyebrow">YOUR RESEARCH FLOW · <b id="flowCurrentStage">Discover</b></span>
-          <strong id="journeyPrompt">Find useful research and bring the right papers into your project.</strong>
+          <strong id="journeyPrompt">Explore the field broadly, then narrow only when the literature gives you a reason.</strong>
         </div>
         <div class="journey-steps five-stage-flow">
           <button type="button" data-flow-stage="discover"><span>1</span><strong>Discover</strong><small>Find research</small></button>
@@ -111,7 +111,7 @@
           <button type="button" data-flow-stage="review"><span>5</span><strong>Review</strong><small>Check & finish</small></button>
         </div>
         <div class="flow-next-card">
-          <div><span class="eyebrow">SENSIBLE NEXT STEP</span><strong id="flowNextTitle">Start with one useful paper</strong><small id="flowNextCopy">Quire will suggest a next action from the work already in this project.</small></div>
+          <div><span class="eyebrow">SENSIBLE NEXT STEP</span><strong id="flowNextTitle">Define the area you want to explore</strong><small id="flowNextCopy">Quire will help you build the literature base before it suggests drafting.</small></div>
           <button type="button" class="soft-btn" id="flowNextAction">Open Research →</button>
         </div>
       </div>
@@ -144,14 +144,52 @@
 
         <div id="sessionCheckpointCard" class="session-checkpoint-card" hidden></div>
 
-        <div class="home-focus-grid">
-          <article class="hero-card home-thesis-card">
+        <section id="researchFoundationGuide" class="research-foundation-guide" hidden aria-labelledby="researchFoundationTitle">
+          <div class="foundation-head">
             <div>
-              <span class="eyebrow light">CURRENT THESIS</span>
-              <h2>How can patient education support self-management after stoma formation?</h2>
-              <p id="dashboardThesisStats">0 objectives · 0 themes · 0 evidence-backed papers</p>
+              <span class="eyebrow">START WITH THE LITERATURE</span>
+              <h2 id="researchFoundationTitle">Build the evidence base before you build the argument.</h2>
+              <p id="researchFoundationIntro">Begin with the area you want to explore. Read broadly, compare studies and let the gap in knowledge emerge from the literature rather than forcing a final question too early.</p>
             </div>
-            <button class="hero-action" data-go="chapters">Continue thesis →</button>
+            <div class="foundation-status" aria-live="polite">
+              <strong id="foundationStatusTitle">Research foundation</strong>
+              <small id="foundationStatusMeta">No papers collected yet</small>
+            </div>
+          </div>
+
+          <div class="foundation-path" aria-label="Early research journey">
+            <div data-foundation-stage="define"><span>1</span><strong>Define the area</strong><small>Start with a broad interest or working topic.</small></div>
+            <div data-foundation-stage="collect"><span>2</span><strong>Search & collect</strong><small>Build a broad literature base before narrowing.</small></div>
+            <div data-foundation-stage="read"><span>3</span><strong>Read & compare</strong><small>Capture findings, methods, limitations and disagreements.</small></div>
+            <div data-foundation-stage="gap"><span>4</span><strong>Explore the gap</strong><small>Look for what is missing, uncertain or under-researched.</small></div>
+            <div data-foundation-stage="refine"><span>5</span><strong>Refine the question</strong><small>Shape the question around what the literature actually shows.</small></div>
+          </div>
+
+          <div id="foundationSignals" class="foundation-signals" aria-label="Research foundation signals"></div>
+
+          <div class="foundation-gap-note">
+            <div>
+              <span class="eyebrow">LIVING GAP EXPLORER</span>
+              <strong id="foundationGapTitle">No gap claimed yet</strong>
+              <small id="foundationGapCopy">Quire will collect possible gap signals as you read. A possible gap is something to test with further searching—not something Quire will invent for you.</small>
+            </div>
+            <button class="soft-btn" id="foundationGapAction" type="button">Record a possible gap</button>
+          </div>
+
+          <div class="foundation-actions">
+            <button class="primary-btn" id="foundationPrimaryAction" type="button">Define my research area</button>
+            <button class="soft-btn" id="foundationResearchAction" type="button">Open Research</button>
+          </div>
+        </section>
+
+        <div class="home-focus-grid">
+          <article class="hero-card home-thesis-card" id="dashboardPrimaryCard">
+            <div>
+              <span class="eyebrow light" id="dashboardPrimaryEyebrow">RESEARCH FOUNDATION</span>
+              <h2 id="dashboardPrimaryTitle">Build the literature before you build the argument.</h2>
+              <p id="dashboardThesisStats">0 papers · 0 reviewed · 0 evidence notes</p>
+            </div>
+            <button class="hero-action" id="dashboardPrimaryAction" type="button">Open Research →</button>
           </article>
           <article class="panel continue-panel home-recent-panel">
             <div class="panel-head"><div><span class="eyebrow">CONTINUE</span><h3>Recent work</h3></div></div>
@@ -1725,7 +1763,7 @@
       <div class="modal-head">
         <div>
           <span class="eyebrow">GUIDED PROJECT LAUNCH</span>
-          <h2>Start the thesis with the right structure</h2>
+          <h2>Start with the area you want to explore</h2>
         </div>
         <button id="closeGuidedLaunchModal" type="button">×</button>
       </div>
@@ -1742,11 +1780,11 @@
       </div>
 
       <section class="launch-step" data-launch-step="1">
-        <span class="eyebrow">PROJECT IDENTITY</span>
-        <h3>What are you working on?</h3>
-        <p>Use a working title. Everything can still be refined later.</p>
+        <span class="eyebrow">RESEARCH AREA</span>
+        <h3>What area are you interested in exploring?</h3>
+        <p>You do not need a final thesis title or confirmed gap yet. Start broad enough to let the literature teach you what is already known.</p>
         <div class="form-grid">
-          <label class="field wide"><span>Working thesis / project title *</span><input id="launchTitle" type="text" placeholder="e.g. Patient education and self-management after stoma formation"></label>
+          <label class="field wide"><span>Research area or working topic *</span><input id="launchTitle" type="text" placeholder="e.g. Patient education and self-management after stoma formation"></label>
           <label class="field"><span>Degree / programme</span><input id="launchDegree" type="text" placeholder="MSc, PhD, dissertation…"></label>
           <label class="field"><span>Institution</span><input id="launchInstitution" type="text" placeholder="University or institution"></label>
           <label class="field wide"><span>Supervisor</span><input id="launchSupervisor" type="text" placeholder="Supervisor / advisor name"></label>
@@ -1754,14 +1792,14 @@
       </section>
 
       <section class="launch-step" data-launch-step="2" hidden>
-        <span class="eyebrow">QUESTION & OBJECTIVES</span>
-        <h3>What does the project need to answer?</h3>
-        <p>A working question and one or more objectives give the Thesis Map something meaningful to organise around.</p>
-        <label class="field wide"><span>Working research question</span><textarea id="launchQuestion" rows="4" placeholder="What are you trying to understand, test, compare or evaluate?"></textarea></label>
+        <span class="eyebrow">EARLY DIRECTION</span>
+        <h3>What are you curious about right now?</h3>
+        <p>This is deliberately provisional. Your question and objectives can change as you read, compare studies and discover what is missing.</p>
+        <label class="field wide"><span>Current question, curiosity or problem (optional)</span><textarea id="launchQuestion" rows="4" placeholder="What are you currently trying to understand? It is fine if this changes later."></textarea></label>
         <div class="launch-objectives">
-          <label class="field"><span>Objective 1</span><input id="launchObjective1" type="text" placeholder="Primary objective"></label>
-          <label class="field"><span>Objective 2</span><input id="launchObjective2" type="text" placeholder="Optional"></label>
-          <label class="field"><span>Objective 3</span><input id="launchObjective3" type="text" placeholder="Optional"></label>
+          <label class="field"><span>Early objective / line of enquiry 1</span><input id="launchObjective1" type="text" placeholder="Optional — this can evolve"></label>
+          <label class="field"><span>Early objective / line of enquiry 2</span><input id="launchObjective2" type="text" placeholder="Optional"></label>
+          <label class="field"><span>Early objective / line of enquiry 3</span><input id="launchObjective3" type="text" placeholder="Optional"></label>
         </div>
       </section>
 
@@ -2127,6 +2165,7 @@
   <script src="chapter-editor.js"></script>
   <script src="evidence-writing.js"></script>
   <script src="research-journey.js"></script>
+  <script src="research-foundation.js"></script>
   <script src="brainstorm.js"></script>
   <script src="session-checkpoint.js"></script>
   <script src="writing-ribbon.js"></script>
