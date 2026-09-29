@@ -38,6 +38,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 36: Contradiction & Counter-Evidence Synthesis — implemented.
 - Step 37: Critical Writing Coach — implemented.
 - Step 38: Selected-Passage Reading Assistant — implemented.
+- Step 39: Provenance-Aware Research Memory Search — implemented.
 
 ## Step 32 — implemented
 
@@ -110,7 +111,11 @@ Writing Review now prompts for critical engagement when substantive paragraphs c
 
 Selected PDF text now exposes an **Explain** action. The reader keeps the exact source passage/page visible and offers separate plain-reading, academic-reading, thesis-relevance and limitation/context prompts. Local mode explicitly avoids presenting an unverified paraphrase as authoritative technical meaning.
 
-## Agreed future feature backlog — after Step 38
+## Step 39 — implemented
+
+Global search now acts as lightweight research memory: question scaffolding is ignored, concept coverage is ranked without requiring every query word to match, and results retain visible provenance across papers, source highlights, research notes, thesis text/structure, supervisor feedback and analysis memos.
+
+## Agreed future feature backlog — after Step 39
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
