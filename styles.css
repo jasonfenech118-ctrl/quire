@@ -3285,3 +3285,16 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .search-coverage-head label{margin-top:10px;min-width:0}
   .search-coverage-summary,.search-coverage-concepts{grid-template-columns:1fr}
 }
+
+
+/* ---------- Step 67: Screening Provenance ---------- */
+.screening-origin{
+  display:block;margin-top:5px;padding-left:7px;border-left:2px solid #c9c0b4;
+  font-size:6.5px!important;line-height:1.4!important;color:var(--muted)!important
+}
+.screening-origin b{font-weight:700;color:#625b53}
+.screening-origin.crossref_discovery{border-left-color:var(--forest)}
+.screening-origin.gap_discovery{border-left-color:var(--gold)}
+.screening-origin.reference_import{border-left-color:#7d8194}
+.screening-origin.metadata_lookup{border-left-color:#92745d}
+.screening-origin.pdf_upload{border-left-color:#a56f65}
