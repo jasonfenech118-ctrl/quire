@@ -877,3 +877,41 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
   .metadata-results{max-height:260px}
   #readerMetadataBtn{display:none}
 }
+
+
+/* ---------- Step 6: grounded Copilot ---------- */
+.copilot-panel-head{position:relative}
+.copilot-settings-btn{
+  margin-left:auto;border:1px solid #47423d;background:transparent;color:#cfc4b5;
+  width:28px;height:28px;border-radius:3px;font-size:11px
+}
+.copilot-settings-btn:hover{background:rgba(255,255,255,.06)}
+.copilot-status{
+  display:flex;align-items:center;gap:7px;margin:12px 0 3px;padding:7px 9px;
+  border:1px solid #413c37;border-radius:3px;background:#252320
+}
+.copilot-status>span{width:7px;height:7px;border-radius:50%;background:#789486;flex:0 0 auto}
+.copilot-status small{font-size:8px;color:#aaa196}
+.copilot-status.working>span{background:var(--gold);animation:copilotPulse 1s ease-in-out infinite}
+@keyframes copilotPulse{0%,100%{opacity:.5}50%{opacity:1}}
+.copilot-panel button:disabled{opacity:.45;cursor:wait}
+.ai-response ul{padding-left:17px;margin:10px 0}
+.ai-response li{margin:7px 0;color:#d8d0c5;font-size:10px;line-height:1.55}
+.copilot-sources{
+  border-top:1px solid #3d3935;margin-top:15px;padding-top:12px
+}
+.copilot-sources strong{display:block;font-size:8px;color:#bca98c;text-transform:uppercase;letter-spacing:.12em;margin-bottom:7px}
+.copilot-sources>div{display:flex;flex-wrap:wrap;gap:5px}
+.copilot-sources button{
+  border:1px solid #514b44;background:#2a2825;color:#ddd4c7;border-radius:14px;
+  padding:5px 8px;font-size:8px
+}
+.copilot-sources button:hover{background:#34302c;border-color:#756b60}
+.ai-settings-modal{width:min(650px,96vw)}
+.ai-mode-card{
+  background:var(--charcoal);color:#f7f0e4;border-radius:4px;padding:18px 19px;margin-top:8px
+}
+.ai-mode-card .eyebrow{color:#bfae91}
+.ai-mode-card h3{font-family:"Libre Caslon Text",serif;font-size:19px;font-weight:400;margin:5px 0 7px}
+.ai-mode-card p{font-size:9px;line-height:1.6;color:#aaa196;margin:0}
+.ai-settings-message{display:block;min-height:16px;margin-top:8px;color:var(--muted);font-size:8px}
