@@ -444,6 +444,25 @@
   }
   function closeSettings(){document.getElementById('aiSettingsModal').hidden=true;}
 
+  async function explainPassage(detail={}){
+    const text=String(detail.highlightedText||'').trim();
+    if(!text)return;
+    const articleId=detail.articleId||window.QuirePdfReader?.getCurrentArticleId?.();
+    const article=window.QuireStore.getArticle(articleId);
+    const setup=window.QuireStore?.getStudySetupData?.()||{};
+    const rq=setup.researchQuestion||'your research question';
+    const claims=[
+      {text:'SELECTED PASSAGE: '+clip(text,520),citations:[{contextId:'selection',page:Number(detail.pageNumber)||1,excerpt:clip(text,220),rects:detail.pdfAnchor?.rects||[]}]},
+      {text:'PLAIN READING CUE: Identify the subject, what happened or was observed, and any condition or comparison in the sentence. Keep technical terms whose meaning matters rather than replacing them with a misleading simplification.',citations:[]},
+      {text:'ACADEMIC READING CUE: Separate what the authors directly report from interpretation, causal language and generalisation. Note the population, context and strength of wording before using this passage in your thesis.',citations:[]},
+      {text:'THESIS RELEVANCE: Ask whether this passage directly informs '+clip(rq,220)+' or instead provides background, method, limitation or contextual evidence.',citations:[]},
+      {text:'LIMITATION CHECK: A selected passage rarely contains enough context by itself. Inspect the surrounding page and the study methods before treating it as standalone evidence.',citations:[]}
+    ];
+    const result={title:'Understand this passage',intro:(article?.title?article.title+' · ':'')+'page '+(detail.pageNumber||'—'),claims,notice:'Quire keeps the selected source wording visible and offers reading prompts around it. Local mode does not pretend to paraphrase technical meaning it cannot verify.'};
+    renderResult(result);
+    return result;
+  }
+
   function bind(){
     document.querySelectorAll('[data-ai]').forEach(btn=>{
       btn.addEventListener('click',()=>analyse(btn.dataset.ai).catch(err=>{
@@ -488,6 +507,7 @@
       const m=document.getElementById('aiSettingsMessage');if(m)m.textContent='AI endpoint removed. Quire will use local claim-level mode.';
     });
 
+    window.addEventListener('quire:explain-passage',e=>explainPassage(e.detail||{}));
     window.addEventListener('quire:text-index-progress',e=>{
       const current=window.QuirePdfReader?.getCurrentArticleId?.();
       if(e.detail?.articleId===current) setBusy(true,'Indexing page '+e.detail.page+' / '+e.detail.total);
@@ -507,6 +527,6 @@
     updateStatus();
   }
 
-  window.QuireCopilot={analyse,searchPassages,localAnalysis,thesisValueAnalysis,setConfig,getConfig:config};
+  window.QuireCopilot={analyse,searchPassages,localAnalysis,thesisValueAnalysis,explainPassage,setConfig,getConfig:config};
   document.addEventListener('DOMContentLoaded',bind);
 })();
