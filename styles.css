@@ -2703,3 +2703,32 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 @media(max-width:900px){
   .writing-companion{padding-bottom:10px;margin-bottom:10px}
 }
+
+
+/* ---------- Step 32: guided five-stage research flow ---------- */
+.guided-flow{display:grid;grid-template-columns:minmax(180px,.8fr) minmax(460px,1.5fr) minmax(250px,1fr);gap:16px;align-items:center}
+.guided-flow .journey-intro{min-width:0}
+.guided-flow .journey-intro strong{display:block;font-family:"Libre Caslon Text",serif;font-size:13px;font-weight:400;line-height:1.4;margin-top:4px}
+.five-stage-flow{display:grid;grid-template-columns:repeat(5,1fr);gap:2px}
+.five-stage-flow button{min-width:0;padding:8px 6px}
+.five-stage-flow button span{width:20px;height:20px}
+.five-stage-flow button strong{font-size:8px}
+.five-stage-flow button small{font-size:6.5px}
+.flow-next-card{display:flex;align-items:center;justify-content:space-between;gap:12px;padding-left:16px;border-left:1px solid var(--line)}
+.flow-next-card>div{min-width:0}
+.flow-next-card strong,.flow-next-card small{display:block}
+.flow-next-card strong{font-size:9px;margin:3px 0}
+.flow-next-card small{font-size:7px;line-height:1.4;color:var(--muted)}
+.flow-next-card .soft-btn{flex:0 0 auto;white-space:nowrap}
+@media(max-width:1180px){
+  .guided-flow{grid-template-columns:180px 1fr}
+  .flow-next-card{grid-column:1/-1;border-left:0;border-top:1px solid var(--line);padding:10px 0 0}
+}
+@media(max-width:760px){
+  .guided-flow{display:block}
+  .guided-flow .journey-intro{margin-bottom:10px}
+  .five-stage-flow{display:flex;overflow-x:auto;scrollbar-width:thin}
+  .five-stage-flow button{min-width:94px}
+  .flow-next-card{margin-top:10px;display:block}
+  .flow-next-card .soft-btn{margin-top:8px;width:100%}
+}
