@@ -3298,3 +3298,19 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .screening-origin.reference_import{border-left-color:#7d8194}
 .screening-origin.metadata_lookup{border-left-color:#92745d}
 .screening-origin.pdf_upload{border-left-color:#a56f65}
+
+
+/* Step 32 — guided thesis foundation */
+.thesis-setup-guide{border:1px solid var(--line);background:#fffdf8;padding:18px 20px;margin-bottom:16px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(220px,.8fr) auto;gap:22px;align-items:center}
+.thesis-setup-copy h2{font-family:"Libre Caslon Text",serif;font-weight:400;font-size:22px;margin:4px 0 6px}
+.thesis-setup-copy p{font-size:9px;line-height:1.55;color:var(--muted);max-width:680px}
+.thesis-setup-status{display:grid;gap:6px}
+.thesis-setup-status strong{font-size:9px}.thesis-setup-status small{font-size:7px;color:var(--muted)}
+.thesis-setup-progress{height:5px;background:#e9e4da;overflow:hidden}.thesis-setup-progress span{display:block;height:100%;width:0;background:var(--forest);transition:width .25s}
+.thesis-setup-actions{display:grid;gap:6px;min-width:150px}
+.thesis-wizard-modal{width:min(850px,96vw);max-height:92vh;overflow:auto}
+.thesis-stage-options{grid-template-columns:1fr}
+.launch-blueprint{display:grid;gap:7px}
+.launch-blueprint>div{border-bottom:1px solid var(--line);padding:8px 0}
+.launch-blueprint span,.launch-blueprint strong{display:block}.launch-blueprint span{font-size:6px;color:var(--muted);text-transform:uppercase;letter-spacing:.08em}.launch-blueprint strong{font-family:"Libre Caslon Text",serif;font-size:13px;font-weight:400;margin-top:3px}
+@media(max-width:850px){.thesis-setup-guide{grid-template-columns:1fr}.thesis-setup-actions{grid-template-columns:1fr 1fr}.thesis-setup-copy h2{font-size:19px}}
