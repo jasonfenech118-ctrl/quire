@@ -1,6 +1,6 @@
-# Quire Research Data & Analysis Workspace — Step 26
+# Quire Research Data & Analysis Workspace — Step 28
 
-Step 26 adds a project-level analysis notebook for de-identified analytic structures, results and findings.
+Step 28 adds a project-level analysis notebook for de-identified analytic structures, results and findings.
 
 ## Scope and safety
 
