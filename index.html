@@ -90,17 +90,21 @@
 
 
 
-      <div id="researchJourney" class="research-journey" aria-label="Research journey">
-        <div class="journey-intro"><span class="eyebrow">YOUR RESEARCH JOURNEY</span><strong id="journeyPrompt">Know where you are. Know what comes next.</strong></div>
-        <div class="journey-steps">
-          <button type="button" data-journey-view="setup"><span>1</span><strong>Plan</strong><small>Question & method</small></button>
-          <button type="button" data-journey-view="searchscreen"><span>2</span><strong>Find</strong><small>Search & screen</small></button>
-          <button type="button" data-journey-view="reader"><span>3</span><strong>Read</strong><small>Papers & highlights</small></button>
-          <button type="button" data-journey-view="appraisal"><span>4</span><strong>Understand</strong><small>Appraise & analyse</small></button>
-          <button type="button" data-journey-view="map"><span>5</span><strong>Organise</strong><small>Themes & evidence</small></button>
-          <button type="button" data-journey-view="chapters"><span>6</span><strong>Write</strong><small>Build the thesis</small></button>
-          <button type="button" data-journey-view="review"><span>7</span><strong>Check</strong><small>Claims & language</small></button>
-          <button type="button" data-journey-view="export"><span>8</span><strong>Finish</strong><small>Review & export</small></button>
+      <div id="researchJourney" class="research-journey guided-flow" aria-label="Research workflow">
+        <div class="journey-intro">
+          <span class="eyebrow">YOUR RESEARCH FLOW · <b id="flowCurrentStage">Discover</b></span>
+          <strong id="journeyPrompt">Find useful research and bring the right papers into your project.</strong>
+        </div>
+        <div class="journey-steps five-stage-flow">
+          <button type="button" data-flow-stage="discover"><span>1</span><strong>Discover</strong><small>Find research</small></button>
+          <button type="button" data-flow-stage="understand"><span>2</span><strong>Understand</strong><small>Read & appraise</small></button>
+          <button type="button" data-flow-stage="organise"><span>3</span><strong>Organise</strong><small>Evidence & ideas</small></button>
+          <button type="button" data-flow-stage="write"><span>4</span><strong>Write</strong><small>Build the thesis</small></button>
+          <button type="button" data-flow-stage="review"><span>5</span><strong>Review</strong><small>Check & finish</small></button>
+        </div>
+        <div class="flow-next-card">
+          <div><span class="eyebrow">SENSIBLE NEXT STEP</span><strong id="flowNextTitle">Start with one useful paper</strong><small id="flowNextCopy">Quire will suggest a next action from the work already in this project.</small></div>
+          <button type="button" class="soft-btn" id="flowNextAction">Open Research →</button>
         </div>
       </div>
 
