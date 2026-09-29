@@ -560,6 +560,15 @@
           </div>
         </div>
 
+        <section class="reading-queue-panel" aria-labelledby="readingQueueTitle">
+          <div class="reading-queue-head">
+            <div><span class="eyebrow">READING QUEUE</span><h2 id="readingQueueTitle">Know what you want to read next—and why.</h2><p>You control the order. Quire keeps the purpose beside each paper so reading stays connected to the research question, search coverage and possible gaps.</p></div>
+            <button class="text-btn" id="toggleReadingQueueBtn" type="button" aria-expanded="true">Hide queue</button>
+          </div>
+          <div id="readingQueueStats" class="reading-queue-stats"></div>
+          <div id="readingQueueList" class="reading-queue-list"></div>
+        </section>
+
         <div class="toolbar">
           <div class="filter-tabs" id="libraryFilters">
             <button class="active" type="button" data-library-filter="all">All <span>0</span></button>
@@ -2295,6 +2304,7 @@
   <script src="question-evolution.js"></script>
   <script src="contribution-builder.js"></script>
   <script src="paper-contribution.js"></script>
+  <script src="reading-queue.js"></script>
   <script src="research-decisions.js"></script>
   <script src="search-checkpoint.js"></script>
   <script src="research-rationale-pack.js"></script>
