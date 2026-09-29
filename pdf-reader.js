@@ -16,6 +16,7 @@
   let selectionTimer=null;
   let pendingSelection=null;
   let editingHighlightId=null;
+  const textIndexPromises=new Map();
 
   function openDb(){
     if(dbPromise) return dbPromise;
@@ -526,11 +527,24 @@
     if(!force){
       const existing=await PdfStore.getTextIndex(articleId);
       if(existing?.pages?.length) return existing;
+      if(textIndexPromises.has(articleId)) return textIndexPromises.get(articleId);
     }
-    if(articleId!==currentArticleId || !pdfDoc){
-      await openArticle(articleId);
-    }
-    return extractTextIndex(articleId);
+    const work=(async()=>{
+      if(articleId!==currentArticleId || !pdfDoc){
+        await openArticle(articleId);
+        const afterOpen=await PdfStore.getTextIndex(articleId);
+        if(afterOpen?.pages?.length && !force) return afterOpen;
+      }
+      const result=await extractTextIndex(articleId);
+      const hasText=result.pages.some(p=>String(p.text||'').trim().length>0);
+      if(!hasText){
+        window.dispatchEvent(new CustomEvent('quire:text-index-empty',{detail:{articleId,pages:result.pages.length}}));
+      }
+      return result;
+    })();
+    textIndexPromises.set(articleId,work);
+    try{return await work;}
+    finally{textIndexPromises.delete(articleId);}
   }
 
   async function enrichArticleFromPdf(articleId,fileName){
