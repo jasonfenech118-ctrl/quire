@@ -198,6 +198,44 @@ Submission Readiness now includes cross-section claim-repetition prompts, object
 
 Thesis Export now provides a downloadable Submission Pack combining export metadata, reference-integrity diagnostics, supervision/revision status and the full Submission Readiness report. It explicitly remains companion preflight material rather than institutional certification.
 
+## Step 56 live-validation findings — research-first onboarding
+
+Real-browser testing found that clearing prototype data was not enough: a genuinely fresh user could still be pushed too quickly toward thesis writing. The frontend has therefore been revised around a literature-first research process.
+
+Implemented corrections:
+- **Start fresh** now supports a clean starter project that can be configured in place rather than creating a duplicate.
+- The first guided question is the **research area / working topic**, not a mandatory final research question.
+- Early questions/objectives are explicitly provisional and can evolve.
+- Guided launch now returns to **Home** rather than Progress/Thesis.
+- Home now exposes a **Research Foundation** flow:
+  **Define the area → Search & collect → Read & compare → Explore the gap → Refine the question.**
+- The global research journey no longer recommends “one paper → start writing.”
+- Quire only recommends drafting after the literature has been read across multiple papers, compared/synthesised, possible gaps have been tested, and evidence has been organised.
+- Gap capture is explicitly a **possible gap signal**, not a confirmed knowledge gap; the control stays unavailable until several papers have been reviewed and compared.
+
+### Research Review Progress
+
+The old article-count review ratio has been replaced with a transparent process-depth model:
+- Search foundation — 15%
+- Collection & screening — 15%
+- Reading & extraction — 25%
+- Critical appraisal — 15%
+- Comparison & synthesis — 20%
+- Coverage & gap exploration — 10%
+
+The percentage is explicitly framed as **progress through the review process recorded in Quire**, not the percentage of all available literature that has been read.
+
+A separate **Literature Maturity** status is used instead of a second pseudo-precise percentage:
+- Needs broader searching
+- Developing
+- Beginning to stabilise
+
+Even “Beginning to stabilise” is described as a pattern to test with further searching, not proof of saturation.
+
+The same review-depth ratio is now used by the Progress data model, so overall progress and future snapshots remain consistent with the visible review metric.
+
+This work is part of Step 56 remediation and must still be manually validated in the live browser before Step 56 is closed.
+
 ## Step 56 — validation gate
 
 Do **not** mark this complete from repository/static inspection alone. It requires:
