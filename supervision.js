@@ -2,6 +2,7 @@
 (function(){
   let activeRoundFilter='all';
   let feedbackPrefill=null;
+  let selectedTextBuffer='';
 
   function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
   function pretty(value){
@@ -199,7 +200,8 @@
 
   function openFeedbackForCurrentSection(){
     const current=window.QuireChapterEditor?.getActive?.()||{};
-    const selectedText=currentSelectedText();
+    const selectedText=selectedTextBuffer||currentSelectedText();
+    selectedTextBuffer='';
     const recentRound=rounds().find(r=>r.status!=='complete');
     openFeedbackModal({
       chapterId:current.chapterId,
@@ -301,6 +303,7 @@
       if(!confirm('Restore this saved version? Quire will first save a safety snapshot of the current section.'))return;
       window.QuireStore.restoreSectionVersion(btn.dataset.restoreVersion);
       window.QuireChapterEditor?.openSection?.(current.sectionId);
+      setTimeout(()=>window.QuireInlineReferences?.syncSection?.(current.sectionId,document.getElementById('liveSectionEditor')),0);
       renderVersions();render();
     }));
   }
@@ -329,6 +332,7 @@
   function bind(){
     document.getElementById('newReviewRoundBtn')?.addEventListener('click',openRoundModal);
     document.getElementById('addSupervisorFeedbackBtn')?.addEventListener('click',()=>openFeedbackModal());
+    document.getElementById('openSectionFeedbackBtn')?.addEventListener('mousedown',()=>{selectedTextBuffer=currentSelectedText();});
     document.getElementById('openSectionFeedbackBtn')?.addEventListener('click',openFeedbackForCurrentSection);
     document.getElementById('openSectionVersionsBtn')?.addEventListener('click',openVersions);
     document.getElementById('createSectionSnapshotBtn')?.addEventListener('click',createSnapshot);
