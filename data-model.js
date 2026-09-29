@@ -619,6 +619,96 @@
   }
 
 
+  function starterProjectIsBlank(state,projectId){
+    const project=state.projects.find(p=>p.id===projectId);
+    if(!project)return false;
+    const title=String(project.title||'').trim().toLowerCase();
+    const starterTitle=!title||title==='untitled thesis'||title==='research project';
+    if(!starterTitle)return false;
+    const owned=key=>(state[key]||[]).filter(row=>row.projectId===projectId);
+    const hasResearch=owned('articles').length||owned('highlights').length||owned('notes').length||owned('evidenceLinks').length||owned('analysisItems').length||owned('feedbackItems').length||owned('reviewRounds').length;
+    const hasWriting=owned('sections').some(row=>String(row.content||'').replace(/<[^>]+>/g,'').trim()||Number(row.currentWordCount)>0);
+    return !hasResearch&&!hasWriting;
+  }
+
+  function isStarterProject(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return starterProjectIsBlank(state,projectId);
+  }
+
+  function configureStarterProject(input={},projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    if(!starterProjectIsBlank(state,projectId))return null;
+    const project=state.projects.find(p=>p.id===projectId);
+    if(!project)return null;
+    const ts=nowIso();
+
+    project.title=String(input.title||project.title||'Untitled thesis').trim()||'Untitled thesis';
+    project.degreeName=String(input.degreeName||'');
+    project.institutionName=String(input.institutionName||'');
+    project.supervisorName=String(input.supervisorName||'');
+    project.researchQuestion=String(input.researchQuestion||'').trim();
+    project.wordTarget=Number(input.wordTarget)||null;
+    project.proposalWordTarget=Number(input.proposalWordTarget)||null;
+    project.startDate=input.startDate||project.startDate||ts.slice(0,10);
+    project.finalDeadline=input.finalDeadline||null;
+    project.status='active';
+    project.updatedAt=ts;
+
+    let setup=state.studySetups.find(s=>s.projectId===projectId);
+    if(!setup){
+      setup={id:uid('setup'),projectId,createdAt:ts,designDetails:{}};
+      state.studySetups.push(setup);
+    }
+    setup.studyType=input.studyType||'';
+    setup.population=String(input.population||'');
+    setup.studySetting=String(input.studySetting||'');
+    setup.proposalDeadline=input.proposalDeadline||'';
+    setup.updatedAt=ts;
+    if(!setup.designDetails||typeof setup.designDetails!=='object')setup.designDetails={};
+
+    const objectiveTitles=Array.isArray(input.objectives)?input.objectives.map(v=>String(v||'').trim()).filter(Boolean):[];
+    state.objectives=state.objectives.filter(row=>row.projectId!==projectId);
+    state.objectives.push(...objectiveTitles.map((title,index)=>({
+      id:uid('objective'),projectId,orderIndex:index+1,title,description:'',status:'active',createdAt:ts,updatedAt:ts
+    })));
+
+    const chapterInput=Array.isArray(input.chapters)&&input.chapters.length?input.chapters:null;
+    const hasSections=state.sections.some(row=>row.projectId===projectId);
+    if(chapterInput&&!hasSections){
+      state.chapters=state.chapters.filter(row=>row.projectId!==projectId);
+      state.chapters.push(...chapterInput.map((item,index)=>{
+        const value=typeof item==='string'?{title:item}:item;
+        return {
+          id:uid('chapter'),projectId,
+          number:String(value.number||index+1),
+          title:String(value.title||('Chapter '+(index+1))).trim(),
+          orderIndex:index+1,targetWordCount:Number(value.targetWordCount)||null,
+          currentWordCount:0,status:index===0?'in_progress':'not_started',
+          createdAt:ts,updatedAt:ts
+        };
+      }));
+    }
+
+    state.themes=state.themes.filter(row=>row.projectId!==projectId);
+    const themeNames=Array.isArray(input.themes)?input.themes.map(v=>String(v||'').trim()).filter(Boolean):[];
+    state.themes.push(...themeNames.map(name=>({
+      id:uid('theme'),projectId,name,description:'',createdAt:ts,updatedAt:ts
+    })));
+
+    const snapshot=state.progressSnapshots.find(row=>row.projectId===projectId);
+    if(snapshot){
+      snapshot.chaptersTotal=state.chapters.filter(row=>row.projectId===projectId).length;
+      snapshot.updatedAt=ts;
+    }
+    syncMilestonesFromSetup(state,projectId);
+    writeState(state);
+    return clone(project);
+  }
+
+
   function updateProject(projectId,patch={}){
     const state=getState();
     const project=state.projects.find(p=>p.id===projectId);
@@ -2133,6 +2223,8 @@
     getActiveProject,
     getActiveProjectId:()=>getActiveProjectId(getState()),
     createProject,
+    isStarterProject,
+    configureStarterProject,
     updateProject,
     archiveProject,
     restoreProject,
