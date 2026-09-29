@@ -136,6 +136,7 @@
   function bind(){
     document.getElementById('newResearchProjectBtn')?.addEventListener('click',openCreate);
     document.getElementById('closeProjectModal')?.addEventListener('click',closeModal);
+    document.getElementById('closeProjectModalSecondary')?.addEventListener('click',closeModal);
     document.getElementById('saveProjectBtn')?.addEventListener('click',save);
     document.getElementById('archiveProjectBtn')?.addEventListener('click',archive);
     document.getElementById('projectModal')?.addEventListener('click',e=>{if(e.target.id==='projectModal')closeModal();});
