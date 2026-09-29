@@ -438,6 +438,7 @@
   }
 
   window.addEventListener('quire:store-changed',queueSync);
+  window.addEventListener('quire:pdf-local-changed',queueSync);
 
   window.QuireCloud={
     init,setConfig,clearConfig,getConfig:config,isConfigured,
