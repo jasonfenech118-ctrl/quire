@@ -1077,3 +1077,59 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 .project-modal-actions>div{display:flex;gap:8px}
 @media(max-width:1050px){.projects-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:700px){.projects-grid{grid-template-columns:1fr}.project-card-actions{flex-direction:column}}
+
+
+/* ---------- Step 10: persistent chapter & section editor ---------- */
+.live-chapter-layout{grid-template-columns:240px minmax(0,1fr) 285px}
+#chapterTreeMount{display:grid;gap:2px;margin-top:8px}
+.chapter-tree-group{display:grid;gap:2px}
+.chapter-tree-row,.section-tree-row{
+  width:100%;border:0;background:transparent;text-align:left;color:var(--ink);
+  display:grid;align-items:center;border-radius:3px
+}
+.chapter-tree-row{grid-template-columns:26px 1fr auto;gap:7px;padding:9px 8px}
+.chapter-tree-row>span{color:var(--burgundy);font-size:9px}
+.chapter-tree-row strong{font-size:10px;font-weight:600}
+.chapter-tree-row small{font-size:7px;color:var(--muted)}
+.chapter-tree-row.active{background:#eee8de}
+.chapter-section-list{display:grid;gap:1px;margin:1px 0 8px 27px}
+.section-tree-row{grid-template-columns:18px 1fr;gap:3px;padding:7px 7px;color:var(--muted)}
+.section-tree-row>span{font-size:8px;cursor:grab;color:#a99f91}
+.section-tree-row strong{font-size:8px;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.section-tree-row.active{background:var(--sage-light);color:var(--forest)}
+.section-tree-row.dragging{opacity:.45}
+.live-editor-panel{min-height:680px}
+.editor-meta-right{display:flex;gap:12px}
+#editorSaveState{color:var(--forest)}
+.section-editor-controls{
+  display:flex;align-items:center;gap:11px;flex-wrap:wrap;border-bottom:1px solid var(--line);
+  padding:9px 0;font-size:8px;color:var(--muted)
+}
+.section-editor-controls label{display:flex;align-items:center;gap:5px}
+.section-editor-controls select,.section-editor-controls input{
+  border:1px solid var(--line);background:#fffdf8;border-radius:3px;padding:5px 6px;font-size:8px;color:var(--ink)
+}
+.section-editor-controls input{width:82px}
+.section-editor-controls .danger-text{margin-left:auto}
+.section-word-progress{height:2px;background:#e3ddd3}
+.section-word-progress span{display:block;height:100%;background:var(--forest);width:0;transition:width .2s ease}
+.live-editor{
+  min-height:480px;padding-bottom:100px;outline:0;
+  font-family:"Libre Caslon Text",serif;font-size:15px;line-height:1.85
+}
+.live-editor:empty:before{content:attr(data-placeholder);color:#aaa196}
+.live-editor h2,.live-editor h3{font-weight:400}
+.live-editor blockquote{border-left:2px solid var(--gold);margin-left:0;padding-left:16px;color:var(--ink-soft)}
+.section-evidence-mount{display:grid;gap:8px}
+.empty-evidence{text-align:center;padding:24px 8px;border:1px dashed #46413c;border-radius:3px}
+.empty-evidence strong,.empty-evidence small{display:block}
+.empty-evidence strong{font-family:"Libre Caslon Text",serif;font-weight:400;font-size:13px}
+.empty-evidence small{font-size:8px;line-height:1.5;color:#aaa196;margin-top:6px}
+@media(max-width:1100px){
+  .live-chapter-layout{grid-template-columns:220px 1fr}
+  .live-chapter-layout>.evidence-panel{grid-column:1/-1}
+}
+@media(max-width:800px){
+  .live-chapter-layout{grid-template-columns:1fr}
+  .chapter-tree{position:static}
+}
