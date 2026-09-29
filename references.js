@@ -155,6 +155,7 @@
       if(!Object.keys(current).length&&!authors.length) return;
       current.authors=authors.join('; ');
       current.keywords=keywords;
+      current.pages=[current.startPage,current.endPage].filter(Boolean).join('-');
       entries.push(articleFromFields(current,'RIS'));
       current={};authors=[];keywords=[];
     };
@@ -184,11 +185,7 @@
       else if(tag==='KW') keywords.push(value);
     }
     flush();
-    return entries.map(item=>{
-      const page=[item.citationData?.startPage,item.citationData?.endPage].filter(Boolean).join('-');
-      if(page) item.citationData.page=page;
-      return item;
-    });
+    return entries;
   }
 
   function detectFormat(file,text){
@@ -288,11 +285,21 @@
     });
   }
 
+  function bibType(referenceType='article'){
+    const type=String(referenceType||'article').toLowerCase();
+    if(['jour','journal','journal article','article'].includes(type)) return 'article';
+    if(['book','ebook'].includes(type)) return 'book';
+    if(['chap','book chapter','inbook','incollection'].includes(type)) return 'incollection';
+    if(['thes','thesis','phdthesis'].includes(type)) return 'phdthesis';
+    if(['conf','conference paper','inproceedings'].includes(type)) return 'inproceedings';
+    return 'misc';
+  }
+
   function toBibTeX(articles){
     const keys=makeCiteKeys(articles);
     return articles.map((a,index)=>{
       const c=a.citationData||{};
-      const type=(c.referenceType||'article').toLowerCase()==='journal'?'article':(c.referenceType||'article').toLowerCase();
+      const type=bibType(c.referenceType);
       const fields=[
         ['title',a.title],
         ['author',bibAuthors(a.authors)],
