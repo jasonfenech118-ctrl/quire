@@ -87,7 +87,11 @@ function showToast(message){
   if(old) old.remove();
   const toast = document.createElement('div');
   toast.className = 'toast';
+  toast.setAttribute('role','status');
+  toast.setAttribute('aria-live','polite');
   toast.textContent = message;
+  const live=document.getElementById('quireLiveRegion');
+  if(live) live.textContent=message;
   Object.assign(toast.style,{position:'fixed',right:'22px',bottom:'22px',background:'#173b34',color:'#fff',padding:'12px 16px',borderRadius:'9px',fontSize:'12px',zIndex:'120',boxShadow:'0 10px 30px rgba(0,0,0,.18)'});
   document.body.appendChild(toast);
   setTimeout(() => toast.remove(), 2600);
