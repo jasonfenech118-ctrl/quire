@@ -8,33 +8,71 @@
     review:'review',supervision:'review',readiness:'review',export:'review',overview:'review'
   };
   const STAGES=[
-    {id:'discover',label:'Discover',copy:'Find useful research and bring the right papers into your project.',view:'library'},
-    {id:'understand',label:'Understand',copy:'Read, highlight and decide what each source actually contributes.',view:'library'},
-    {id:'organise',label:'Organise',copy:'Turn evidence and your own thinking into themes, arguments and destinations.',view:'brainstorm'},
-    {id:'write',label:'Write',copy:'Develop the thesis with your evidence and writing companion beside you.',view:'chapters'},
+    {id:'discover',label:'Discover',copy:'Explore the field broadly, plan the search and build a literature base before narrowing too early.',view:'searchscreen'},
+    {id:'understand',label:'Understand',copy:'Read across several papers, capture what they contribute and critically appraise their strengths and limitations.',view:'library'},
+    {id:'organise',label:'Organise',copy:'Compare studies, identify recurring themes and disagreement, and test possible gaps against more literature.',view:'synthesis'},
+    {id:'write',label:'Write',copy:'Develop an argument only after the evidence has been organised enough to support synthesis.',view:'chapters'},
     {id:'review',label:'Review',copy:'Check meaning, language, claims, evidence and readiness before finalising.',view:'review'}
   ];
 
   function state(){
     const s=window.QuireStore?.getState?.()||{};
     const projectId=window.QuireStore?.getActiveProjectId?.();
+    const project=(s.projects||[]).find(p=>p.id===projectId)||{};
     const articles=(s.articles||[]).filter(a=>!projectId||a.projectId===projectId);
     const highlights=(s.highlights||[]).filter(h=>!projectId||h.projectId===projectId);
     const notes=(s.notes||[]).filter(n=>!projectId||n.projectId===projectId);
     const sections=(s.sections||[]).filter(x=>!projectId||x.projectId===projectId);
     const evidence=(s.evidenceLinks||[]).filter(x=>!projectId||x.projectId===projectId);
+    const analysis=(s.analysisItems||[]).filter(x=>!projectId||x.projectId===projectId);
+    const reviewed=articles.filter(a=>a.readingStatus==='reviewed');
+    const compared=articles.filter(article=>{
+      const d=article.citationData?.synthesis||{};
+      return ['design','sample','methods','findings','limitations','relevance'].some(key=>String(d[key]||'').trim());
+    });
+    const gaps=analysis.filter(x=>x.kind==='gap_signal');
     const words=sections.reduce((n,x)=>n+(Number(x.currentWordCount)||0),0);
-    return {articles,highlights,notes,sections,evidence,words};
+    const review=window.QuireResearchFoundation?.reviewProgress?.(projectId)||{score:0};
+    const maturity=window.QuireResearchFoundation?.maturity?.(projectId)||{key:'broad',label:'Needs broader searching'};
+    return {projectId,project,articles,highlights,notes,sections,evidence,analysis,reviewed,compared,gaps,words,review,maturity};
   }
 
   function recommendation(view){
     const s=state();
-    if(!s.articles.length)return {stage:'discover',title:'Start with one useful paper',copy:'Add or find a paper connected to your research question. You do not need to organise the whole thesis first.',action:'Open Research',view:'library'};
-    if(!s.highlights.length&&!s.notes.length)return {stage:'understand',title:'Understand a paper before collecting more',copy:'Open one paper from your Research Library, then highlight the exact passages that matter and capture what they mean for your question.',action:'Open Research',view:'library'};
-    if(!s.evidence.length)return {stage:'organise',title:'Give the evidence a destination',copy:'Connect a useful passage or note to a theme, argument or thesis destination so it does not become an isolated highlight.',action:'Open Ideas',view:'brainstorm'};
-    if(!s.words)return {stage:'write',title:'Turn one organised idea into a paragraph',copy:'Start small. Write the point in your own words with the linked evidence beside you.',action:'Start writing',view:'chapters'};
-    if(view==='chapters')return {stage:'review',title:'Check the paragraph you just developed',copy:'Confirm Quire understood your meaning, improve the English only where useful, then verify the evidence behind factual claims.',action:'Review writing',view:'review'};
-    return {stage:'write',title:'Keep the research and writing connected',copy:'Return to the thesis and develop the next evidence-backed point. Review it when the idea is complete.',action:'Continue writing',view:'chapters'};
+    if(window.QuireStore?.isStarterProject?.(s.projectId)){
+      return {stage:'discover',title:'Start with the area you want to explore',copy:'You do not need a final research question yet. Define the broad area first, then let the literature help you narrow it.',action:'Define research area',view:'dashboard'};
+    }
+    if(!s.articles.length){
+      return {stage:'discover',title:'Plan the search before narrowing the question',copy:'Develop the main concepts, keywords and sources you need to explore the field broadly.',action:'Plan literature search',view:'searchscreen'};
+    }
+    if(s.articles.length<5){
+      return {stage:'discover',title:'Keep building the literature base',copy:'A few papers are a starting point, not a basis for defining the gap. Keep collecting relevant work from across the field.',action:'Continue research',view:'searchscreen'};
+    }
+    if(s.reviewed.length<3){
+      return {stage:'understand',title:'Read across several papers',copy:'Compare what different studies actually found, how they were designed and what limitations they report before drawing conclusions.',action:'Open Research',view:'library'};
+    }
+    if(s.compared.length<2){
+      return {stage:'organise',title:'Start comparing papers side by side',copy:'Pull findings, methods and limitations together so recurring patterns and disagreements become visible.',action:'Compare papers',view:'synthesis'};
+    }
+    if(!s.gaps.length){
+      return {stage:'organise',title:'Look for possible gaps—but do not confirm one yet',copy:'Use cross-paper comparison to identify unanswered issues, under-studied populations, inconsistent findings or repeated limitations, then test them with further searching.',action:'Explore the literature gap',view:'synthesis'};
+    }
+    if(!String(s.project.researchQuestion||'').trim()){
+      return {stage:'organise',title:'Refine the working question from the literature',copy:'You now have possible gap signals. Shape the working question around what the literature appears to leave unanswered, while continuing to test that gap.',action:'Refine research direction',view:'setup'};
+    }
+    if(s.review.score<65||s.maturity.key!=='stabilising'){
+      return {stage:'organise',title:'Strengthen the case for the emerging gap',copy:'Keep searching, appraising and comparing. Quire will not treat the gap as established while the evidence base is still developing.',action:'Continue literature review',view:'searchscreen'};
+    }
+    if(!s.evidence.length){
+      return {stage:'organise',title:'Turn the literature into an evidence map',copy:'Connect the strongest findings, counter-evidence and possible gap to the objectives, themes and argument you are beginning to develop.',action:'Open Thesis Map',view:'map'};
+    }
+    if(!s.words){
+      return {stage:'write',title:'The evidence is organised enough to begin a cautious draft',copy:'Start with one synthesised section, keeping supporting and conflicting evidence visible. Research can still continue as the draft develops.',action:'Start an evidence-grounded draft',view:'chapters'};
+    }
+    if(view==='chapters'){
+      return {stage:'review',title:'Check the section against the evidence base',copy:'Confirm the argument reflects the literature fairly, including limitations and counter-evidence, then continue researching any weak spots.',action:'Review writing',view:'review'};
+    }
+    return {stage:'write',title:'Keep research and writing iterative',copy:'Develop the next evidence-grounded point, then return to the literature whenever a claim exposes a gap in coverage.',action:'Continue writing',view:'chapters'};
   }
 
   function render(view){
