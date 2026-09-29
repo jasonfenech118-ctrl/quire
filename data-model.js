@@ -703,6 +703,72 @@
     return clone(state.objectives.filter(o=>o.projectId===projectId).sort((a,b)=>a.orderIndex-b.orderIndex));
   }
 
+
+  function updateChapter(chapterId,patch={}){
+    const state=getState();
+    const row=state.chapters.find(c=>c.id===chapterId);
+    if(!row) return null;
+    ['title','number','orderIndex','targetWordCount','currentWordCount','status'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) row[key]=patch[key];
+    });
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function listSections(chapterId,projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return clone(state.sections.filter(s=>s.projectId===projectId && (!chapterId||s.chapterId===chapterId))
+      .sort((a,b)=>(a.orderIndex||0)-(b.orderIndex||0)));
+  }
+
+  function addSection(chapterId,data={}){
+    const state=getState();
+    const chapter=state.chapters.find(c=>c.id===chapterId);
+    if(!chapter) throw new Error('Chapter not found.');
+    const siblings=state.sections.filter(s=>s.chapterId===chapterId && !s.parentSectionId);
+    const ts=nowIso();
+    const row={
+      id:uid('section'),projectId:chapter.projectId,chapterId,parentSectionId:data.parentSectionId||null,
+      number:data.number||'',title:data.title||'Untitled section',
+      orderIndex:data.orderIndex||siblings.length+1,content:data.content||'',
+      targetWordCount:data.targetWordCount==null?null:Number(data.targetWordCount),
+      currentWordCount:Number(data.currentWordCount)||0,status:data.status||'not_started',
+      createdAt:ts,updatedAt:ts
+    };
+    state.sections.push(row);writeState(state);return clone(row);
+  }
+
+  function updateSection(sectionId,patch={}){
+    const state=getState();
+    const row=state.sections.find(s=>s.id===sectionId);
+    if(!row) return null;
+    ['parentSectionId','number','title','orderIndex','content','targetWordCount','currentWordCount','status'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) row[key]=patch[key];
+    });
+    row.updatedAt=nowIso();
+    writeState(state);return clone(row);
+  }
+
+  function removeSection(sectionId){
+    const state=getState();
+    if(!state.sections.some(s=>s.id===sectionId)) return false;
+    state.evidenceLinks=state.evidenceLinks.filter(e=>e.sectionId!==sectionId);
+    state.aiThreads=state.aiThreads.filter(t=>t.sectionId!==sectionId);
+    state.sections=state.sections.filter(s=>s.id!==sectionId && s.parentSectionId!==sectionId);
+    writeState(state);return true;
+  }
+
+  function reorderSections(chapterId,orderedIds=[]){
+    const state=getState();
+    orderedIds.forEach((id,index)=>{
+      const row=state.sections.find(s=>s.id===id&&s.chapterId===chapterId);
+      if(row){row.orderIndex=index+1;row.updatedAt=nowIso();}
+    });
+    writeState(state);return listSections(chapterId);
+  }
+
   function listChapters(projectId){
     const state=getState(); projectId=projectId||getActiveProjectId(state);
     return clone(state.chapters.filter(ch=>ch.projectId===projectId).sort((a,b)=>a.orderIndex-b.orderIndex));
@@ -820,7 +886,13 @@
     updateNote,
     listThemes,
     listObjectives,
+    updateChapter,
     listChapters,
+    listSections,
+    addSection,
+    updateSection,
+    removeSection,
+    reorderSections,
     addEvidenceLink,
     listEvidenceLinks,
     getOrCreateArticleThread,
