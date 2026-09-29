@@ -44,9 +44,12 @@
     const sections=projectRows(state,'sections',projectId);
     const reviewed=articles.filter(article=>article.readingStatus==='reviewed');
     const gapSignals=analysis.filter(item=>item.kind==='gap_signal');
+    const gapExplorations=gapSignals.filter(item=>String(item.payload?.gapStatus||'emerging')!=='set_aside');
+    const viableGapSignals=gapSignals.filter(item=>!['set_aside','challenged'].includes(String(item.payload?.gapStatus||'emerging')));
     return {
       state,projectId,project,setup,articles,highlights,notes,appraisals,screening,
-      searchRuns,plan,evidence,objectives,themes,analysis,articleThemes,sections,reviewed,gapSignals
+      searchRuns,plan,evidence,objectives,themes,analysis,articleThemes,sections,reviewed,
+      gapSignals,gapExplorations,viableGapSignals
     };
   }
 
@@ -172,15 +175,16 @@
       coverageBase=coveredThemes.size/ctx.themes.length;
       coverageLabel=coveredThemes.size+' of '+ctx.themes.length+' themes have evidence links';
     }
-    const gapFactor=Math.min(1,ctx.gapSignals.length/2);
+    const gapFactor=Math.min(1,ctx.gapExplorations.length/2);
     const score=(coverageBase*60)+(gapFactor*40);
     return {
       key:'coverage',label:'Coverage & gap exploration',weight:WEIGHTS.coverage,score:pct(score),
-      detail:coverageLabel+' · '+ctx.gapSignals.length+' possible gap signal'+(ctx.gapSignals.length===1?'':'s'),
+      detail:coverageLabel+' · '+ctx.gapExplorations.length+' gap exploration'+(ctx.gapExplorations.length===1?'':'s')+', '+ctx.viableGapSignals.length+' currently viable',
       evidence:{
         objectives:ctx.objectives.length,coveredObjectives:coveredObjectives.size,
         themes:ctx.themes.length,coveredThemes:coveredThemes.size,
-        gapSignals:ctx.gapSignals.length
+        gapSignals:ctx.viableGapSignals.length,
+        gapExplorations:ctx.gapExplorations.length
       }
     };
   }
@@ -216,7 +220,7 @@
     const synthesized=ctx.articles.filter(hasSynthesis).length;
     const multiThemes=repeatedThemeCount(ctx);
     const counterEvidence=ctx.highlights.filter(row=>row.category==='contradictory').length;
-    const gaps=ctx.gapSignals.length;
+    const gaps=ctx.gapExplorations.length;
     const reviewed=ctx.reviewed.length;
 
     if(ctx.articles.length<5||reviewed<3){
@@ -259,7 +263,7 @@
     if(!ctx.articles.length)return 'collect';
     if(ctx.reviewed.length<3)return 'read';
     if((synthesis?.evidence?.synthesized||0)<2)return 'read';
-    if(!ctx.gapSignals.length)return 'gap';
+    if(!ctx.viableGapSignals.length)return 'gap';
     if(!hasText(ctx.project.researchQuestion))return 'refine';
     if(mat.key!=='stabilising'||review.score<65)return 'gap';
     return 'refine';
@@ -398,10 +402,13 @@
 
     const gapTitle=document.getElementById('foundationGapTitle');
     const gapCopy=document.getElementById('foundationGapCopy');
-    if(ctx.gapSignals.length){
-      const latest=ctx.gapSignals.slice().sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||'')))[0];
-      if(gapTitle)gapTitle.textContent=ctx.gapSignals.length+' possible gap signal'+(ctx.gapSignals.length===1?'':'s')+' being tested';
+    if(ctx.viableGapSignals.length){
+      const latest=ctx.viableGapSignals.slice().sort((a,b)=>String(b.updatedAt||b.createdAt||'').localeCompare(String(a.updatedAt||a.createdAt||'')))[0];
+      if(gapTitle)gapTitle.textContent=ctx.viableGapSignals.length+' active gap hypothesis'+(ctx.viableGapSignals.length===1?'':'es')+' being tested';
       if(gapCopy)gapCopy.textContent='Latest: “'+latest.title+'”. Keep searching for evidence that supports, narrows or disproves it before treating it as the thesis gap.';
+    }else if(ctx.gapSignals.length){
+      if(gapTitle)gapTitle.textContent='No active gap direction';
+      if(gapCopy)gapCopy.textContent='Previous gap signals have been challenged or set aside. Return to the literature and look for a better-supported direction.';
     }else{
       if(gapTitle)gapTitle.textContent='No gap claimed yet';
       if(gapCopy)gapCopy.textContent='Quire will help you record possible gap signals as you read. A possible gap is something to test with further searching—not something Quire will invent for you.';
@@ -413,7 +420,7 @@
       if(!isStarter(ctx)&&!ctx.articles.length){label='Plan my literature search';target='searchscreen';}
       else if(ctx.articles.length&&ctx.reviewed.length<3){label='Read across the literature';target='library';}
       else if(review.components.find(row=>row.key==='synthesis')?.evidence?.synthesized<2){label='Compare several papers';target='synthesis';}
-      else if(!ctx.gapSignals.length){label='Compare findings & look for gaps';target='synthesis';}
+      else if(!ctx.viableGapSignals.length){label='Compare findings & look for gaps';target='synthesis';}
       else if(!hasText(ctx.project.researchQuestion)){label='Refine the working question';target='setup';}
       else if(review.score<65||mat.key!=='stabilising'){label='Strengthen the literature foundation';target='searchscreen';}
       else{label='Organise the emerging argument';target='map';}
@@ -453,10 +460,10 @@
       action.textContent='Continue reading →';target='library';
     }else if(currentStage==='gap'){
       if(eyebrow)eyebrow.textContent='COMPARE & TEST';
-      title.textContent=ctx.gapSignals.length?'Test the possible gap against more literature.':'Look for what is missing, uncertain or repeatedly limited.';
-      if(stats)stats.textContent=mat.label+' · '+review.counts.gapSignals+' possible gap signals · '+review.score+'% review progress';
-      action.textContent=ctx.gapSignals.length?'Plan another search →':'Compare papers →';
-      target=ctx.gapSignals.length?'searchscreen':'synthesis';
+      title.textContent=ctx.viableGapSignals.length?'Test the possible gap against more literature.':'Look for what is missing, uncertain or repeatedly limited.';
+      if(stats)stats.textContent=mat.label+' · '+review.counts.gapSignals+' active gap hypotheses · '+review.score+'% review progress';
+      action.textContent=ctx.viableGapSignals.length?'Plan another search →':'Compare papers →';
+      target=ctx.viableGapSignals.length?'searchscreen':'synthesis';
     }else{
       if(eyebrow)eyebrow.textContent='REFINE THE RESEARCH DIRECTION';
       title.textContent='Use the literature to sharpen the question and define your contribution.';
