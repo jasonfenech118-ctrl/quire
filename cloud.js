@@ -22,6 +22,9 @@
     ['evidenceLinks','evidence_links',evidenceToDb],
     ['milestones','milestones',milestoneToDb],
     ['progressSnapshots','progress_snapshots',progressToDb],
+    ['reviewRounds','review_rounds',reviewRoundToDb],
+    ['feedbackItems','feedback_items',feedbackToDb],
+    ['sectionVersions','section_versions',sectionVersionToDb],
     ['aiThreads','ai_threads',threadToDb],
     ['aiMessages','ai_messages',messageToDb]
   ];
@@ -187,6 +190,9 @@
   function evidenceToDb(x){return {id:x.id,project_id:x.projectId,article_id:x.articleId||null,highlight_id:x.highlightId||null,note_id:x.noteId||null,theme_id:x.themeId||null,objective_id:x.objectiveId||null,chapter_id:x.chapterId||null,section_id:x.sectionId||null,relationship:x.relationship||'supports',rationale:x.rationale||null,created_at:iso(x.createdAt)};}
   function milestoneToDb(x){return {id:x.id,project_id:x.projectId,type:x.type||null,title:x.title,description:x.description||null,order_index:x.orderIndex||null,due_date:x.dueDate||null,completed_at:x.completedAt||null,status:x.status||'not_started',created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function progressToDb(x){return {id:x.id,project_id:x.projectId,snapshot_date:x.snapshotDate,current_words:Number(x.currentWords)||0,words_per_week:Number(x.wordsPerWeek)||0,articles_total:Number(x.articlesTotal)||0,articles_reviewed:Number(x.articlesReviewed)||0,chapters_total:Number(x.chaptersTotal)||0,chapters_developed:Number(x.chaptersDeveloped)||0,milestones_total:Number(x.milestonesTotal)||0,milestones_complete:Number(x.milestonesComplete)||0,highlights:Number(x.highlights)||0,notes:Number(x.notes)||0,evidence_links:Number(x.evidenceLinks)||0,sections_total:Number(x.sectionsTotal)||0,sections_with_evidence:Number(x.sectionsWithEvidence)||0,overall_progress:Number(x.overallProgress)||0,source:x.source||'legacy',created_at:iso(x.createdAt)};}
+  function reviewRoundToDb(x){return {id:x.id,project_id:x.projectId,title:x.title,reviewer_name:x.reviewerName||null,status:x.status||'awaiting_feedback',scope:x.scope||'whole_thesis',chapter_id:x.chapterId||null,submitted_at:x.submittedAt||null,response_due_date:x.responseDueDate||null,notes:x.notes||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
+  function feedbackToDb(x){return {id:x.id,project_id:x.projectId,review_round_id:x.reviewRoundId||null,chapter_id:x.chapterId||null,section_id:x.sectionId||null,reviewer_name:x.reviewerName||null,category:x.category||'content',priority:x.priority||'normal',status:x.status||'open',selected_text:x.selectedText||null,comment:x.comment||'',researcher_response:x.researcherResponse||null,resolved_at:x.resolvedAt||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
+  function sectionVersionToDb(x){return {id:x.id,project_id:x.projectId,chapter_id:x.chapterId||null,section_id:x.sectionId,review_round_id:x.reviewRoundId||null,label:x.label||'Snapshot',reason:x.reason||'manual',section_title:x.sectionTitle||null,content:x.content||'',word_count:Number(x.wordCount)||0,section_status:x.sectionStatus||'not_started',created_at:iso(x.createdAt)};}
   function threadToDb(x){return {id:x.id,project_id:x.projectId,article_id:x.articleId||null,section_id:x.sectionId||null,mode:x.mode||'research',title:x.title||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function messageToDb(x){return {id:x.id,thread_id:x.threadId,role:x.role,content:x.content,source_refs:x.sourceRefs||[],created_at:iso(x.createdAt)};}
 
@@ -236,6 +242,9 @@
   const fromEvidence=r=>({id:r.id,projectId:r.project_id,articleId:r.article_id,highlightId:r.highlight_id,noteId:r.note_id,themeId:r.theme_id,objectiveId:r.objective_id,chapterId:r.chapter_id,sectionId:r.section_id,relationship:r.relationship,rationale:r.rationale||'',createdAt:r.created_at});
   const fromMilestone=r=>({id:r.id,projectId:r.project_id,type:r.type||'',title:r.title,description:r.description||'',orderIndex:r.order_index,dueDate:r.due_date,completedAt:r.completed_at,status:r.status,createdAt:r.created_at,updatedAt:r.updated_at});
   const fromProgress=r=>({id:r.id,projectId:r.project_id,snapshotDate:r.snapshot_date,currentWords:r.current_words,wordsPerWeek:r.words_per_week,articlesTotal:r.articles_total,articlesReviewed:r.articles_reviewed,chaptersTotal:r.chapters_total,chaptersDeveloped:r.chapters_developed,milestonesTotal:r.milestones_total,milestonesComplete:r.milestones_complete,highlights:r.highlights,notes:r.notes,evidenceLinks:r.evidence_links||0,sectionsTotal:r.sections_total||0,sectionsWithEvidence:r.sections_with_evidence||0,overallProgress:r.overall_progress||0,source:r.source||'legacy',createdAt:r.created_at});
+  const fromReviewRound=r=>({id:r.id,projectId:r.project_id,title:r.title,reviewerName:r.reviewer_name||'',status:r.status||'awaiting_feedback',scope:r.scope||'whole_thesis',chapterId:r.chapter_id||null,submittedAt:r.submitted_at||null,responseDueDate:r.response_due_date||null,notes:r.notes||'',createdAt:r.created_at,updatedAt:r.updated_at});
+  const fromFeedback=r=>({id:r.id,projectId:r.project_id,reviewRoundId:r.review_round_id||null,chapterId:r.chapter_id||null,sectionId:r.section_id||null,reviewerName:r.reviewer_name||'',category:r.category||'content',priority:r.priority||'normal',status:r.status||'open',selectedText:r.selected_text||'',comment:r.comment||'',researcherResponse:r.researcher_response||'',resolvedAt:r.resolved_at||null,createdAt:r.created_at,updatedAt:r.updated_at});
+  const fromSectionVersion=r=>({id:r.id,projectId:r.project_id,chapterId:r.chapter_id||null,sectionId:r.section_id,reviewRoundId:r.review_round_id||null,label:r.label||'Snapshot',reason:r.reason||'manual',sectionTitle:r.section_title||'',content:r.content||'',wordCount:r.word_count||0,sectionStatus:r.section_status||'not_started',createdAt:r.created_at});
   const fromThread=r=>({id:r.id,projectId:r.project_id,articleId:r.article_id,sectionId:r.section_id,mode:r.mode,title:r.title||'',createdAt:r.created_at,updatedAt:r.updated_at});
   const fromMessage=r=>({id:r.id,threadId:r.thread_id,role:r.role,content:r.content,sourceRefs:r.source_refs||[],createdAt:r.created_at});
 
@@ -250,11 +259,13 @@
       if(!projects?.length) return {empty:true};
 
       const projectIds=projects.map(p=>p.id);
-      const [setups,objectives,chapters,sections,articles,highlights,notes,themes,evidenceLinks,milestones,progressSnapshots,aiThreads]=await Promise.all([
+      const [setups,objectives,chapters,sections,articles,highlights,notes,themes,evidenceLinks,milestones,progressSnapshots,reviewRounds,feedbackItems,sectionVersions,aiThreads]=await Promise.all([
         selectProjectRows('study_setups',projectIds),selectProjectRows('objectives',projectIds),selectProjectRows('chapters',projectIds),
         selectProjectRows('sections',projectIds),selectProjectRows('articles',projectIds),selectProjectRows('highlights',projectIds),
         selectProjectRows('notes',projectIds),selectProjectRows('themes',projectIds),selectProjectRows('evidence_links',projectIds),
-        selectProjectRows('milestones',projectIds),selectProjectRows('progress_snapshots',projectIds),selectProjectRows('ai_threads',projectIds)
+        selectProjectRows('milestones',projectIds),selectProjectRows('progress_snapshots',projectIds),
+        selectProjectRows('review_rounds',projectIds),selectProjectRows('feedback_items',projectIds),selectProjectRows('section_versions',projectIds),
+        selectProjectRows('ai_threads',projectIds)
       ]);
 
       let articleThemes=[];
@@ -285,6 +296,9 @@
         evidenceLinks:evidenceLinks.map(fromEvidence),
         milestones:milestones.map(fromMilestone),
         progressSnapshots:progressSnapshots.map(fromProgress),
+        reviewRounds:reviewRounds.map(fromReviewRound),
+        feedbackItems:feedbackItems.map(fromFeedback),
+        sectionVersions:sectionVersions.map(fromSectionVersion),
         aiThreads:aiThreads.map(fromThread),
         aiMessages:aiMessages.map(fromMessage)
       };
