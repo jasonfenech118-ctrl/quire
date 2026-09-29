@@ -500,6 +500,128 @@
     return true;
   }
 
+
+  function listHighlights(articleId){
+    const state=getState();
+    return clone(state.highlights.filter(h=>!articleId || h.articleId===articleId)
+      .sort((a,b)=>(a.pageNumber||0)-(b.pageNumber||0) || (a.createdAt||'').localeCompare(b.createdAt||'')));
+  }
+
+  function getHighlight(highlightId){
+    const state=getState();
+    return clone(state.highlights.find(h=>h.id===highlightId) || null);
+  }
+
+  function addHighlight(data={}){
+    const state=getState();
+    const article=state.articles.find(a=>a.id===data.articleId);
+    if(!article) throw new Error('Article not found.');
+    const ts=nowIso();
+    const highlight={
+      id:uid('highlight'),projectId:article.projectId,articleId:article.id,
+      pageNumber:Number(data.pageNumber)||null,
+      highlightedText:data.highlightedText || '',
+      color:data.color || 'yellow',
+      category:data.category || 'key_finding',
+      pdfAnchor:data.pdfAnchor || {},
+      createdAt:ts,updatedAt:ts
+    };
+    state.highlights.push(highlight);
+    writeState(state);
+    return clone(highlight);
+  }
+
+  function updateHighlight(highlightId,patch={}){
+    const state=getState();
+    const row=state.highlights.find(h=>h.id===highlightId);
+    if(!row) return null;
+    ['color','category','highlightedText','pdfAnchor'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) row[key]=patch[key];
+    });
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function removeHighlight(highlightId){
+    const state=getState();
+    if(!state.highlights.some(h=>h.id===highlightId)) return false;
+    state.notes=state.notes.filter(n=>n.highlightId!==highlightId);
+    state.evidenceLinks=state.evidenceLinks.filter(e=>e.highlightId!==highlightId);
+    state.highlights=state.highlights.filter(h=>h.id!==highlightId);
+    writeState(state);
+    return true;
+  }
+
+  function listNotes(articleId){
+    const state=getState();
+    return clone(state.notes.filter(n=>!articleId || n.articleId===articleId));
+  }
+
+  function addNote(data={}){
+    const state=getState();
+    const article=data.articleId ? state.articles.find(a=>a.id===data.articleId) : null;
+    const projectId=data.projectId || article?.projectId || getActiveProjectId(state);
+    if(!projectId) throw new Error('No active thesis project.');
+    const ts=nowIso();
+    const note={
+      id:uid('note'),projectId,articleId:data.articleId||null,highlightId:data.highlightId||null,
+      title:data.title||'',body:data.body||'',tags:Array.isArray(data.tags)?data.tags:[],
+      noteType:data.noteType||'research',createdAt:ts,updatedAt:ts
+    };
+    state.notes.push(note);
+    writeState(state);
+    return clone(note);
+  }
+
+  function updateNote(noteId,patch={}){
+    const state=getState();
+    const row=state.notes.find(n=>n.id===noteId);
+    if(!row) return null;
+    ['title','body','tags','noteType'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) row[key]=patch[key];
+    });
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function listThemes(projectId){
+    const state=getState(); projectId=projectId||getActiveProjectId(state);
+    return clone(state.themes.filter(t=>t.projectId===projectId));
+  }
+
+  function listObjectives(projectId){
+    const state=getState(); projectId=projectId||getActiveProjectId(state);
+    return clone(state.objectives.filter(o=>o.projectId===projectId).sort((a,b)=>a.orderIndex-b.orderIndex));
+  }
+
+  function listChapters(projectId){
+    const state=getState(); projectId=projectId||getActiveProjectId(state);
+    return clone(state.chapters.filter(ch=>ch.projectId===projectId).sort((a,b)=>a.orderIndex-b.orderIndex));
+  }
+
+  function addEvidenceLink(data={}){
+    const state=getState();
+    const projectId=data.projectId||getActiveProjectId(state);
+    const ts=nowIso();
+    const row={
+      id:uid('evidence'),projectId,
+      articleId:data.articleId||null,highlightId:data.highlightId||null,noteId:data.noteId||null,
+      themeId:data.themeId||null,objectiveId:data.objectiveId||null,sectionId:data.sectionId||null,
+      chapterId:data.chapterId||null,relationship:data.relationship||'supports',
+      rationale:data.rationale||'',createdAt:ts
+    };
+    state.evidenceLinks.push(row);
+    writeState(state);
+    return clone(row);
+  }
+
+  function listEvidenceLinks(highlightId){
+    const state=getState();
+    return clone(state.evidenceLinks.filter(e=>!highlightId || e.highlightId===highlightId));
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -540,6 +662,19 @@
     addArticle,
     updateArticle,
     removeArticle,
+    listHighlights,
+    getHighlight,
+    addHighlight,
+    updateHighlight,
+    removeHighlight,
+    listNotes,
+    addNote,
+    updateNote,
+    listThemes,
+    listObjectives,
+    listChapters,
+    addEvidenceLink,
+    listEvidenceLinks,
     getProjectBundle
   };
 
