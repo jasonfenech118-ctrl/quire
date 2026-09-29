@@ -928,7 +928,8 @@
 
           <aside class="evidence-panel" id="sectionEvidencePanel">
             <div class="writing-companion" id="writingCompanion">
-              <div class="evidence-head"><strong>Writing companion</strong><span id="writingCompanionState">Ready</span></div>
+              <div class="evidence-head writing-companion-head"><strong>Writing companion</strong><div><span id="writingCompanionState">Ready</span><button id="toggleWritingCompanion" class="companion-toggle" type="button" aria-expanded="true" aria-controls="writingCompanionBody">Hide</button></div></div>
+              <div id="writingCompanionBody" class="writing-companion-body">
               <div class="writing-companion-block">
                 <span class="eyebrow">WHAT QUIRE UNDERSTANDS</span>
                 <p id="writingUnderstanding">Start writing a paragraph. Quire will reflect back the main idea it understands so you can check whether your meaning is clear.</p>
@@ -938,6 +939,7 @@
                 <div id="writingLanguageSuggestions" class="writing-language-suggestions"><small>Suggestions will appear as you write. Your manuscript is never changed automatically.</small></div>
               </div>
               <button class="soft-btn" id="reviewCurrentParagraphBtn" type="button">Review current paragraph</button>
+              </div>
             </div>
             <div class="evidence-head writing-evidence-head"><strong>Evidence for this section</strong><span id="sectionEvidenceCount">0 sources</span></div>
             <button class="soft-btn evidence-linker-btn" id="openEvidenceLinker" type="button">＋ Link evidence</button>
