@@ -577,7 +577,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 }
 .progress-ring{
   width:118px;height:118px;border-radius:50%;display:grid;place-items:center;
-  background:conic-gradient(#ddc8a3 0deg,#ddc8a3 137deg,#3d3935 137deg,#3d3935 360deg);position:relative
+  background:conic-gradient(#ddc8a3 0deg,#ddc8a3 0deg,#3d3935 0deg,#3d3935 360deg);position:relative
 }
 .progress-ring:after{content:"";position:absolute;inset:9px;border-radius:50%;background:var(--charcoal)}
 .progress-ring>div{position:relative;z-index:1;text-align:center}
