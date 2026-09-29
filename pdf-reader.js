@@ -1,9 +1,10 @@
 /* Quire PDF Reader v2 — real PDF rendering, text selection, highlights and notes */
 (function(){
   const DB_NAME='quire-pdfs';
-  const DB_VERSION=2;
+  const DB_VERSION=3;
   const STORE_NAME='pdfs';
   const TEXT_STORE_NAME='text-index';
+  const TEXT_INDEX_VERSION=2;
   let dbPromise=null;
 
   let pdfDoc=null;
@@ -16,6 +17,7 @@
   let selectionTimer=null;
   let pendingSelection=null;
   let editingHighlightId=null;
+  let activeCitationFocus=null;
   const textIndexPromises=new Map();
 
   function openDb(){
@@ -67,7 +69,7 @@
       return new Promise((resolve,reject)=>{
         const tx=db.transaction(TEXT_STORE_NAME,'readwrite');
         const store=tx.objectStore(TEXT_STORE_NAME);
-        const request=store.put({articleId,pages,updatedAt:new Date().toISOString()});
+        const request=store.put({articleId,version:TEXT_INDEX_VERSION,pages,updatedAt:new Date().toISOString()});
         request.onsuccess=()=>resolve(request.result);
         request.onerror=()=>reject(request.error);
       });
@@ -194,6 +196,46 @@
     refreshHighlightSidebar();
   }
 
+  function renderCitationFocus(){
+    const layer=document.getElementById('pdfCitationLayer');
+    if(!layer) return;
+    layer.innerHTML='';
+    if(!activeCitationFocus || activeCitationFocus.page!==currentPage) return;
+    const rects=Array.isArray(activeCitationFocus.rects)?activeCitationFocus.rects:[];
+    rects.forEach(rect=>{
+      const el=document.createElement('div');
+      el.className='copilot-citation-focus';
+      el.style.left=(rect.x*100)+'%';
+      el.style.top=(rect.y*100)+'%';
+      el.style.width=(rect.w*100)+'%';
+      el.style.height=(rect.h*100)+'%';
+      layer.appendChild(el);
+    });
+    if(rects.length){
+      requestAnimationFrame(()=>{
+        layer.querySelectorAll('.copilot-citation-focus').forEach(el=>el.classList.add('active'));
+      });
+    }
+  }
+
+  async function focusEvidence(citation={}){
+    if(!pdfDoc || !citation.page) return;
+    activeCitationFocus={
+      page:Number(citation.page),
+      rects:Array.isArray(citation.rects)?citation.rects:[],
+      excerpt:citation.excerpt||''
+    };
+    await renderPage(activeCitationFocus.page);
+    renderCitationFocus();
+    const surface=document.getElementById('pdfPageSurface');
+    if(surface) surface.scrollIntoView({behavior:'smooth',block:'center'});
+    window.setTimeout(()=>{
+      if(activeCitationFocus && activeCitationFocus.page===Number(citation.page)){
+        document.querySelectorAll('.copilot-citation-focus').forEach(el=>el.classList.remove('active'));
+      }
+    },2200);
+  }
+
   async function renderPage(number){
     if(!pdfDoc) return;
     if(rendering){pendingPage=number;return;}
@@ -208,6 +250,7 @@
       const canvas=document.getElementById('pdfCanvas');
       const surface=document.getElementById('pdfPageSurface');
       const highlightLayer=document.getElementById('pdfHighlightLayer');
+      const citationLayer=document.getElementById('pdfCitationLayer');
       const context=canvas.getContext('2d',{alpha:false});
       const pixelRatio=Math.min(window.devicePixelRatio||1,2);
 
@@ -217,6 +260,7 @@
       canvas.style.height=Math.floor(viewport.height)+'px';
       if(surface){surface.style.width=viewport.width+'px';surface.style.height=viewport.height+'px';}
       if(highlightLayer){highlightLayer.style.width=viewport.width+'px';highlightLayer.style.height=viewport.height+'px';}
+      if(citationLayer){citationLayer.style.width=viewport.width+'px';citationLayer.style.height=viewport.height+'px';}
 
       await page.render({
         canvasContext:context,viewport,
@@ -224,6 +268,7 @@
       }).promise;
       await renderTextLayer(page,viewport);
       renderHighlights();
+      renderCitationFocus();
 
       document.querySelectorAll('.pdf-thumb-button').forEach(btn=>{
         btn.classList.toggle('active',Number(btn.dataset.page)===currentPage);
@@ -496,44 +541,67 @@
   }
 
 
+  function clamp01(value){return Math.max(0,Math.min(1,value));}
+
   async function extractTextIndex(articleId){
     if(!pdfDoc || articleId!==currentArticleId) throw new Error('Open the article before indexing its text.');
     const pages=[];
     for(let pageNumber=1;pageNumber<=pdfDoc.numPages;pageNumber++){
       const page=await pdfDoc.getPage(pageNumber);
+      const viewport=page.getViewport({scale:1});
       const content=await page.getTextContent();
+      const segments=[];
       let text='';
       for(const item of content.items){
         if(!item.str) continue;
-        text+=item.str;
+        const tx=window.pdfjsLib.Util.transform(viewport.transform,item.transform);
+        const fontHeight=Math.max(1,Math.hypot(tx[2],tx[3]));
+        const rawWidth=Math.max(1,(item.width||1)*viewport.scale);
+        const x=clamp01(tx[4]/viewport.width);
+        const y=clamp01((tx[5]-fontHeight)/viewport.height);
+        const w=clamp01(rawWidth/viewport.width);
+        const h=clamp01(fontHeight/viewport.height);
+        const clean=String(item.str).replace(/\s+/g,' ').trim();
+        if(!clean) continue;
+        segments.push({
+          text:clean,
+          rect:{x,y,w:Math.min(w,1-x),h:Math.min(h,1-y)},
+          eol:Boolean(item.hasEOL)
+        });
+        text+=clean;
         text+=item.hasEOL?'\n':' ';
       }
       text=text.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ').trim();
-      pages.push({page:pageNumber,text});
+      pages.push({page:pageNumber,text,segments});
       window.dispatchEvent(new CustomEvent('quire:text-index-progress',{detail:{articleId,page:pageNumber,total:pdfDoc.numPages}}));
     }
     await PdfStore.saveTextIndex(articleId,pages);
     const article=window.QuireStore?.getArticle(articleId);
     if(article){
       window.QuireStore.updateArticle(articleId,{
-        citationData:{...(article.citationData||{}),textIndexedAt:new Date().toISOString(),textPageCount:pages.length}
+        citationData:{
+          ...(article.citationData||{}),
+          textIndexedAt:new Date().toISOString(),
+          textPageCount:pages.length,
+          textIndexVersion:TEXT_INDEX_VERSION
+        }
       });
     }
     window.dispatchEvent(new CustomEvent('quire:text-index-ready',{detail:{articleId,pages:pages.length}}));
-    return {articleId,pages,updatedAt:new Date().toISOString()};
+    return {articleId,version:TEXT_INDEX_VERSION,pages,updatedAt:new Date().toISOString()};
   }
 
   async function ensureTextIndex(articleId,{force=false}={}){
     if(!force){
       const existing=await PdfStore.getTextIndex(articleId);
-      if(existing?.pages?.length) return existing;
+      if(existing?.version===TEXT_INDEX_VERSION && existing?.pages?.length && existing.pages.some(p=>Array.isArray(p.segments))) return existing;
       if(textIndexPromises.has(articleId)) return textIndexPromises.get(articleId);
     }
     const work=(async()=>{
       if(articleId!==currentArticleId || !pdfDoc){
         await openArticle(articleId);
         const afterOpen=await PdfStore.getTextIndex(articleId);
-        if(afterOpen?.pages?.length && !force) return afterOpen;
+        if(afterOpen?.version===TEXT_INDEX_VERSION && afterOpen?.pages?.length && afterOpen.pages.some(p=>Array.isArray(p.segments)) && !force) return afterOpen;
       }
       const result=await extractTextIndex(articleId);
       const hasText=result.pages.some(p=>String(p.text||'').trim().length>0);
@@ -673,7 +741,7 @@
   window.QuirePdfStore=PdfStore;
   window.QuirePdfReader={
     init,importFile,attachFileToArticle,openArticle,renderPage,renderHighlights,refreshHighlightSidebar,
-    ensureTextIndex,getTextIndex:(articleId)=>PdfStore.getTextIndex(articleId),
+    focusEvidence,ensureTextIndex,getTextIndex:(articleId)=>PdfStore.getTextIndex(articleId),
     getCurrentArticleId:()=>currentArticleId,pendingArticleId:null
   };
 
