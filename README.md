@@ -8,7 +8,7 @@ Quire currently includes:
 
 - Thesis dashboard and project overview
 - Adaptive study setup for qualitative, quantitative, mixed-methods and systematic review/meta-analysis projects
-- Word-count targets, deadlines, milestones and pace-based completion estimates
+- Live word-count, evidence, milestone and history-based progress intelligence
 - Research library
 - Real PDF reading workspace
 - Browser OCR for scanned/image-only PDFs
@@ -125,6 +125,7 @@ See `docs/reference-manager.md`.
 - Step 16 — Adaptive methodology workspace ✅
 - Step 17 — OCR for scanned PDFs ✅
 - Step 18 — Live Thesis Map ✅
+- Step 19 — Progress Intelligence ✅
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -140,6 +141,14 @@ The map also includes a connection editor that writes directly into Quire's exis
 
 See `docs/thesis-map.md`.
 
+### Step 19 — Progress Intelligence
+
+Prototype progress counters and manually entered writing pace have been replaced with metrics derived from the active project's real sections, article statuses, evidence links, chapter states and milestones.
+
+Quire records one derived snapshot per project per day, learns writing velocity from dated history, shows a transparent weighted progress breakdown and only produces a completion forecast once enough real history exists.
+
+See `docs/progress-intelligence.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -149,6 +158,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–18 are implemented. The next planned step is **Step 19 — Progress Intelligence**, replacing remaining prototype progress counters with metrics derived from real project activity and history.
+The original eight foundation steps and Phase 2 Steps 9–19 are implemented. The next planned step is **Step 20 — Supervisor & Revision Workflow**, adding structured feedback, revision states and draft history without overwriting the researcher's writing.
 
 © Quire prototype.
