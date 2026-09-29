@@ -556,6 +556,17 @@ function renderLibraryControls(articles){
   }
 }
 
+let writingLibraryQuery='';
+
+function libraryWritingMatch(article,query){
+  const terms=String(query||'').toLowerCase().replace(/[^a-z0-9\s-]/g,' ').split(/\s+/)
+    .filter(w=>w.length>2&&!['the','and','for','with','from','that','this','are','was','were','into','about'].includes(w));
+  if(!terms.length)return true;
+  const hay=[article.title,article.authors,article.journal,article.abstract,article.keywords]
+    .filter(Boolean).join(' ').toLowerCase();
+  return terms.some(term=>hay.includes(term));
+}
+
 async function renderLibraryArticles(){
   const mount=document.getElementById('articleListMount');
   if(!mount || !window.QuireStore) return;
@@ -566,6 +577,7 @@ async function renderLibraryArticles(){
   const highlighted=new Set((state.highlights||[]).map(h=>h.articleId));
   const linked=libraryArticleIdsWithEvidence(state,allArticles);
   let articles=allArticles.filter(article=>{
+    if(writingLibraryQuery&&!libraryWritingMatch(article,writingLibraryQuery)) return false;
     if(libraryFilter==='unread'&&article.readingStatus!=='unread') return false;
     if(libraryFilter==='highlighted'&&!highlighted.has(article.id)) return false;
     if(libraryFilter==='linked'&&!linked.has(article.id)) return false;
@@ -597,7 +609,10 @@ async function renderLibraryArticles(){
     return;
   }
 
-  mount.innerHTML=articles.map(article=>{
+  const writingBanner=writingLibraryQuery
+    ? '<div class="writing-library-context"><div><span class="eyebrow">FROM YOUR WRITING</span><strong>Library matches for your selected claim</strong><small>'+escapeHtml(writingLibraryQuery.slice(0,220))+'</small></div><button type="button" id="clearWritingLibraryQuery">Show full library</button></div>'
+    : '';
+  mount.innerHTML=writingBanner+articles.map(article=>{
     const citation=article.citationData || {};
     const meta=[article.authors,article.journal].filter(Boolean).join(' · ') || 'Reference';
     const pageText=citation.pageCount ? citation.pageCount+' pages' : 'Reference record';
@@ -619,9 +634,18 @@ async function renderLibraryArticles(){
           '<div class="meta-row"><span>'+escapeHtml(pageText)+'</span><span>◫ '+highlightTotal+' highlights</span><span>▱ '+noteTotal+' notes</span><span>§ '+linkTotal+' links</span><span data-pdf-status="'+escapeHtml(article.id)+'">Checking PDF…</span></div>'+
         '</div>'+
       '</div>'+
-      '<div class="article-score"><strong>Open paper</strong><span>Quire reader</span></div>'+
+      '<div class="article-score"><strong>Open paper</strong><span>Quire reader</span>'+
+        (writingLibraryQuery?'<button type="button" class="library-cite-writing" data-library-cite="'+escapeHtml(article.id)+'">§ Cite in writing</button>':'')+
+      '</div>'+
     '</article>';
   }).join('');
+
+  document.getElementById('clearWritingLibraryQuery')?.addEventListener('click',()=>{writingLibraryQuery='';renderLibraryArticles();});
+  mount.querySelectorAll('[data-library-cite]').forEach(btn=>btn.addEventListener('click',e=>{
+    e.stopPropagation();
+    window.dispatchEvent(new CustomEvent('quire:cite-article-request',{detail:{articleId:btn.dataset.libraryCite}}));
+    window.dispatchEvent(new CustomEvent('quire:return-to-writing'));
+  }));
 
   mount.querySelectorAll('[data-article-id]').forEach(card=>{
     card.addEventListener('click',async()=>{
@@ -662,6 +686,10 @@ window.addEventListener('quire:project-switched',()=>{
 });
 window.addEventListener('quire:store-changed',()=>renderLibraryArticles());
 window.addEventListener('quire:cloud-pulled',()=>renderLibraryArticles());
+window.addEventListener('quire:writing-library-search',e=>{
+  writingLibraryQuery=String(e.detail?.query||'').trim();
+  renderLibraryArticles();
+});
 renderLibraryArticles();
 
 function updateResearchDeskCounts(){
