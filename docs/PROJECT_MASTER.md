@@ -50,6 +50,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 48: Provenance Chain Inspector — implemented.
 - Step 49: Contextual Command Palette — implemented.
 - Step 50: Frontend Release Readiness — code-level audit complete; real browser/device QA remains a separate validation task.
+- Step 51: In-App Workflow Diagnostics — implemented.
 
 ## Step 32 — implemented
 
@@ -172,7 +173,11 @@ The release audit found no duplicate HTML IDs and successfully parsed all 35 loc
 
 This is a **code-level** readiness result, not a claim that every interaction has been manually exercised in a real browser/device matrix. Real browser, mobile, keyboard-only and export rendering checks remain valuable before calling the frontend production-ready.
 
-## Next value review — proposed Steps 51–56
+## Step 51 — implemented
+
+Diagnostics now verifies availability of the guided research journey, Writing Companion, Claim Awareness, Ideas/provenance, Argument Map, Research Memory, Writing Growth, Session Checkpoint and current writing context in addition to existing storage/PDF/integrity checks.
+
+## Next value review — proposed Steps 52–56
 
 - **Step 51 — In-App Workflow Diagnostics.** Extend Diagnostics with checks for the guided journey, active section, evidence graph, Ideas provenance, writing companion modules and local checkpoint/growth stores so regressions can be detected from inside Quire.
 - **Step 52 — Citation & Source Integrity Preflight.** Before export, identify citations with missing article records, evidence links with missing source passages, uncited bibliography entries and cited sources absent from the bibliography.
