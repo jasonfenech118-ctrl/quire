@@ -289,8 +289,9 @@
     const state=window.QuireStore.getState();
     const payload={
       format:'quire-workspace-backup',
-      backupVersion:1,
+      backupVersion:2,
       exportedAt:new Date().toISOString(),
+      schemaVersion:window.QuireStore?.schemaVersion||state.schemaVersion||1,
       note:'Structured Quire data backup. Local PDF binaries are not included.',
       state
     };
@@ -313,8 +314,8 @@
     const rawState=parsed?.format==='quire-workspace-backup'?parsed.state:parsed;
     const state=sanitizeBackupState(rawState);
     if(!confirm('Restore this Quire backup? Your current structured workspace will be replaced. Local PDFs stored on this device are not deleted.'))return;
-    window.QuireStore.replaceState(state);
-    window.dispatchEvent(new CustomEvent('quire:project-switched',{detail:{projectId:state.activeProjectId}}));
+    const restored=window.QuireStore.replaceState(state);
+    window.dispatchEvent(new CustomEvent('quire:project-switched',{detail:{projectId:restored.activeProjectId}}));
     announce('Quire workspace restored');
   }
 
@@ -347,8 +348,24 @@
     const state=window.QuireStore.getState();
     const projectId=window.QuireStore.getActiveProjectId();
     add('Active project',projectId&&state.projects.some(p=>p.id===projectId)?'ok':'error',projectId?'Active project ID is valid.':'No active project.');
-    const brokenSections=(state.sections||[]).filter(s=>!state.chapters.some(c=>c.id===s.chapterId)).length;
-    add('Section relationships',brokenSections?'warning':'ok',brokenSections?brokenSections+' section(s) have a missing chapter.':'Section/chapter relationships are consistent.');
+    const integrity=window.QuireStore?.auditIntegrity?.();
+    if(integrity){
+      add(
+        'Quire data integrity',
+        integrity.healthy?'ok':'warning',
+        integrity.healthy
+          ? 'Schema v'+integrity.schemaVersion+' · stored relationships are consistent.'
+          : integrity.issueCount+' integrity issue'+(integrity.issueCount===1?'':'s')+' detected. Use Repair data relationships to fix them safely.'
+      );
+    }
+    const recovery=window.QuireStore?.getRecoveryBackup?.();
+    add(
+      'Migration recovery copy',
+      recovery?'ok':'info',
+      recovery
+        ? 'Recovery copy available from '+new Date(recovery.createdAt).toLocaleString()+' ('+String(recovery.reason||'migration').replace(/_/g,' ')+').'
+        : 'No automatic migration recovery copy is currently stored.'
+    );
 
     mount.innerHTML=checks.map(c=>
       '<div class="diagnostic-row '+c.status+'"><span></span><div><strong>'+escapeHtml(c.name)+'</strong><small>'+escapeHtml(c.detail)+'</small></div></div>'
@@ -356,6 +373,36 @@
     document.getElementById('diagnosticsSummary').textContent=checks.filter(c=>c.status==='error').length
       ? 'One or more checks need attention.'
       : 'Core browser checks passed.';
+  }
+
+
+  async function repairWorkspace(){
+    const audit=window.QuireStore?.auditIntegrity?.();
+    if(!audit)return;
+    if(audit.healthy){
+      announce('Quire data relationships are already healthy');
+      await diagnostics();
+      return;
+    }
+    if(!confirm('Quire found '+audit.issueCount+' data-integrity issue'+(audit.issueCount===1?'':'s')+'. Repair them now? A recovery copy will be saved first when possible.'))return;
+    const result=window.QuireStore.repairIntegrity();
+    window.dispatchEvent(new CustomEvent('quire:project-switched',{detail:{projectId:window.QuireStore.getActiveProjectId()}}));
+    announce(result.repaired+' data relationship'+(result.repaired===1?'':'s')+' repaired');
+    await diagnostics();
+  }
+
+  async function restoreMigrationRecovery(){
+    const recovery=window.QuireStore?.getRecoveryBackup?.();
+    if(!recovery){
+      alert('No migration recovery copy is available on this device.');
+      return;
+    }
+    const when=new Date(recovery.createdAt).toLocaleString();
+    if(!confirm('Restore the automatic recovery copy from '+when+'? This will replace the current structured workspace.'))return;
+    const restored=window.QuireStore.restoreRecoveryBackup();
+    window.dispatchEvent(new CustomEvent('quire:project-switched',{detail:{projectId:restored.activeProjectId}}));
+    announce('Migration recovery copy restored');
+    await diagnostics();
   }
 
   function announce(message){
@@ -467,6 +514,8 @@
       finally{e.target.value='';}
     });
     document.getElementById('runDiagnosticsBtn')?.addEventListener('click',diagnostics);
+    document.getElementById('repairWorkspaceBtn')?.addEventListener('click',repairWorkspace);
+    document.getElementById('restoreRecoveryBtn')?.addEventListener('click',restoreMigrationRecovery);
 
     window.addEventListener('online',updateConnectivity);
     window.addEventListener('offline',updateConnectivity);
@@ -481,5 +530,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuirePolish={search,downloadBackup,restoreBackup,diagnostics};
+  window.QuirePolish={search,downloadBackup,restoreBackup,diagnostics,repairWorkspace,restoreMigrationRecovery};
 })();
