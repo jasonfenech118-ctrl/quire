@@ -105,6 +105,11 @@
         sectionId:currentSectionId,chapterId:currentChapterId,relationship:'supports'
       });
       renderLinker();renderPanel();
+      window.dispatchEvent(new CustomEvent('quire:workflow-handoff',{detail:{
+        title:'Evidence linked to this section',
+        copy:'The source is now beside your manuscript. Develop the point in your own words, then cite or quote the source where appropriate.',
+        action:'Continue writing',view:'chapters'
+      }}));
     }));
   }
 
