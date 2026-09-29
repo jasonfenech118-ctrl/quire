@@ -131,6 +131,7 @@ See `docs/reference-manager.md`.
 - Step 20 — Supervisor & Revision Workflow ✅
 - Step 21 — Thesis Export ✅
 - Step 22 — Real Cloud Backend — code complete, activation pending
+- Step 23 — Final Product Polish ✅
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -182,6 +183,12 @@ The code and SQL policies are complete, but the external Supabase project still 
 
 See `docs/cloud-activation.md`.
 
+### Step 23 — Final Product Polish
+
+Quire now includes real cross-project search, live dashboard activity, a fully data-driven Research Library, structured backup/restore, browser diagnostics, keyboard shortcuts, accessibility improvements, mobile navigation and an installable/offline application shell.
+
+See `docs/product-polish.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -191,6 +198,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–21 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next build step that can proceed locally is **Step 23 — Final Product Polish**.
+The original eight foundation steps and Phase 2 Steps 9–23 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 24 — Guided Project Launch**, giving new thesis projects a structured first-run setup and readiness path.
 
 © Quire prototype.
