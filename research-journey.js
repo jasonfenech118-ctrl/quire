@@ -58,6 +58,20 @@
     if(action){action.textContent=rec.action+' →';action.dataset.flowTarget=rec.view;}
   }
 
+  function showHandoff(detail={}){
+    const card=document.querySelector('.flow-next-card');
+    const title=document.getElementById('flowNextTitle');
+    const copy=document.getElementById('flowNextCopy');
+    const action=document.getElementById('flowNextAction');
+    if(!card||!title||!copy||!action)return;
+    title.textContent=detail.title||'A sensible next step is ready';
+    copy.textContent=detail.copy||'Continue when you are ready.';
+    action.textContent=(detail.action||'Continue')+' →';
+    action.dataset.flowTarget=detail.view||'dashboard';
+    card.classList.add('handoff-ready');
+    setTimeout(()=>card.classList.remove('handoff-ready'),1800);
+  }
+
   function bind(){
     document.querySelectorAll('[data-flow-stage]').forEach(btn=>btn.addEventListener('click',()=>{
       const target=STAGES.find(x=>x.id===btn.dataset.flowStage)?.view;
@@ -69,8 +83,9 @@
     });
     window.addEventListener('quire:view-changed',e=>render(e.detail?.viewId||'dashboard'));
     window.addEventListener('quire:store-changed',()=>render(document.querySelector('.view.active')?.id||'dashboard'));
+    window.addEventListener('quire:workflow-handoff',e=>showHandoff(e.detail||{}));
     render(document.querySelector('.view.active')?.id||'dashboard');
   }
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireJourney={render,recommendation};
+  window.QuireJourney={render,recommendation,showHandoff};
 })();
