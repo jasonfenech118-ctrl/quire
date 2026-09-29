@@ -1498,3 +1498,108 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 @media(max-width:520px){
   .thesis-map-gaps{grid-template-columns:1fr}
 }
+
+
+/* ---------- Step 19: progress intelligence ---------- */
+.dashboard-milestones{display:grid}
+.dashboard-milestone-empty{
+  border:1px dashed var(--line-dark);padding:14px 10px;font-size:8px;
+  line-height:1.5;color:var(--muted);text-align:center
+}
+.milestone-task{grid-template-columns:18px minmax(0,1fr) auto!important}
+.milestone-task small{white-space:nowrap}
+.milestone-task.overdue small{color:#975e56}
+.milestone-task.due small{color:#8b6c3c}
+.milestone-task.complete small{color:var(--forest)}
+
+.progress-history-panel .project-panel-head>small{
+  font-size:7px;color:var(--muted);text-align:right
+}
+.progress-history-chart{
+  min-height:150px;border:1px solid var(--line);background:
+    linear-gradient(to top,rgba(99,63,62,.05) 1px,transparent 1px);
+  background-size:100% 25%;position:relative;padding:13px 12px 8px
+}
+.progress-history-empty{
+  min-height:125px;display:flex;flex-direction:column;justify-content:center;
+  align-items:center;text-align:center;padding:16px
+}
+.progress-history-empty strong{
+  font-family:"Libre Caslon Text",serif;font-size:15px;font-weight:400
+}
+.progress-history-empty small{
+  max-width:470px;font-size:8px;line-height:1.5;color:var(--muted);margin-top:6px
+}
+.progress-history-bars{
+  height:116px;display:flex;align-items:flex-end;gap:5px;border-bottom:1px solid #d7cfc3
+}
+.progress-history-column{
+  flex:1;min-width:26px;height:100%;position:relative;display:flex;align-items:flex-end;justify-content:center
+}
+.progress-history-column>i{
+  width:min(24px,66%);min-height:3px;background:#c7d2c9;border-radius:2px 2px 0 0;
+  display:block;position:relative
+}
+.progress-history-column>span{
+  position:absolute;bottom:-18px;font-size:6px;color:var(--muted);white-space:nowrap
+}
+.history-overall-marker{
+  position:absolute;left:10%;right:10%;height:2px;background:var(--burgundy);
+  z-index:2;transform:translateY(50%)
+}
+.progress-history-legend{
+  display:flex;justify-content:flex-end;gap:12px;font-size:6px;color:var(--muted);margin-top:23px
+}
+.progress-history-legend span{display:flex;gap:4px;align-items:center}
+.progress-history-legend i{width:10px;height:6px;background:#c7d2c9;display:inline-block}
+.progress-history-legend b{width:10px;height:2px;background:var(--burgundy);display:inline-block}
+
+.history-delta-grid{
+  display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--line);
+  border:1px solid var(--line);margin-top:10px
+}
+.history-delta-grid>div{background:#faf6ef;padding:10px}
+.history-delta-grid strong,.history-delta-grid span{display:block}
+.history-delta-grid strong{
+  font-family:"Libre Caslon Text",serif;font-size:16px;font-weight:400
+}
+.history-delta-grid span{font-size:6px;color:var(--muted);margin-top:2px}
+
+.pace-intelligence-grid{
+  display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--line);
+  border:1px solid var(--line);margin:12px 0
+}
+.pace-intelligence-grid>div{background:#faf6ef;padding:11px}
+.pace-intelligence-grid strong,.pace-intelligence-grid span,.pace-intelligence-grid small{display:block}
+.pace-intelligence-grid strong{
+  font-family:"Libre Caslon Text",serif;font-size:20px;font-weight:400
+}
+.pace-intelligence-grid span{font-size:7px;color:var(--ink);margin-top:3px}
+.pace-intelligence-grid small{font-size:6px;line-height:1.4;color:var(--muted);margin-top:3px}
+
+.progress-breakdown-panel>p{
+  font-size:8px;line-height:1.5;color:var(--muted)
+}
+.progress-breakdown{display:grid;gap:8px;margin-top:12px}
+.progress-breakdown-row{
+  display:grid;grid-template-columns:98px minmax(0,1fr) 31px;gap:8px;align-items:center
+}
+.progress-breakdown-row>div:first-child span,
+.progress-breakdown-row>div:first-child small{display:block}
+.progress-breakdown-row>div:first-child span{font-size:8px}
+.progress-breakdown-row>div:first-child small{font-size:6px;color:var(--muted);margin-top:1px}
+.progress-breakdown-track{height:3px;background:#e1dbd0}
+.progress-breakdown-track i{display:block;height:100%;background:var(--forest)}
+.progress-breakdown-row>strong{font-size:8px;text-align:right}
+
+.overview-timeline-row.milestone-complete strong{color:var(--forest)}
+.overview-timeline-row.milestone-overdue strong{color:#995d55}
+.overview-timeline-row.milestone-due strong{color:#87683b}
+.deadline-list .overdue strong{color:#995d55}
+.deadline-list .due strong{color:#87683b}
+
+@media(max-width:720px){
+  .history-delta-grid{grid-template-columns:1fr 1fr}
+  .pace-intelligence-grid{grid-template-columns:1fr}
+  .progress-breakdown-row{grid-template-columns:88px minmax(0,1fr) 28px}
+}
