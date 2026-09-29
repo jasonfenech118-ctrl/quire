@@ -225,6 +225,12 @@ Quire now stores de-identified analytic structures, results, findings and memos 
 
 See `docs/data-analysis.md`.
 
+### Step 27 — Submission Readiness & Integrity
+
+Quire now centralises concrete structural and integrity checks across writing, evidence, citations, screening, appraisal, analysis, supervision, deadlines and export metadata. Institution-specific requirements can be added as a separate user-controlled checklist.
+
+See `docs/submission-readiness.md`.
+
 ## Run locally
 
 1. Clone the repository.
