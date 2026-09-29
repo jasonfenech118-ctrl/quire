@@ -52,6 +52,38 @@
     return out.slice(0,3);
   }
 
+  function reviewCategories(text){
+    const ss=sentences(text), wc=words(text).length;
+    const longCount=ss.filter(s=>words(s).length>32).length;
+    const ands=(text.match(/\band\b/gi)||[]).length;
+    const conversational=(text.match(/\b(really|very|a lot|good|bad|big|thing|things)\b/gi)||[]);
+    const strong=(text.match(/\b(proves?|always|never|definitely|clearly|obviously)\b/gi)||[]);
+    return [
+      {key:'meaning',title:'Meaning understood',body:understanding(text)},
+      {key:'grammar',title:'Language & grammar',body:longCount?'The paragraph contains '+longCount+' long sentence'+(longCount>1?'s':'')+'. Shorter sentence boundaries may improve readability.':'No obvious sentence-length problem was detected in this paragraph.'},
+      {key:'clarity',title:'Academic clarity',body:ands>=4?'Several ideas are linked with “and”. Check whether each relationship is continuation, contrast, cause or a separate point.':(ss.length>4?'The paragraph carries several steps of the argument. Check that one main point remains dominant.':'The paragraph structure appears reasonably focused at this level.')},
+      {key:'vocabulary',title:'Vocabulary',body:conversational.length?'Consider a more precise alternative for: '+[...new Set(conversational.map(x=>x.toLowerCase()))].join(', ')+'. Choose the simplest accurate academic term rather than a more complicated synonym.':'No obvious conversational vocabulary was detected. Keep prioritising precise, natural wording over complexity.'},
+      {key:'evidence',title:'Evidence & claim caution',body:strong.length?'The wording includes a strong certainty signal ('+[...new Set(strong)].join(', ')+'). Check that linked evidence supports that strength of claim.':'No obvious absolute claim marker was detected. Factual, causal and comparative statements should still be checked against their sources.'}
+    ];
+  }
+
+  function proposedWording(text){
+    let proposal=clean(text);
+    proposal=proposal.replace(/\ba lot of\b/gi,'many').replace(/\breally\b/gi,'substantially');
+    proposal=proposal.replace(/\bvery important\b/gi,'important');
+    proposal=proposal.replace(/\bproves that\b/gi,'provides evidence that');
+    proposal=proposal.replace(/\bclearly shows\b/gi,'suggests');
+    const ss=sentences(proposal);
+    const longIndex=ss.findIndex(s=>words(s).length>36);
+    if(longIndex>=0){
+      const s=ss[longIndex];
+      const split=s.match(/^(.{40,}?[;,])\s+(.+)$/);
+      if(split)ss[longIndex]=split[1].replace(/[;,]$/,'.')+' '+split[2];
+      proposal=ss.join(' ');
+    }
+    return proposal;
+  }
+
   function render(force=false){
     const text=currentParagraph();
     const state=document.getElementById('writingCompanionState');
@@ -95,5 +127,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireWritingCompanion={render,currentParagraph,understanding,languageSuggestions};
+  window.QuireWritingCompanion={render,currentParagraph,understanding,languageSuggestions,reviewCategories,proposedWording};
 })();
