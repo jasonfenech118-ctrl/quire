@@ -2826,3 +2826,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .research-memory-answer>p{font-size:7px;color:var(--muted);margin:5px 0 8px}
 .research-memory-answer section{margin-top:7px}.research-memory-answer section>strong{font-size:7px;text-transform:uppercase;letter-spacing:.08em}
 .research-memory-answer section div{display:grid;grid-template-columns:minmax(100px,.35fr) 1fr;gap:8px;padding:4px 0}.research-memory-answer section span,.research-memory-answer section small{font-size:7px;line-height:1.35}.research-memory-answer section small{color:var(--muted)}
+
+
+/* ---------- Step 47: personal writing growth ---------- */
+.companion-action-row{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:9px}.companion-action-row #reviewCurrentParagraphBtn{margin-top:0}
+.writing-growth-card{max-width:760px}.writing-growth-intro{font-size:9px;color:var(--muted);line-height:1.5}
+.writing-growth-summary{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}.writing-growth-summary>div{border:1px solid var(--line);padding:10px;background:#f8f4ed}.writing-growth-summary strong,.writing-growth-summary span{display:block}.writing-growth-summary strong{font-size:15px}.writing-growth-summary span{font-size:7px;color:var(--muted)}
+#writingGrowthLessons{display:grid;gap:7px;max-height:52vh;overflow:auto}.writing-lesson{border:1px solid var(--line);padding:9px;background:#fff}.writing-lesson>span{font-size:6px;text-transform:uppercase;letter-spacing:.08em;color:var(--muted)}.writing-lesson p{font-size:8px;margin:5px 0}.writing-lesson small{font-size:7px;color:var(--muted);line-height:1.4;display:block}.writing-lesson button{border:0;background:transparent;color:var(--forest);font-size:7px;font-weight:700;padding:6px 0 0;cursor:pointer}
+@media(max-width:600px){.companion-action-row,.writing-growth-summary{grid-template-columns:1fr}}
