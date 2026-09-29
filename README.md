@@ -136,6 +136,7 @@ See `docs/reference-manager.md`.
 - Step 25 — Data Integrity & Migration Hardening ✅
 - Step 26 — Literature Search & Screening Workflow ✅
 - Step 26 — Literature Search & Screening ✅
+- Step 27 — Critical Appraisal & Quality Assessment ✅
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -211,6 +212,12 @@ Quire now supports reproducible PICO/PCC/SPIDER/custom search planning, Boolean 
 
 See `docs/search-screening.md`.
 
+### Step 27 — Critical Appraisal & Quality Assessment
+
+Quire now records structured methodological appraisal for individual papers, preserves domain-level reasoning and narrative limitations/applicability, and avoids collapsing study quality into a simplistic numerical score.
+
+See `docs/critical-appraisal.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -220,6 +227,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–26 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 27 — Critical Appraisal & Quality Assessment**.
+The original eight foundation steps and Phase 2 Steps 9–27 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 28 — Analysis Workspace**.
 
 © Quire prototype.
