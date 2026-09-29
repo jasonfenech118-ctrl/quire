@@ -942,22 +942,8 @@
           <button class="primary-btn" id="newIdeaBtn">＋ New idea</button>
         </div>
         <div class="brainstorm-layout">
-          <div class="idea-board">
-            <div class="idea-column">
-              <div class="column-head"><strong>Inbox</strong><span>3</span></div>
-              <article class="idea-card"><small>ROUGH THOUGHT</small><p>Does too much information before discharge overwhelm patients?</p><div class="idea-tags"><span>education</span></div></article>
-              <article class="idea-card"><small>QUESTION</small><p>Difference between being technically competent and feeling confident?</p><div class="idea-tags"><span>self-management</span></div></article>
-            </div>
-            <div class="idea-column">
-              <div class="column-head"><strong>Developing themes</strong><span>2</span></div>
-              <article class="idea-card strong"><small>THEME</small><p>Confidence develops through supported practice, not information alone.</p><div class="idea-tags"><span>6 sources</span><span>chapter 2</span></div></article>
-            </div>
-            <div class="idea-column">
-              <div class="column-head"><strong>Ready for thesis</strong><span>2</span></div>
-              <article class="idea-card ready"><small>ARGUMENT</small><p>Education should be staged across the transition from hospital to home.</p><div class="idea-tags"><span>8 sources</span><span>discussion</span></div></article>
-            </div>
-          </div>
-          <aside class="brainstorm-ai">
+          <div class="idea-board" id="ideaBoard"></div>
+                    <aside class="brainstorm-ai">
             <div class="copilot-orb">✦</div>
             <span class="eyebrow">BRAINSTORM WITH COPILOT</span>
             <h3>Develop the idea without losing your own voice.</h3>
@@ -2131,6 +2117,7 @@
   <script src="chapter-editor.js"></script>
   <script src="evidence-writing.js"></script>
   <script src="research-journey.js"></script>
+  <script src="brainstorm.js"></script>
   <script src="writing-ribbon.js"></script>
   <script src="writing-companion.js"></script>
   <script src="claim-awareness.js"></script>
