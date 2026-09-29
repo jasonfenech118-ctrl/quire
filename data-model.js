@@ -38,7 +38,10 @@
     aiMessages: [],
     reviewRounds: [],
     feedbackItems: [],
-    sectionVersions: []
+    sectionVersions: [],
+    searchPlans: [],
+    searchRuns: [],
+    screeningRecords: []
   });
 
   function readJson(key, fallback=null){
@@ -227,7 +230,7 @@
     const collections=[
       'projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes',
       'articleThemes','evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages',
-      'reviewRounds','feedbackItems','sectionVersions'
+      'reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords'
     ];
     collections.forEach(key=>{if(!Array.isArray(state[key])) state[key]=[];});
     return state;
@@ -1281,6 +1284,202 @@
     return clone(row);
   }
 
+
+  function defaultSearchPlan(projectId){
+    const ts=nowIso();
+    return {
+      id:uid('searchplan'),projectId,
+      framework:'',
+      concepts:[
+        {id:uid('concept'),label:'Concept 1',terms:[]},
+        {id:uid('concept'),label:'Concept 2',terms:[]},
+        {id:uid('concept'),label:'Concept 3',terms:[]}
+      ],
+      databases:[],
+      limits:'',
+      notes:'',
+      createdAt:ts,updatedAt:ts
+    };
+  }
+
+  function getSearchPlan(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    const row=state.searchPlans.find(p=>p.projectId===projectId);
+    return clone(row||defaultSearchPlan(projectId));
+  }
+
+  function saveSearchPlan(data={},projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    if(!projectId) throw new Error('No active thesis project.');
+    let row=state.searchPlans.find(p=>p.projectId===projectId);
+    const ts=nowIso();
+    if(!row){
+      row=defaultSearchPlan(projectId);
+      state.searchPlans.push(row);
+    }
+    if(Object.prototype.hasOwnProperty.call(data,'framework'))row.framework=data.framework||'';
+    if(Object.prototype.hasOwnProperty.call(data,'concepts')){
+      row.concepts=Array.isArray(data.concepts)?data.concepts.map((concept,index)=>({
+        id:concept.id||uid('concept'),
+        label:String(concept.label||('Concept '+(index+1))).trim()||('Concept '+(index+1)),
+        terms:Array.isArray(concept.terms)?concept.terms.map(x=>String(x).trim()).filter(Boolean):[]
+      })):[];
+    }
+    if(Object.prototype.hasOwnProperty.call(data,'databases'))row.databases=Array.isArray(data.databases)?data.databases.map(x=>String(x).trim()).filter(Boolean):[];
+    if(Object.prototype.hasOwnProperty.call(data,'limits'))row.limits=data.limits||'';
+    if(Object.prototype.hasOwnProperty.call(data,'notes'))row.notes=data.notes||'';
+    row.updatedAt=ts;
+    writeState(state);
+    return clone(row);
+  }
+
+  function listSearchRuns(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return clone(state.searchRuns.filter(r=>r.projectId===projectId)
+      .sort((a,b)=>String(b.searchedAt||b.createdAt||'').localeCompare(String(a.searchedAt||a.createdAt||''))));
+  }
+
+  function addSearchRun(data={},projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    if(!projectId) throw new Error('No active thesis project.');
+    if(!String(data.databaseName||'').trim()) throw new Error('Enter the database or source searched.');
+    const ts=nowIso();
+    const plan=state.searchPlans.find(p=>p.projectId===projectId);
+    const row={
+      id:uid('searchrun'),projectId,searchPlanId:data.searchPlanId||plan?.id||null,
+      databaseName:String(data.databaseName).trim(),
+      searchedAt:data.searchedAt||ts.slice(0,10),
+      queryText:String(data.queryText||'').trim(),
+      resultCount:Math.max(0,Number(data.resultCount)||0),
+      importedCount:Math.max(0,Number(data.importedCount)||0),
+      duplicatesRemoved:Math.max(0,Number(data.duplicatesRemoved)||0),
+      notes:String(data.notes||'').trim(),
+      createdAt:ts,updatedAt:ts
+    };
+    state.searchRuns.push(row);
+    writeState(state);
+    return clone(row);
+  }
+
+  function updateSearchRun(runId,patch={}){
+    const state=getState();
+    const row=state.searchRuns.find(r=>r.id===runId);
+    if(!row)return null;
+    ['databaseName','searchedAt','queryText','notes'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key))row[key]=patch[key];
+    });
+    ['resultCount','importedCount','duplicatesRemoved'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key))row[key]=Math.max(0,Number(patch[key])||0);
+    });
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function removeSearchRun(runId){
+    const state=getState();
+    const before=state.searchRuns.length;
+    state.searchRuns=state.searchRuns.filter(r=>r.id!==runId);
+    if(state.searchRuns.length===before)return false;
+    writeState(state);
+    return true;
+  }
+
+  function ensureScreeningRecords(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    const articles=state.articles.filter(a=>a.projectId===projectId);
+    const existing=new Map(state.screeningRecords.filter(r=>r.projectId===projectId).map(r=>[r.articleId,r]));
+    let changed=false;
+    const ts=nowIso();
+    articles.forEach(article=>{
+      if(existing.has(article.id))return;
+      const row={
+        id:uid('screen'),projectId,articleId:article.id,
+        titleAbstractDecision:'pending',
+        fullTextDecision:'not_started',
+        exclusionReason:'',
+        notes:'',
+        screenedAt:null,
+        createdAt:ts,updatedAt:ts
+      };
+      state.screeningRecords.push(row);
+      existing.set(article.id,row);
+      changed=true;
+    });
+    if(changed)writeState(state);
+    return clone(state.screeningRecords.filter(r=>r.projectId===projectId));
+  }
+
+  function listScreeningRecords(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    const articles=state.articles.filter(a=>a.projectId===projectId);
+    const existing=new Set(state.screeningRecords.filter(r=>r.projectId===projectId).map(r=>r.articleId));
+    if(articles.some(a=>!existing.has(a.id)))return ensureScreeningRecords(projectId);
+    return clone(state.screeningRecords.filter(r=>r.projectId===projectId));
+  }
+
+  function updateScreeningRecord(articleId,patch={}){
+    const state=getState();
+    const article=state.articles.find(a=>a.id===articleId);
+    if(!article)throw new Error('Article not found.');
+    let row=state.screeningRecords.find(r=>r.articleId===articleId);
+    const ts=nowIso();
+    if(!row){
+      row={
+        id:uid('screen'),projectId:article.projectId,articleId,
+        titleAbstractDecision:'pending',fullTextDecision:'not_started',
+        exclusionReason:'',notes:'',screenedAt:null,createdAt:ts,updatedAt:ts
+      };
+      state.screeningRecords.push(row);
+    }
+    const ta=['pending','include','exclude','maybe'];
+    const ft=['not_started','include','exclude','maybe'];
+    if(Object.prototype.hasOwnProperty.call(patch,'titleAbstractDecision')){
+      row.titleAbstractDecision=ta.includes(patch.titleAbstractDecision)?patch.titleAbstractDecision:'pending';
+    }
+    if(Object.prototype.hasOwnProperty.call(patch,'fullTextDecision')){
+      row.fullTextDecision=ft.includes(patch.fullTextDecision)?patch.fullTextDecision:'not_started';
+    }
+    if(Object.prototype.hasOwnProperty.call(patch,'exclusionReason'))row.exclusionReason=String(patch.exclusionReason||'');
+    if(Object.prototype.hasOwnProperty.call(patch,'notes'))row.notes=String(patch.notes||'');
+    if(Object.prototype.hasOwnProperty.call(patch,'screenedAt'))row.screenedAt=patch.screenedAt||null;
+    if(row.titleAbstractDecision!=='pending'||row.fullTextDecision!=='not_started')row.screenedAt=row.screenedAt||ts;
+    if(row.fullTextDecision!=='exclude'&&row.titleAbstractDecision!=='exclude'&&patch.exclusionReason===undefined){
+      // Keep an existing reason for audit history; only explicit edits clear it.
+    }
+    row.updatedAt=ts;
+    writeState(state);
+    return clone(row);
+  }
+
+  function screeningSummary(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    const articles=state.articles.filter(a=>a.projectId===projectId);
+    const records=listScreeningRecords(projectId);
+    const runs=state.searchRuns.filter(r=>r.projectId===projectId);
+    const identified=runs.reduce((sum,r)=>sum+(Number(r.resultCount)||0),0);
+    const imported=runs.reduce((sum,r)=>sum+(Number(r.importedCount)||0),0);
+    const duplicatesRemoved=runs.reduce((sum,r)=>sum+(Number(r.duplicatesRemoved)||0),0);
+    const titleScreened=records.filter(r=>r.titleAbstractDecision!=='pending').length;
+    const titleIncluded=records.filter(r=>r.titleAbstractDecision==='include'||r.titleAbstractDecision==='maybe').length;
+    const titleExcluded=records.filter(r=>r.titleAbstractDecision==='exclude').length;
+    const fullTextAssessed=records.filter(r=>r.fullTextDecision!=='not_started').length;
+    const fullTextIncluded=records.filter(r=>r.fullTextDecision==='include').length;
+    const fullTextExcluded=records.filter(r=>r.fullTextDecision==='exclude').length;
+    return clone({
+      identified,imported,duplicatesRemoved,libraryTotal:articles.length,
+      titleScreened,titleIncluded,titleExcluded,fullTextAssessed,fullTextIncluded,fullTextExcluded,
+      pending:records.filter(r=>r.titleAbstractDecision==='pending').length
+    });
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -1303,7 +1502,10 @@
       aiThreads:byProject('aiThreads'),
       reviewRounds:byProject('reviewRounds'),
       feedbackItems:byProject('feedbackItems'),
-      sectionVersions:byProject('sectionVersions')
+      sectionVersions:byProject('sectionVersions'),
+      searchPlans:byProject('searchPlans'),
+      searchRuns:byProject('searchRuns'),
+      screeningRecords:byProject('screeningRecords')
     });
   }
 
@@ -1369,6 +1571,16 @@
     createSectionVersion,
     listSectionVersions,
     restoreSectionVersion,
+    getSearchPlan,
+    saveSearchPlan,
+    listSearchRuns,
+    addSearchRun,
+    updateSearchRun,
+    removeSearchRun,
+    ensureScreeningRecords,
+    listScreeningRecords,
+    updateScreeningRecord,
+    screeningSummary,
     getProjectBundle
   };
 
