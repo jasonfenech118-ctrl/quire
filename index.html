@@ -25,26 +25,30 @@
         </div>
       </div>
 
-      <nav class="nav" aria-label="Primary">
-        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Dashboard</button>
-        <button class="nav-item" data-view="projects"><span>▦</span> My Research <b id="projectCount" class="nav-count">1</b></button>
-        <button class="nav-item" data-view="overview"><span>◈</span> Thesis Overview</button>
-        <button class="nav-item" data-view="library"><span>▤</span> Research Library</button>
-        <button class="nav-item" data-view="searchscreen"><span>⌕</span> Search & Screening</button>
-        <button class="nav-item" data-view="appraisal"><span>✓</span> Critical Appraisal</button>
-        <button class="nav-item" data-view="analysis"><span>∿</span> Data & Analysis</button>
-        <button class="nav-item" data-view="synthesis"><span>≋</span> Synthesis</button>
-        <button class="nav-item" data-view="reader"><span>◫</span> Article Reader</button>
-        <button class="nav-item" data-view="map"><span>⌘</span> Thesis Map</button>
-        <button class="nav-item" data-view="chapters"><span>¶</span> Chapters</button>
-        <button class="nav-item" data-view="brainstorm"><span>✦</span> Brainstorm</button>
-        <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
-        <button class="nav-item" data-view="supervision"><span>☷</span> Supervision</button>
-        <button class="nav-item" data-view="readiness"><span>✓</span> Submission Check</button>
-        <button class="nav-item" data-view="export"><span>⇩</span> Thesis Export</button>
-        <button class="nav-item" data-view="methodology"><span>◌</span> Methodology</button>
-        <button class="nav-item" data-view="analysis"><span>⌁</span> Data & Analysis</button>
-        <button class="nav-item" data-view="setup"><span>⚙</span> Study Setup</button>
+      <nav class="nav simple-nav" aria-label="Primary">
+        <button class="nav-item active" data-view="dashboard"><span>⌂</span> Home</button>
+        <button class="nav-item" data-view="library"><span>▤</span> Research</button>
+        <button class="nav-item" data-view="brainstorm"><span>✦</span> Ideas</button>
+        <button class="nav-item" data-view="chapters"><span>¶</span> Thesis</button>
+        <button class="nav-item" data-view="overview"><span>◈</span> Progress</button>
+        <details class="nav-more">
+          <summary><span>•••</span> More tools</summary>
+          <div class="nav-more-items">
+            <button class="nav-item" data-view="projects"><span>▦</span> My Research <b id="projectCount" class="nav-count">1</b></button>
+            <button class="nav-item" data-view="searchscreen"><span>⌕</span> Search & Screening</button>
+            <button class="nav-item" data-view="reader"><span>◫</span> Article Reader</button>
+            <button class="nav-item" data-view="appraisal"><span>✓</span> Critical Appraisal</button>
+            <button class="nav-item" data-view="analysis"><span>∿</span> Data & Analysis</button>
+            <button class="nav-item" data-view="synthesis"><span>≋</span> Synthesis</button>
+            <button class="nav-item" data-view="map"><span>⌘</span> Thesis Map</button>
+            <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
+            <button class="nav-item" data-view="supervision"><span>☷</span> Supervision</button>
+            <button class="nav-item" data-view="readiness"><span>✓</span> Submission Check</button>
+            <button class="nav-item" data-view="export"><span>⇩</span> Thesis Export</button>
+            <button class="nav-item" data-view="methodology"><span>◌</span> Methodology</button>
+            <button class="nav-item" data-view="setup"><span>⚙</span> Study Setup</button>
+          </div>
+        </details>
       </nav>
 
       <div class="sidebar-spacer"></div>
@@ -861,7 +865,7 @@
                 <button type="button" data-ribbon-tab="references">References</button>
                 <button type="button" data-ribbon-tab="evidence">Evidence</button>
                 <button type="button" data-ribbon-tab="review">Review</button>
-                <button type="button" data-ribbon-tab="copilot">Copilot</button>
+                <button type="button" data-ribbon-tab="copilot">AI Assist</button>
               </div>
               <div class="ribbon-panels">
                 <div class="ribbon-panel active" data-ribbon-panel="home">
@@ -893,12 +897,15 @@
                 <div class="ribbon-panel" data-ribbon-panel="evidence">
                   <div class="ribbon-group wide"><small>Check the claim</small><div>
                     <button type="button" id="ribbonCheckClaimBtn">✓ Check against source</button>
+                    <button type="button" id="ribbonOpposingEvidenceBtn">⇄ Find opposing evidence</button>
+                    <button type="button" id="ribbonMarkIdeaBtn">✦ Mark as my idea</button>
                     <button type="button" id="ribbonOpenEvidenceBtn">Connected evidence</button>
                   </div><p>Compare your wording with the source before relying on it.</p></div>
                 </div>
                 <div class="ribbon-panel" data-ribbon-panel="review">
                   <div class="ribbon-group"><small>Academic writing</small><div>
                     <button type="button" id="ribbonImproveWritingBtn">Improve clarity</button>
+                    <button type="button" id="ribbonInterpretationBtn">Check interpretation</button>
                     <button type="button" id="ribbonReviewSectionBtn">Review section</button>
                   </div></div>
                   <div class="ribbon-group"><small>Supervisor</small><div><button type="button" id="openSectionFeedbackBtn">☷ Feedback <b id="sectionFeedbackBadge"></b></button></div></div>
