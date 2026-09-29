@@ -348,68 +348,26 @@
         </div>
 
         <div class="toolbar">
-          <div class="filter-tabs">
-            <button class="active">All <span>24</span></button>
-            <button>Unread <span>5</span></button>
-            <button>Highlighted <span>14</span></button>
-            <button>Linked to thesis <span>18</span></button>
+          <div class="filter-tabs" id="libraryFilters">
+            <button class="active" type="button" data-library-filter="all">All <span>0</span></button>
+            <button type="button" data-library-filter="unread">Unread <span>0</span></button>
+            <button type="button" data-library-filter="highlighted">Highlighted <span>0</span></button>
+            <button type="button" data-library-filter="linked">Linked to thesis <span>0</span></button>
           </div>
-          <select><option>Recently added</option><option>Author A–Z</option><option>Year</option></select>
+          <select id="librarySort" aria-label="Sort research library">
+            <option value="recent">Recently updated</option>
+            <option value="author">Author A–Z</option>
+            <option value="year">Year, newest first</option>
+          </select>
         </div>
 
         <div class="library-layout">
           <aside class="collection-panel">
-            <span class="eyebrow">COLLECTIONS</span>
-            <button class="collection active">All research <span>24</span></button>
-            <button class="collection">Patient education <span>8</span></button>
-            <button class="collection">Self-management <span>6</span></button>
-            <button class="collection">Quality of life <span>5</span></button>
-            <button class="collection">Peristomal complications <span>5</span></button>
-            <button class="collection add">＋ New collection</button>
+            <span class="eyebrow">THEME COLLECTIONS</span>
+            <div id="libraryCollections"></div>
           </aside>
 
           <div id="articleListMount" class="article-list"></div>
-
-          <div class="article-list">
-            <article class="article-card" data-open-reader>
-              <div class="article-main">
-                <div class="pdf-thumb">PDF</div>
-                <div>
-                  <div class="tags"><span>Patient education</span><span>2025</span></div>
-                  <h3>Living with a stoma: self-management needs and educational priorities</h3>
-                  <p>Andersson, P. · Clarke, M. · Journal of Clinical Nursing</p>
-                  <div class="meta-row"><span>◫ 6 highlights</span><span>▱ 3 notes</span><span>§ Linked to Chapter 2</span></div>
-                </div>
-              </div>
-              <div class="article-score"><strong>Highly relevant</strong><span>AI assessed</span></div>
-            </article>
-
-            <article class="article-card">
-              <div class="article-main">
-                <div class="pdf-thumb">PDF</div>
-                <div>
-                  <div class="tags"><span>Self-management</span><span>2024</span></div>
-                  <h3>Supporting adaptation following ostomy surgery: a qualitative synthesis</h3>
-                  <p>Reed, J. et al. · International Journal of Nursing Studies</p>
-                  <div class="meta-row"><span>◫ 9 highlights</span><span>▱ 5 notes</span><span>§ Linked to Chapter 2</span></div>
-                </div>
-              </div>
-              <div class="article-score"><strong>Core paper</strong><span>Manually tagged</span></div>
-            </article>
-
-            <article class="article-card">
-              <div class="article-main">
-                <div class="pdf-thumb muted">PDF</div>
-                <div>
-                  <div class="tags"><span>Quality of life</span><span>2023</span></div>
-                  <h3>Quality of life outcomes in adults after stoma formation</h3>
-                  <p>Bianchi, L. et al. · Colorectal Disease</p>
-                  <div class="meta-row"><span>Not reviewed yet</span></div>
-                </div>
-              </div>
-              <button class="soft-btn small">Summarise with AI</button>
-            </article>
-          </div>
         </div>
       </section>
 
