@@ -48,6 +48,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 46: Research Memory Answer Builder — implemented.
 - Step 47: Personal Writing Growth Centre — implemented.
 - Step 48: Provenance Chain Inspector — implemented.
+- Step 49: Contextual Command Palette — implemented.
 
 ## Step 32 — implemented
 
@@ -160,7 +161,11 @@ A local Personal Writing Growth Centre records only wording edits the researcher
 
 Ideas now expose a provenance-chain inspector showing stored origin/source/page/excerpt and direct source reopening where possible. It also surfaces likely downstream thesis sections using shared-term matching, clearly labelled as inferred rather than proof that the text originated from the idea.
 
-## Added-value roadmap after Step 48
+## Step 49 — implemented
+
+Ctrl/Cmd+K now acts as a find-or-do surface. Alongside workspace search it can surface common contextual actions such as capture idea, continue writing, link evidence, run writing review, save an end-session checkpoint and open progress. Command actions are excluded from Research Memory summaries.
+
+## Added-value roadmap after Step 49
 
 A second product review identified the next high-value frontend milestones:
 
