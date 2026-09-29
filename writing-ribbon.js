@@ -1,6 +1,7 @@
 /* Quire writing ribbon and evidence-aware writing actions */
 (function(){
   let lastSelectionText='';
+  let writingContext=null;
 
   function editor(){return document.getElementById('liveSectionEditor');}
   function selectedText(){
@@ -21,17 +22,33 @@
     }
     return selectedText()||'';
   }
+  function rememberWritingContext(){
+    writingContext={
+      sectionId:writingContext?.sectionId||window.QuireChapterEditor?.getCurrentSectionId?.()||null,
+      selection:selectedText(),
+      paragraph:paragraphText()
+    };
+    return writingContext;
+  }
+  function returnToWriting(){
+    window.showView?.('chapters');
+    setTimeout(()=>editor()?.focus(),80);
+  }
   function openReference(){
+    rememberWritingContext();
     document.getElementById('insertReferenceBtn')?.click();
   }
   function openEvidence(){
+    rememberWritingContext();
     document.getElementById('openEvidenceLinker')?.click();
   }
   function openReview(){
+    rememberWritingContext();
     window.showView?.('review');
     setTimeout(()=>document.getElementById('runWritingReview')?.click(),50);
   }
   function openCopilotWith(prompt){
+    rememberWritingContext();
     window.showView?.('review');
     window.dispatchEvent(new CustomEvent('quire:writing-copilot-request',{detail:{
       prompt,
@@ -42,7 +59,8 @@
   }
 
   function findLibrary(){
-    const q=selectedText()||paragraphText();
+    rememberWritingContext();
+    const q=writingContext?.selection||writingContext?.paragraph||'';
     window.showView?.('library');
     setTimeout(()=>{
       const input=document.getElementById('librarySearch');
@@ -51,7 +69,8 @@
   }
 
   function findEvidence(){
-    const claim=selectedText()||paragraphText();
+    rememberWritingContext();
+    const claim=writingContext?.selection||writingContext?.paragraph||'';
     window.dispatchEvent(new CustomEvent('quire:discover-evidence',{detail:{claim,source:'writing-ribbon'}}));
   }
 
@@ -74,8 +93,10 @@
     document.getElementById('ribbonExplainBtn')?.addEventListener('click',()=>openCopilotWith('Explain the argument I am making in this paragraph and identify any logical jump or ambiguous wording.'));
     document.getElementById('ribbonChallengeBtn')?.addEventListener('click',()=>openCopilotWith('Act as a critical academic reader. Challenge this paragraph using only grounded evidence and clearly separate evidence from suggestions.'));
     document.getElementById('ribbonFindGapBtn')?.addEventListener('click',()=>openCopilotWith('Identify factual or interpretive claims in this paragraph that still need evidence, and explain what type of source would support each claim.'));
+    document.getElementById('returnToWritingBtn')?.addEventListener('click',returnToWriting);
+    window.addEventListener('quire:return-to-writing',returnToWriting);
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireWritingRibbon={selectedText,paragraphText};
+  window.QuireWritingRibbon={selectedText,paragraphText,rememberWritingContext,returnToWriting,getContext:()=>writingContext};
 })();
