@@ -186,19 +186,6 @@
         </div>
 
 
-        <section class="project-launch-card">
-          <div class="project-launch-head">
-            <div>
-              <span class="eyebrow">PROJECT LAUNCH</span>
-              <h3>Research workspace readiness</h3>
-              <p id="launchReadinessLabel">Checking project setup…</p>
-            </div>
-            <div class="launch-readiness-score"><strong id="launchReadinessPercent">0%</strong><span>ready</span></div>
-          </div>
-          <div class="launch-readiness-track"><span id="launchReadinessBar"></span></div>
-          <div id="projectLaunchReadiness" class="project-launch-readiness"></div>
-        </section>
-
         <div class="project-progress-hero">
           <div class="progress-ring" id="projectProgressRing">
             <div><strong id="projectProgressPercent">0%</strong><span>overall</span></div>
@@ -1177,7 +1164,7 @@
         <button class="new-card" id="openReferenceImportCard" type="button"><span>BIB</span><strong>Import references</strong><small>BibTeX or RIS from Zotero, Mendeley or EndNote</small></button>
         <button class="new-card" data-go-modal="brainstorm"><span>✦</span><strong>Capture an idea</strong><small>Save a thought before it disappears</small></button>
         <button class="new-card" data-go-modal="chapters"><span>§</span><strong>New thesis section</strong><small>Add to your chapter structure</small></button>
-        <button class="new-card" id="newThesisProjectCard" type="button"><span>◈</span><strong>New thesis project</strong><small>Launch a project with guided setup</small></button>
+        <button class="new-card" data-open-launch type="button"><span>◈</span><strong>New thesis project</strong><small>Launch a project with guided setup</small></button>
       </div>
     </div>
   </div>
@@ -1794,7 +1781,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="data-model.js"></script>
-  <script src="guided-launch.js"></script>
+  <script src="launch.js"></script>
   <script src="projects.js"></script>
   <script src="chapter-editor.js"></script>
   <script src="evidence-writing.js"></script>
