@@ -170,6 +170,7 @@
       }else window.showView?.('library');
     }else if(row.type==='theme'||row.type==='objective'){
       window.showView?.('map');
+      setTimeout(()=>window.QuireThesisMap?.focusNode?.(row.type,row.id),50);
     }else if(row.type==='feedback'){
       if(row.sectionId)window.QuireChapterEditor?.openSection?.(row.sectionId);
       window.showView?.('supervision');
@@ -205,6 +206,83 @@
     if(!state.projects.some(p=>p.id===state.activeProjectId))state.activeProjectId=state.projects[0]?.id||null;
     state.version=1;
     return state;
+  }
+
+
+  function relativeTime(value){
+    const date=new Date(value||0);
+    if(Number.isNaN(date.getTime()))return 'Recently';
+    const seconds=Math.max(0,Math.floor((Date.now()-date.getTime())/1000));
+    if(seconds<60)return 'Just now';
+    const mins=Math.floor(seconds/60);if(mins<60)return mins+' min ago';
+    const hours=Math.floor(mins/60);if(hours<24)return hours+' hr'+(hours===1?'':'s')+' ago';
+    const days=Math.floor(hours/24);if(days<7)return days+' day'+(days===1?'':'s')+' ago';
+    return date.toLocaleDateString(undefined,{day:'numeric',month:'short'});
+  }
+
+  function recentWorkRows(){
+    const {state,projectId}=activeState();
+    if(!projectId)return [];
+    const chapters=(state.chapters||[]).filter(x=>x.projectId===projectId);
+    const rows=[];
+
+    (state.sections||[]).filter(x=>x.projectId===projectId && (x.content||x.currentWordCount)).forEach(section=>{
+      const chapter=chapters.find(c=>c.id===section.chapterId);
+      rows.push({
+        type:'section',id:section.id,
+        title:(chapter?.title?chapter.title+' — ':'')+section.title,
+        detail:(Number(section.currentWordCount)||0).toLocaleString()+' words',
+        at:section.updatedAt||section.createdAt,
+        icon:'§',iconClass:'chapter'
+      });
+    });
+
+    (state.articles||[]).filter(x=>x.projectId===projectId).forEach(article=>{
+      const highlightCount=(state.highlights||[]).filter(h=>h.articleId===article.id).length;
+      rows.push({
+        type:'article',id:article.id,title:article.title,
+        detail:highlightCount?highlightCount+' highlight'+(highlightCount===1?'':'s'):((article.readingStatus||'unread').replace(/_/g,' ')),
+        at:article.updatedAt||article.createdAt,
+        icon:'PDF',iconClass:''
+      });
+    });
+
+    (state.notes||[]).filter(x=>x.projectId===projectId).forEach(note=>{
+      rows.push({
+        type:'note',id:note.id,articleId:note.articleId,
+        title:note.title||truncate(note.body,72)||'Research note',
+        detail:'Research note',at:note.updatedAt||note.createdAt,
+        icon:'✎',iconClass:'note'
+      });
+    });
+
+    (state.feedbackItems||[]).filter(x=>x.projectId===projectId).forEach(item=>{
+      rows.push({
+        type:'feedback',id:item.id,sectionId:item.sectionId,
+        title:truncate(item.comment,72),detail:'Supervisor feedback · '+(item.status||'open').replace(/_/g,' '),
+        at:item.updatedAt||item.createdAt,icon:'☷',iconClass:'note'
+      });
+    });
+
+    return rows.filter(r=>r.at).sort((a,b)=>String(b.at).localeCompare(String(a.at))).slice(0,5);
+  }
+
+  function renderRecentWork(){
+    const mount=document.getElementById('dashboardRecentWork');
+    if(!mount)return;
+    const rows=recentWorkRows();
+    if(!rows.length){
+      mount.innerHTML='<div class="recent-work-empty">Your recent writing, papers and research notes will appear here.</div>';
+      return;
+    }
+    mount.innerHTML=rows.map((row,index)=>
+      '<button class="recent-item" type="button" data-recent-index="'+index+'">'+
+        '<div class="file-icon '+escapeHtml(row.iconClass||'')+'">'+escapeHtml(row.icon)+'</div>'+
+        '<div><strong>'+escapeHtml(row.title)+'</strong><small>'+escapeHtml(row.detail)+' · '+escapeHtml(relativeTime(row.at))+'</small></div>'+
+        '<span>›</span>'+
+      '</button>'
+    ).join('');
+    mount.querySelectorAll('[data-recent-index]').forEach(btn=>btn.addEventListener('click',()=>openResult(rows[Number(btn.dataset.recentIndex)])));
   }
 
   function downloadBackup(){
@@ -392,10 +470,13 @@
 
     window.addEventListener('online',updateConnectivity);
     window.addEventListener('offline',updateConnectivity);
+    window.addEventListener('quire:project-switched',renderRecentWork);
+    window.addEventListener('quire:store-changed',renderRecentWork);
     window.addEventListener('beforeunload',()=>window.QuireChapterEditor?.save?.());
 
     improveModals();
     updateConnectivity();
+    renderRecentWork();
     registerServiceWorker();
   }
 
