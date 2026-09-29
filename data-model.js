@@ -790,6 +790,20 @@
     return clone(row);
   }
 
+
+  function listEvidenceForSection(sectionId){
+    const state=getState();
+    return clone(state.evidenceLinks.filter(e=>e.sectionId===sectionId));
+  }
+
+  function removeEvidenceLink(linkId){
+    const state=getState();
+    const before=state.evidenceLinks.length;
+    state.evidenceLinks=state.evidenceLinks.filter(e=>e.id!==linkId);
+    if(state.evidenceLinks.length===before) return false;
+    writeState(state);return true;
+  }
+
   function listEvidenceLinks(highlightId){
     const state=getState();
     return clone(state.evidenceLinks.filter(e=>!highlightId || e.highlightId===highlightId));
@@ -894,6 +908,8 @@
     removeSection,
     reorderSections,
     addEvidenceLink,
+    listEvidenceForSection,
+    removeEvidenceLink,
     listEvidenceLinks,
     getOrCreateArticleThread,
     addAiMessage,
