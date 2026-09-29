@@ -6,6 +6,8 @@
 
 Status: **reconciliation/refinement in progress**.
 
+Latest saved refinement: the writing ribbon now preserves the active writing context before opening library/evidence/review/Copilot tools, and the stale Step 11 evidence placeholder was replaced with current guidance.
+
 Do not start Step 31 yet.
 
 ## What was verified
@@ -26,8 +28,8 @@ Continue frontend-only. Do not run Supabase SQL, activate cloud persistence, or 
 ## Next exact work
 
 Audit Step 30 end-to-end in the visible writing workspace:
-1. inspect the ribbon markup/styles and every button target;
-2. verify evidence discovery and reference insertion flows return the user naturally to writing;
+1. continue verifying the ribbon markup/styles and every button target;
+2. complete the return-to-writing UX for evidence discovery, reference insertion, review and Copilot flows;
 3. verify writing-assistance requests are surfaced as reviewable suggestions rather than destructive edits;
 4. identify duplicated navigation/actions that make Quire feel scattered;
 5. simplify the writing workspace and contextual transitions;
