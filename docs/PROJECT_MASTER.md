@@ -31,18 +31,20 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 29: Submission Readiness & Integrity — implemented and documented.
 - Step 30: Unified Writing Workspace & Academic Ribbon — implemented.
 - Step 31: Guided five-destination product framework — implemented; primary navigation simplified to Home, Research, Ideas, Thesis and Progress while specialist tools remain available contextually.
-- Step 32: Writing Understanding & Language Coach — in progress.
+- Step 32: Writing Understanding & Language Coach + Guided Research Flow — implemented.
 
-## Step 32 intent
+## Step 32 — implemented
 
-The writing workspace should actively help the researcher express their own thinking more clearly without taking authorship away from them. Beside the manuscript, Quire should:
+The writing workspace now helps the researcher express their own thinking more clearly without taking authorship away from them. Beside the manuscript, Quire can:
 - reflect back what it understands the current paragraph to mean, allowing the researcher to detect ambiguity;
 - surface optional grammar, sentence-structure, clarity and vocabulary guidance while the researcher writes;
 - favour precise natural academic English over unnecessarily complex vocabulary;
 - identify overly long sentences, repeated connectors, conversational wording and claims whose certainty may exceed the evidence;
 - keep all proposed wording separate from the manuscript until the researcher explicitly accepts or applies a change;
 - connect deeper paragraph review to the existing Writing Review/evidence workflows;
-- eventually support adaptive guidance based on recurring writing patterns, without presenting a simplistic language score.
+- support adaptive guidance based on recurring writing patterns, without presenting a simplistic language score.
+
+Step 32 also consolidates the product around **Discover → Understand → Organise → Write → Review**. The journey derives a sensible next action from project state and completed actions, Home is focused on continuation rather than duplicated tools, the Writing Companion is collapsible with a locally remembered preference, and specialist tools remain available in grouped secondary navigation.
 
 ## Step 30 intent
 
