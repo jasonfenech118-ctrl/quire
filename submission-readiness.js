@@ -42,6 +42,17 @@
     out.push(mk('design','Project foundation','Study design',setup.studyType?'clear':'review',
       setup.studyType?'Study type: '+setup.studyType.replace('meta','systematic review / meta-analysis')+'.':'Study type has not been selected.','setup','Study Setup'));
 
+    const anchorText=[project.researchQuestion,...objectives.map(o=>o.title+' '+(o.description||''))].join(' ');
+    const driftStop=new Set('the and that with from this into your their about study research question explore identify evaluate effect impact relationship'.split(' '));
+    const anchorTerms=new Set(norm(anchorText).split(' ').filter(x=>x.length>4&&!driftStop.has(x)));
+    const overlap=value=>{const t=new Set(norm(value).split(' ').filter(x=>x.length>4&&!driftStop.has(x)));return [...t].filter(x=>anchorTerms.has(x)).length;};
+    const readyIdeas=(state.analysisItems||[]).filter(x=>x.projectId===pid&&x.kind==='idea'&&x.payload?.ideaStatus==='ready');
+    const driftIdeas=anchorTerms.size?readyIdeas.filter(x=>overlap(x.title)===0):[];
+    const substantiveSections=sections.filter(s=>(Number(s.currentWordCount)||0)>=120);
+    const driftSections=anchorTerms.size?substantiveSections.filter(s=>overlap((()=>{const d=document.createElement('div');d.innerHTML=s.content||'';return d.innerText||'';})())===0):[];
+    out.push(mk('question-drift','Project foundation','Research-question alignment reflection',driftIdeas.length||driftSections.length?'review':'clear',
+      driftIdeas.length||driftSections.length?plural(driftIdeas.length,'ready argument')+' and '+plural(driftSections.length,'substantive section')+' share no obvious key terms with the saved question/objectives. Review relevance manually; different terminology can still be fully appropriate.':'Ready arguments and substantive sections share at least some terminology with the saved question/objectives.','map','Thesis Map'));
+
     const emptyChapters=chapters.filter(ch=>!sections.some(s=>s.chapterId===ch.id));
     out.push(mk('chapters','Writing & structure','Chapter structure',chapters.length&&emptyChapters.length===0?'clear':'review',
       !chapters.length?'No chapters exist.':emptyChapters.length?plural(emptyChapters.length,'chapter')+' currently have no sections.':'Every chapter has at least one section.','chapters','Chapters'));
