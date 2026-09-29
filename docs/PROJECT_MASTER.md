@@ -32,6 +32,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 30: Unified Writing Workspace & Academic Ribbon — implemented.
 - Step 31: Guided five-destination product framework — implemented; primary navigation simplified to Home, Research, Ideas, Thesis and Progress while specialist tools remain available contextually.
 - Step 32: Writing Understanding & Language Coach + Guided Research Flow — implemented.
+- Step 33: Claim-Aware Writing & Evidence Intelligence Foundation — implemented.
 
 ## Step 32 — implemented
 
@@ -78,7 +79,13 @@ A step is not considered complete only because a JavaScript or documentation fil
 - Supabase/cloud code exists, but activation is intentionally deferred. Do not interpret code-complete as connected.
 - Step 30 must therefore refine and validate the existing writing-ribbon foundation rather than start a second competing implementation.
 
-## Agreed future feature backlog — after Step 32
+## Step 33 — implemented
+
+Claim awareness now runs contextually inside the Writing Companion. It distinguishes researcher framing/developing interpretation from likely factual or empirical claims; recognises obvious in-text citations; checks whether related evidence is already linked to the active section; searches saved project highlights for possible matches; and routes the researcher into the existing evidence-linking workflow. Missing-evidence language is deliberately cautious and never treats a heuristic flag as proof that a statement is false.
+
+Step 33 reuses and exposes the existing Evidence Check primitives instead of creating a second evidence model.
+
+## Agreed future feature backlog — after Step 33
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
