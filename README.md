@@ -135,6 +135,7 @@ See `docs/reference-manager.md`.
 - Step 24 — Literature Search & Screening ✅
 - Step 25 — Critical Appraisal & Quality Assessment ✅
 - Step 24 — Guided Project Launch ✅
+- Step 25 — Data Integrity & Migration Hardening ✅
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -198,6 +199,12 @@ New theses now start through a five-step launch wizard covering project identity
 
 See `docs/guided-launch.md`.
 
+### Step 25 — Data Integrity & Migration Hardening
+
+Quire now version-controls its local data shape, migrates older workspaces forward, audits relationships across the research graph and safely repairs supported inconsistencies. Automatic migration/repair attempts to preserve a local recovery copy first, and backup restore plus cloud push now pass through the integrity layer.
+
+See `docs/data-integrity.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -207,6 +214,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–24 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 25 — Data Integrity & Migration Hardening**.
+The original eight foundation steps and Phase 2 Steps 9–25 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 26 — Literature Search & Screening Workflow**.
 
 © Quire prototype.
