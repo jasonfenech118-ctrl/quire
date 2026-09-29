@@ -95,6 +95,14 @@ Without a backend, Quire uses a local extractive grounded mode. A secure HTTPS A
 
 See `docs/grounded-copilot.md`.
 
+## Step 7 — Claim-level exact-passage citations ✅
+
+Copilot responses now attach citations to individual claims rather than showing a general list of source pages. Selecting a citation opens the supporting page and visually focuses the exact retrieved passage.
+
+The PDF text index now preserves source geometry, and the secure AI endpoint contract uses stable context IDs so generated claims can only receive citations that map back to passages Quire actually supplied.
+
+See `docs/claim-level-citations.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -104,7 +112,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Next build stage
 
-1. Claim-level / exact-passage citations for AI answers
-2. Reference-manager integration
+1. Reference-manager integration
 
 © Quire prototype.
