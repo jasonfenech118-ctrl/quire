@@ -69,6 +69,32 @@ The review score is now used by the Progress data model as well as the visible H
 
 Only after that live retest should Step 56.2 continue with the real Research → PDF workflow.
 
+### Step 56.2 — Research → PDF workflow preparation
+
+Code-level preparation completed before the live PDF test:
+- Fresh Research Library empty state now explains that the goal is to build a **broad literature base**, not find one “perfect” paper.
+- Empty Research offers:
+  - Plan literature search
+  - Upload PDF
+  - Add/import references
+- Removed a stale project-switch handler that could overwrite the new Home research-foundation guidance with an old “define your research question” prompt.
+- PDF selection flow remains wired for:
+  - coloured highlight
+  - highlight + note
+  - Explain selected passage
+  - selected passage → Idea with source/page/excerpt provenance
+- Reader handoffs are now **literature-maturity aware**:
+  - early-stage evidence capture suggests more reading;
+  - developing evidence suggests cross-paper comparison;
+  - “Use it in writing” appears only after the review foundation is substantially developed, the literature is beginning to stabilise, a working question exists and at least one possible gap signal has been recorded.
+- GitHub Pages offline shell cache bumped to v27.
+- Syntax checks passed for app.js, pdf-reader.js, research-foundation.js, research-journey.js, data-model.js and service-worker.js.
+- Explain event is handled by copilot.js.
+- Idea capture event is handled by brainstorm.js with source-page provenance.
+
+**Still required for Step 56.2:** real-browser test with an actual PDF. Static/code checks do not pass this gate by themselves.
+
+
 
 Step 22 backend activation remains deliberately deferred. Do not activate Supabase or touch the separate Customer Roster project.
 
