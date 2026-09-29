@@ -764,6 +764,8 @@ async function renderLibraryArticles(){
       const meta=[article.authors,article.journal].filter(Boolean).join(' · ') || 'Imported PDF';
       const pageText=citation.pageCount ? citation.pageCount+' pages' : 'PDF';
       const reviewed=article.readingStatus==='reviewed'?'Reviewed':article.readingStatus==='reading'?'Reading':'Unread';
+      const highlightTotal=window.QuireStore.listHighlights(article.id).length;
+      const noteTotal=window.QuireStore.listNotes(article.id).length;
       return '<article class="article-card" data-article-id="'+escapeHtml(article.id)+'">'+
         '<div class="article-main">'+
           '<div class="pdf-thumb">PDF</div>'+
@@ -771,7 +773,7 @@ async function renderLibraryArticles(){
             '<div class="tags"><span>'+escapeHtml(articleYearLabel(article))+'</span><span>'+escapeHtml(reviewed)+'</span></div>'+
             '<h3>'+escapeHtml(article.title || 'Untitled article')+'</h3>'+
             '<p>'+escapeHtml(meta)+'</p>'+
-            '<div class="meta-row"><span>'+escapeHtml(pageText)+'</span><span data-pdf-status="'+escapeHtml(article.id)+'">Checking PDF…</span></div>'+
+            '<div class="meta-row"><span>'+escapeHtml(pageText)+'</span><span>◫ '+highlightTotal+' highlights</span><span>▱ '+noteTotal+' notes</span><span data-pdf-status="'+escapeHtml(article.id)+'">Checking PDF…</span></div>'+
           '</div>'+
         '</div>'+
         '<div class="article-score"><strong>Open paper</strong><span>Quire reader</span></div>'+
@@ -804,3 +806,23 @@ async function renderLibraryArticles(){
 window.addEventListener('quire:store-changed',()=>renderLibraryArticles());
 window.addEventListener('quire:cloud-pulled',()=>renderLibraryArticles());
 renderLibraryArticles();
+
+
+function updateResearchDeskCounts(){
+  if(!window.QuireStore) return;
+  const articles=window.QuireStore.listArticles();
+  const highlights=window.QuireStore.listHighlights();
+  const notes=window.QuireStore.listNotes();
+  const themes=window.QuireStore.listThemes();
+  const values=[articles.length,highlights.length,notes.length,themes.length];
+  document.querySelectorAll('.stat-panel .stats > div strong').forEach((el,index)=>{
+    if(values[index]!==undefined) el.textContent=String(values[index]);
+  });
+}
+
+window.addEventListener('quire:annotation-changed',()=>{
+  renderLibraryArticles();
+  updateResearchDeskCounts();
+});
+window.addEventListener('quire:store-changed',updateResearchDeskCounts);
+updateResearchDeskCounts();
