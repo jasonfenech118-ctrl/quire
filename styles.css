@@ -915,3 +915,42 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 .ai-mode-card h3{font-family:"Libre Caslon Text",serif;font-size:19px;font-weight:400;margin:5px 0 7px}
 .ai-mode-card p{font-size:9px;line-height:1.6;color:#aaa196;margin:0}
 .ai-settings-message{display:block;min-height:16px;margin-top:8px;color:var(--muted);font-size:8px}
+
+
+/* ---------- Step 7: claim-level exact passage citations ---------- */
+.pdf-citation-layer{
+  position:absolute;inset:0;z-index:2;pointer-events:none;overflow:hidden
+}
+.copilot-citation-focus{
+  position:absolute;border-radius:2px;background:rgba(178,139,82,.16);
+  outline:1px solid rgba(128,91,40,.35);opacity:.45;
+  transition:opacity .22s ease,background .22s ease,box-shadow .22s ease
+}
+.copilot-citation-focus.active{
+  opacity:1;background:rgba(239,207,116,.44);
+  box-shadow:0 0 0 2px rgba(255,250,228,.78),0 0 0 4px rgba(178,139,82,.30)
+}
+.copilot-claims{display:grid;gap:8px;margin:12px 0}
+.copilot-claim{
+  border:1px solid #3c3833;border-radius:3px;background:#252320;padding:10px 10px 9px
+}
+.copilot-claim p{font-size:10px;line-height:1.58;color:#ddd5ca;margin:0}
+.copilot-claim.uncited{border-style:dashed;border-color:#5f4b46}
+.claim-citation-row{display:flex;flex-wrap:wrap;gap:5px;margin-top:8px}
+.claim-citation{
+  border:1px solid #665a49!important;background:#302c27!important;color:#eadfcd!important;
+  border-radius:12px!important;padding:4px 7px!important;font-size:7px!important;line-height:1!important
+}
+.claim-citation span{color:#d8b873;font-weight:700}
+.claim-citation:hover{background:#3c352e!important;border-color:#8c775a!important}
+.claim-uncited{font-size:7px;color:#b88983;margin-top:7px}
+.copilot-intro{font-size:9px!important;color:#aaa196!important;line-height:1.55!important}
+.citation-evidence-preview{
+  margin:13px 0 10px;border-left:2px solid var(--gold);background:#2a2723;padding:10px 11px
+}
+.citation-evidence-preview[hidden]{display:none}
+.citation-evidence-preview .eyebrow{color:#c9af81}
+.citation-evidence-preview p{
+  font-family:"Libre Caslon Text",serif;font-size:10px;line-height:1.55;color:#ece3d6;margin:6px 0
+}
+.citation-evidence-preview small{font-size:7px;color:#948b80}
