@@ -1,14 +1,8 @@
 /* Quire Projects — Step 9 */
 (function(){
   function pct(projectId){
-    const p=window.QuireStore.getLatestProgress(projectId)||{};
-    const project=window.QuireStore.listProjects().find(x=>x.id===projectId)||{};
-    const wordTarget=Number(project.wordTarget)||0;
-    const writing=wordTarget?Math.min(100,Math.round((Number(p.currentWords)||0)/wordTarget*100)):0;
-    const research=p.articlesTotal?Math.min(100,Math.round((p.articlesReviewed||0)/p.articlesTotal*100)):0;
-    const chapters=p.chaptersTotal?Math.min(100,Math.round((p.chaptersDeveloped||0)/p.chaptersTotal*100)):0;
-    const milestones=p.milestonesTotal?Math.min(100,Math.round((p.milestonesComplete||0)/p.milestonesTotal*100)):0;
-    return Math.round(writing*.35+research*.2+chapters*.25+milestones*.2);
+    const live=window.QuireStore.computeLiveProgress?.(projectId);
+    return live ? Number(live.overallProgress)||0 : 0;
   }
 
   function pretty(date){
@@ -26,7 +20,7 @@
     if(!mount) return;
 
     mount.innerHTML=active.map(project=>{
-      const progress=window.QuireStore.getLatestProgress(project.id)||{};
+      const progress=window.QuireStore.computeLiveProgress?.(project.id)||{};
       const articles=(window.QuireStore.getState().articles||[]).filter(a=>a.projectId===project.id).length;
       const chapters=(window.QuireStore.getState().chapters||[]).filter(c=>c.projectId===project.id).length;
       const percent=pct(project.id);
