@@ -236,6 +236,38 @@ The same review-depth ratio is now used by the Progress data model, so overall p
 
 This work is part of Step 56 remediation and must still be manually validated in the live browser before Step 56 is closed.
 
+## Steps 57–64 — research-first literature-to-contribution workflow
+
+Following live Step 56 findings, Quire was expanded around the principle that a defensible thesis direction should emerge from broad reading and comparison rather than from an early writing prompt.
+
+### Step 57 — Living Gap Explorer
+Implemented inside Synthesis. Possible gaps are researcher-managed hypotheses with support, challenge, status and search provenance. Valid statuses are Emerging, Being tested, Narrowed, Supported by current review, Challenged and Set aside. No status presents a gap as universally confirmed.
+
+### Step 58 — Gap → Search Iteration
+Implemented inside Search & Screening. A gap can seed a separate targeted search concept derived only from the researcher's own gap note. Targeted search runs are linked back to the gap and do not overwrite the broader search plan.
+
+### Step 59 — Research Question Evolution
+Implemented inside Study Setup. Meaningful evidence-led refinements preserve previous/new wording, rationale, literature basis and optional gap provenance while updating the active working question.
+
+### Step 60 — Working Contribution Builder
+Implemented inside Synthesis. The researcher records what existing literature covers, what remains unresolved, what the thesis will do, intended contribution and boundaries. Quire can assemble supplied wording into an editable working statement but does not establish novelty.
+
+### Step 61 — Reading Contribution Checkpoint & Literature Maturity Trend
+Implemented around the Article Reader and Synthesis. Reviewed papers can be classified by what they contributed to the researcher's understanding. With enough checkpoints, maturity uses these explicit reading judgements; recurring patterns remain signals, not proof of saturation.
+
+### Step 62 — Research Decision Log
+Implemented inside Study Setup. Major research choices retain rationale, evidence/trigger, links to gap/question evolution, date and current/superseded status.
+
+### Step 63 — Search Review Checkpoint
+Implemented inside Search & Screening. Quire surfaces process signals while the researcher records whether to continue broadly, continue with targeted gap searches, pause broad searching, or complete the current search stage for now. Systematic-review protocol requirements remain authoritative.
+
+### Step 64 — Supervisor Research Rationale Pack
+Implemented inside Supervision. The pack traces literature review → gap testing → question refinement → intended contribution → decisions/search checkpoints and is downloadable as Markdown. It explicitly does not certify novelty, completeness, merit or supervisor approval.
+
+Cross-module reconciliation now distinguishes historical gap exploration from currently viable gap directions. Challenged/set-aside gaps do not unlock later workflow stages; writing handoffs require a supported or narrowed gap plus sufficient review maturity and an active question.
+
+
+
 ## Step 56 — validation gate
 
 Do **not** mark this complete from repository/static inspection alone. It requires:
