@@ -43,6 +43,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 41: Living Argument Map — implemented.
 - Step 42: Supervisor Review Package — implemented.
 - Step 43: End-of-Session Checkpoint — implemented.
+- Step 44: Integrated Value & UX Audit — implemented.
 
 ## Step 32 — implemented
 
@@ -135,7 +136,22 @@ Supervision can now build a review package from recorded project data: changes s
 
 Home now supports an explicit **End session** checkpoint stored locally per project. It records recent thesis work and notes, unresolved feedback and ready ideas, then provides a direct resume destination for the next session. It has no backend dependency.
 
-## Agreed future feature backlog — after Step 43
+## Step 44 — implemented
+
+The integrated audit checked syntax for the newly touched workflow modules, verified that each new module is loaded by the application, and checked direct app-level event bindings against current DOM IDs. It found and fixed stale Home Copilot wiring left behind by the earlier Home simplification.
+
+## Added-value roadmap after Step 44
+
+A second product review identified the next high-value frontend milestones:
+
+- **Step 45 — Better Idea Capture & Source-to-Idea Handoffs.** Replace prompt-based idea capture with a proper modal and allow selected/highlighted source material, supervisor feedback and analysis memos to seed a provenance-linked idea.
+- **Step 46 — Research Memory Answer Builder.** Build a provenance-preserving “what do I know about X?” summary from retrieved papers/highlights/notes/thesis/feedback without inventing content.
+- **Step 47 — Personal Writing Growth Centre.** Activate the latent writing-coach profile/lesson concepts safely, teach recurring grammar/vocabulary patterns and track reviewed/mastered lessons without grading the researcher.
+- **Step 48 — Provenance Chain Inspector.** Let the researcher trace an idea/claim backward to its source note/highlight/feedback and forward to thesis sections.
+- **Step 49 — Contextual Command Palette.** Turn global search into a keyboard-first “find or do” surface for common research actions without adding navigation.
+- **Step 50 — Frontend Release Readiness.** Final responsive/accessibility/data-integrity/export regression audit and explicit decision point before any backend activation.
+
+These milestones should be implemented and QA'd one at a time. Backend activation remains deferred.
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
