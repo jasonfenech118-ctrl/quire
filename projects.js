@@ -67,8 +67,8 @@
   }
 
   function openCreate(){
-    if(window.QuireGuidedLaunch?.open){
-      window.QuireGuidedLaunch.open();
+    if(window.QuireLaunch?.open){
+      window.QuireLaunch.open();
       return;
     }
     document.getElementById('projectModalTitle').textContent='New research project';
