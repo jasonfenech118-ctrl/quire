@@ -706,11 +706,22 @@
     if(title) title.textContent=article?.title||'PDF reader';
     if(meta){const bits=[article?.authors,article?.year].filter(Boolean);meta.textContent=bits.join(' · ')||'Local PDF';}
 
-    const stored=await PdfStore.get(articleId);
+    let stored=await PdfStore.get(articleId);
+    if(!stored?.blob && article?.pdfPath && window.QuireCloud?.isConfigured?.() && window.QuireCloud?.getUser?.()){
+      setReaderState('loading','Downloading PDF from your private cloud storage…');
+      try{
+        const downloaded=await window.QuireCloud.downloadPdfToLocal(articleId);
+        if(downloaded) stored=await PdfStore.get(articleId);
+      }catch(err){
+        console.warn('Cloud PDF download failed',err);
+      }
+    }
     if(!stored?.blob){
       pdfDoc=null;currentPage=1;updateToolbar();
       document.getElementById('pageThumbs').innerHTML='';refreshHighlightSidebar();
-      setReaderState('empty','This article is in your library, but its PDF is not stored on this device yet.');
+      setReaderState('empty',article?.pdfPath
+        ? 'This paper is backed up in Quire cloud storage, but it could not be downloaded to this device.'
+        : 'This article is in your library, but its PDF is not stored on this device yet.');
       return false;
     }
 
@@ -747,7 +758,9 @@
       readingStatus:'unread',citationData:{localFileName:file.name,fileSize:file.size,localPdf:true}
     });
     try{
-      await PdfStore.save(article.id,file);await openArticle(article.id);
+      await PdfStore.save(article.id,file);
+      window.dispatchEvent(new CustomEvent('quire:pdf-local-changed',{detail:{articleId:article.id}}));
+      await openArticle(article.id);
       return window.QuireStore.getArticle(article.id);
     }catch(err){
       await PdfStore.remove(article.id).catch(()=>{});
@@ -761,6 +774,7 @@
     if(!(file.type==='application/pdf'||/\.pdf$/i.test(file.name||''))) throw new Error('Please choose a PDF file.');
     await PdfStore.save(articleId,file);
     await PdfStore.removeTextIndex(articleId).catch(()=>{});
+    window.dispatchEvent(new CustomEvent('quire:pdf-local-changed',{detail:{articleId}}));
     const article=window.QuireStore.getArticle(articleId);
     window.QuireStore.updateArticle(articleId,{citationData:{...(article?.citationData||{}),localFileName:file.name,fileSize:file.size,localPdf:true}});
     await openArticle(articleId);
