@@ -2818,3 +2818,11 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .idea-actions{display:flex;gap:6px;margin-top:8px}.idea-actions button{border:0;background:transparent;color:var(--forest);font-size:7px;cursor:pointer;padding:0}
 .idea-empty{font-size:8px;color:var(--muted);padding:12px;border:1px dashed var(--line)}
 @media(max-width:600px){.idea-capture-grid{grid-template-columns:1fr}}
+
+
+/* ---------- Step 46: research memory answer ---------- */
+.research-memory-answer{border-bottom:1px solid var(--line);background:#f7f2e9;padding:9px 11px}
+.research-memory-answer summary{cursor:pointer;font-size:8px;font-weight:700;color:var(--forest)}
+.research-memory-answer>p{font-size:7px;color:var(--muted);margin:5px 0 8px}
+.research-memory-answer section{margin-top:7px}.research-memory-answer section>strong{font-size:7px;text-transform:uppercase;letter-spacing:.08em}
+.research-memory-answer section div{display:grid;grid-template-columns:minmax(100px,.35fr) 1fr;gap:8px;padding:4px 0}.research-memory-answer section span,.research-memory-answer section small{font-size:7px;line-height:1.35}.research-memory-answer section small{color:var(--muted)}
