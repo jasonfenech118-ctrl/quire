@@ -153,6 +153,26 @@
     });
   }
 
+
+  function openChapter(chapterId){
+    const chapter=window.QuireStore.listChapters().find(c=>c.id===chapterId);
+    if(!chapter) return false;
+    activeChapterId=chapter.id;
+    const sections=ensureSection(chapter);
+    activeSectionId=sections[0]?.id||null;
+    render();
+    return true;
+  }
+
+  function openSection(sectionId){
+    const section=(window.QuireStore.getState().sections||[]).find(s=>s.id===sectionId);
+    if(!section) return false;
+    activeChapterId=section.chapterId;
+    activeSectionId=section.id;
+    render();
+    return true;
+  }
+
   function bind(){
     document.getElementById('addChapterSectionBtn')?.addEventListener('click',addSection);
     document.getElementById('chapterTreeAddBtn')?.addEventListener('click',addSection);
@@ -173,5 +193,5 @@
 
   function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireChapterEditor={render,getActive:()=>({chapterId:activeChapterId,sectionId:activeSectionId}),save:saveNow};
+  window.QuireChapterEditor={render,openChapter,openSection,getActive:()=>({chapterId:activeChapterId,sectionId:activeSectionId}),save:saveNow};
 })();
