@@ -522,43 +522,47 @@
 
       <section id="chapters" class="view">
         <div class="page-heading compact">
-          <div><span class="eyebrow">CHAPTERS</span><h1>Build the thesis, section by section.</h1><p>Outline arguments first, then write with your evidence beside you.</p></div>
-          <button class="primary-btn">＋ New section</button>
+          <div><span class="eyebrow">CHAPTERS</span><h1>Build the thesis, section by section.</h1><p>Write in a persistent workspace with autosave, section targets and your evidence beside you.</p></div>
+          <button class="primary-btn" id="addChapterSectionBtn" type="button">＋ New section</button>
         </div>
-        <div class="chapter-layout">
+
+        <div class="chapter-layout live-chapter-layout">
           <aside class="chapter-tree">
-            <div class="chapter-tree-head"><strong>Thesis outline</strong><button>＋</button></div>
-            <button><span>1</span> Introduction</button>
-            <button class="active"><span>2</span> Literature Review</button>
-            <div class="subsections">
-              <button>2.1 Background</button>
-              <button class="active">2.2 Patient education</button>
-              <button>2.3 Self-management</button>
-              <button>2.4 Quality of life</button>
-              <button>2.5 Gaps in literature</button>
-            </div>
-            <button><span>3</span> Methodology</button>
-            <button><span>4</span> Results</button>
-            <button><span>5</span> Discussion</button>
-            <button><span>6</span> Conclusion</button>
+            <div class="chapter-tree-head"><strong>Thesis outline</strong><button id="chapterTreeAddBtn" type="button">＋</button></div>
+            <div id="chapterTreeMount"></div>
           </aside>
 
-          <div class="editor-panel">
-            <div class="editor-meta"><span>Chapter 2 · Literature Review</span><span>842 words</span></div>
-            <input class="editor-title" value="2.2 Patient education" />
-            <div class="editor-toolbar"><button>B</button><button><em>I</em></button><button>U</button><span></span><button>H1</button><button>H2</button><button>“</button><button>🔗</button></div>
-            <div class="editor" contenteditable="true">
-              <p>Education is a central component of adjustment following stoma formation. Patients are expected to acquire practical skills while simultaneously adapting to significant physical and psychological change.</p>
-              <p>Recent literature suggests that education is most effective when it is <u class="suggestion">repeated, practical and responsive to the person's changing needs</u>, rather than concentrated into a single pre-discharge teaching episode.</p>
-              <p class="placeholder-paragraph">Continue writing here…</p>
+          <div class="editor-panel live-editor-panel">
+            <div class="editor-meta">
+              <span id="chapterEditorMeta">Chapter</span>
+              <div class="editor-meta-right"><span id="editorSaveState">Autosave</span><span id="sectionWordCount">0 words</span></div>
             </div>
+            <input class="editor-title" id="liveSectionTitle" value="" placeholder="Section title" />
+            <div class="section-editor-controls">
+              <label>Status <select id="sectionStatus"><option value="not_started">Not started</option><option value="outlined">Outlined</option><option value="in_progress">In progress</option><option value="review">Ready for review</option><option value="complete">Complete</option></select></label>
+              <label>Target <input id="sectionTargetWords" type="number" min="0" step="100" placeholder="Words"></label>
+              <span id="sectionWordTarget">No target</span>
+              <button class="text-btn danger-text" id="deleteSectionBtn" type="button">Delete section</button>
+            </div>
+            <div class="section-word-progress"><span id="sectionWordBar"></span></div>
+            <div class="editor-toolbar">
+              <button type="button" data-editor-command="bold"><strong>B</strong></button>
+              <button type="button" data-editor-command="italic"><em>I</em></button>
+              <button type="button" data-editor-command="underline"><u>U</u></button>
+              <span></span>
+              <button type="button" data-editor-command="formatBlock" data-editor-value="h2">H2</button>
+              <button type="button" data-editor-command="formatBlock" data-editor-value="h3">H3</button>
+              <button type="button" data-editor-command="formatBlock" data-editor-value="blockquote">“</button>
+              <button type="button" data-editor-command="insertUnorderedList">• List</button>
+            </div>
+            <div id="liveSectionEditor" class="editor live-editor" contenteditable="true" data-placeholder="Start writing this section…"></div>
           </div>
 
-          <aside class="evidence-panel">
-            <div class="evidence-head"><strong>Evidence for this section</strong><span>8 sources</span></div>
-            <div class="evidence-card"><span class="source-tag">Andersson et al., 2025</span><p>“Confidence increased when education was repeated, practical…”</p><small>Highlight · p.4</small><button>Insert note</button></div>
-            <div class="evidence-card"><span class="source-tag">Reed et al., 2024</span><p>Education needs changed substantially following discharge.</p><small>AI summary · verified</small><button>Insert note</button></div>
-            <button class="soft-btn">✦ Ask Copilot about this section</button>
+          <aside class="evidence-panel" id="sectionEvidencePanel">
+            <div class="evidence-head"><strong>Evidence for this section</strong><span id="sectionEvidenceCount">0 sources</span></div>
+            <div id="sectionEvidenceMount" class="section-evidence-mount">
+              <div class="empty-evidence"><strong>No linked evidence yet</strong><small>Step 11 will connect your highlights, notes and papers directly to this section.</small></div>
+            </div>
           </aside>
         </div>
       </section>
@@ -1140,6 +1144,7 @@
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="data-model.js"></script>
   <script src="projects.js"></script>
+  <script src="chapter-editor.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
   <script src="metadata.js"></script>
