@@ -11,7 +11,9 @@
   }
   function truncate(v,n=100){const s=String(v||'');return s.length>n?s.slice(0,n-1)+'…':s;}
   function normalize(v=''){return String(v).toLowerCase().replace(/[^a-z0-9]+/g,' ').replace(/\s+/g,' ').trim();}
+  const MEMORY_STOP=new Set('what where when which who why how did does do is are was were have has had can could would should show tell find remember about from into with that this these those my our the a an and or of to in on for'.split(' '));
   function terms(v=''){return normalize(v).split(' ').filter(Boolean);}
+  function memoryTerms(v=''){return terms(v).filter(t=>t.length>2&&!MEMORY_STOP.has(t));}
 
   function activeState(){
     const state=window.QuireStore?.getState?.()||{};
@@ -112,12 +114,24 @@
   }
 
   function search(query){
-    const q=terms(query);
+    const q=memoryTerms(query);
     if(!q.length)return [];
     return buildSearchIndex()
-      .map(row=>({...row,score:score(row,q)}))
+      .map(row=>{
+        const hay=normalize(row.text),title=normalize(row.title);
+        let total=0,hits=0;
+        q.forEach(term=>{
+          if(title===term)total+=20;
+          else if(title.startsWith(term))total+=9;
+          else if(title.includes(term))total+=6;
+          if(hay.includes(term)){total+=2;hits++;}
+        });
+        const coverage=hits/q.length;
+        if(!hits||coverage<Math.min(.34,1/q.length))total=0;
+        return {...row,score:total+(coverage*8),coverage};
+      })
       .filter(row=>row.score>0)
-      .sort((a,b)=>b.score-a.score||String(a.title).localeCompare(String(b.title)))
+      .sort((a,b)=>b.score-a.score||b.coverage-a.coverage||String(a.title).localeCompare(String(b.title)))
       .slice(0,18);
   }
 
@@ -144,7 +158,7 @@
         '<button type="button" class="global-search-result '+(index===searchIndex?'active':'')+'" data-search-result="'+index+'">'+
           '<span class="global-search-icon">'+escapeHtml(icon(row.type))+'</span>'+
           '<div><strong>'+escapeHtml(row.title)+'</strong><small>'+escapeHtml(row.meta||row.type)+'</small></div>'+
-          '<em>'+escapeHtml(row.type)+'</em>'+
+          '<em>'+escapeHtml(({article:'paper',section:'thesis',chapter:'thesis structure',highlight:'source highlight',note:'research note',theme:'theme',objective:'objective',feedback:'supervisor feedback',analysis:'analysis memo'})[row.type]||row.type)+'</em>'+
         '</button>'
       ).join('');
     box.querySelectorAll('[data-search-result]').forEach(btn=>btn.addEventListener('click',()=>openResult(searchResults[Number(btn.dataset.searchResult)])));
@@ -551,5 +565,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuirePolish={search,downloadBackup,restoreBackup,diagnostics,repairWorkspace,restoreMigrationRecovery};
+  window.QuirePolish={search,buildSearchIndex,memoryTerms,downloadBackup,restoreBackup,diagnostics,repairWorkspace,restoreMigrationRecovery};
 })();
