@@ -23,7 +23,14 @@
         return article?.projectId===projectId;
       }),
       chapters:all.chapters.filter(x=>x.projectId===projectId).sort((a,b)=>(a.orderIndex||0)-(b.orderIndex||0)),
-      sections:all.sections.filter(x=>x.projectId===projectId).sort((a,b)=>(a.orderIndex||0)-(b.orderIndex||0))
+      sections:all.sections.filter(x=>x.projectId===projectId).sort((a,b)=>(a.orderIndex||0)-(b.orderIndex||0)),
+      ideas:(all.analysisItems||[]).filter(x=>x.projectId===projectId&&x.kind==='idea'&&x.payload?.ideaStatus==='ready'),
+      claims:(all.sections||[]).filter(x=>x.projectId===projectId).flatMap(sec=>{
+        const d=document.createElement('div');d.innerHTML=sec.content||'';
+        const text=(d.innerText||'').replace(/\s+/g,' ').trim();
+        return (text.match(/[^.!?]+[.!?]+|[^.!?]+$/g)||[]).map((sentence,index)=>({id:sec.id+'_claim_'+index,sectionId:sec.id,text:sentence.trim()}))
+          .filter(x=>x.text.length>35&&window.QuireEvidenceCheck?.claimLike?.(x.text));
+      })
     };
   }
 
@@ -66,11 +73,33 @@
     addNode('question',s.projectId,s.project?.researchQuestion||'Research question not yet defined',{project:s.project});
     s.objectives.forEach(o=>addNode('objective',o.id,o.title||o.description||'Untitled objective',{record:o}));
     s.themes.forEach(t=>addNode('theme',t.id,t.name||'Untitled theme',{record:t}));
+    s.ideas.forEach(a=>addNode('argument',a.id,a.title||'Untitled argument',{record:a}));
+    s.claims.forEach(cl=>addNode('claim',cl.id,cl.text,{record:cl}));
     s.articles.forEach(a=>addNode('article',a.id,a.title||'Untitled article',{record:a}));
     s.chapters.forEach(c=>addNode('chapter',c.id,c.title||'Untitled chapter',{record:c}));
     s.sections.forEach(sec=>addNode('section',sec.id,sec.title||'Untitled section',{record:sec}));
 
     s.objectives.forEach(o=>addEdge('question',s.projectId,'objective',o.id,'structural'));
+
+    const tokenSet=value=>new Set(String(value||'').toLowerCase().replace(/[^a-z0-9]+/g,' ').split(/\s+/).filter(x=>x.length>4));
+    s.ideas.forEach(idea=>{
+      const a=tokenSet(idea.title);
+      let bestTheme=null,best=0;
+      s.themes.forEach(theme=>{const b=tokenSet(theme.name+' '+(theme.description||''));const hit=[...a].filter(x=>b.has(x)).length;if(hit>best){best=hit;bestTheme=theme;}});
+      if(bestTheme&&best)addEdge('theme',bestTheme.id,'argument',idea.id,'derived',true);
+      s.claims.forEach(cl=>{const b=tokenSet(cl.text);const hit=[...a].filter(x=>b.has(x)).length;if(hit>=2)addEdge('argument',idea.id,'claim',cl.id,'derived',true);});
+      const sourceId=idea.payload?.sourceId;
+      if(sourceId){
+        const h=s.highlights.find(x=>x.id===sourceId);
+        const articleId=h?.articleId||s.articles.find(x=>x.id===sourceId)?.id;
+        if(articleId)addEdge('article',articleId,'argument',idea.id,'derived',true);
+      }
+    });
+    s.claims.forEach(cl=>{
+      addEdge('claim',cl.id,'section',cl.sectionId,'structural',true);
+      const sectionLinks=s.links.filter(l=>l.sectionId===cl.sectionId);
+      sectionLinks.forEach(link=>{const articleId=link.articleId||(link.highlightId?s.highlights.find(h=>h.id===link.highlightId)?.articleId:null);if(articleId)addEdge('article',articleId,'claim',cl.id,link.relationship||'supports',true);});
+    });
 
     s.articleThemes.forEach(at=>addEdge('theme',at.themeId,'article',at.articleId,'theme'));
     s.links.forEach(link=>{
@@ -172,6 +201,8 @@
     if(type==='chapter')kicker='CHAPTER '+(record.number||record.orderIndex||index+1);
     if(type==='section')kicker=(record.number||'SECTION');
     if(type==='article')kicker=articleLabel(record);
+    if(type==='argument')kicker='ARGUMENT · '+String(record?.payload?.origin||'researcher').replace(/_/g,' ');
+    if(type==='claim')kicker='CLAIM';
     return '<button type="button" id="'+nodeId(type,id)+'" class="'+classes+'" data-map-node-type="'+type+'" data-map-node-id="'+escapeHtml(id)+'" data-gap="'+(gap?'true':'false')+'">'+
       '<span class="map-node-kicker">'+escapeHtml(kicker)+'</span>'+
       '<strong>'+escapeHtml(truncate(label,type==='article'?72:92))+'</strong>'+
@@ -202,9 +233,13 @@
         '<div class="map-node-stack">'+(s.objectives.length?s.objectives.map((o,i)=>nodeButton('objective',o,o.title||o.description,data,s,i)).join(''):'<div class="map-empty-column">Add objectives in Study Setup.</div>')+'</div></div>'+
       '<div class="thesis-map-column"><div class="map-column-head"><span>3</span><strong>Themes</strong><small>'+s.themes.length+'</small></div>'+
         '<div class="map-node-stack">'+(s.themes.length?s.themes.map((t,i)=>nodeButton('theme',t,t.name,data,s,i)).join(''):'<div class="map-empty-column">No themes yet.</div>')+'</div></div>'+
-      '<div class="thesis-map-column map-col-evidence"><div class="map-column-head"><span>4</span><strong>Evidence</strong><small>'+s.articles.length+'</small></div>'+
+      '<div class="thesis-map-column"><div class="map-column-head"><span>4</span><strong>Arguments</strong><small>'+s.ideas.length+'</small></div>'+
+        '<div class="map-node-stack">'+(s.ideas.length?s.ideas.map((a,i)=>nodeButton('argument',a,a.title,data,s,i)).join(''):'<div class="map-empty-column">Move developed ideas to Ready for thesis.</div>')+'</div></div>'+
+      '<div class="thesis-map-column"><div class="map-column-head"><span>5</span><strong>Claims</strong><small>'+s.claims.length+'</small></div>'+
+        '<div class="map-node-stack">'+(s.claims.length?s.claims.slice(0,24).map((cl,i)=>nodeButton('claim',cl,cl.text,data,s,i)).join(''):'<div class="map-empty-column">Claims appear as thesis writing develops.</div>')+'</div></div>'+
+      '<div class="thesis-map-column map-col-evidence"><div class="map-column-head"><span>6</span><strong>Evidence</strong><small>'+s.articles.length+'</small></div>'+
         '<div class="map-node-stack">'+(s.articles.length?s.articles.map((a,i)=>nodeButton('article',a,a.title,data,s,i)).join(''):'<div class="map-empty-column">Add articles to your Research Library.</div>')+'</div></div>'+
-      '<div class="thesis-map-column map-col-writing"><div class="map-column-head"><span>5</span><strong>Writing</strong><small>'+s.chapters.length+' chapters</small></div>'+
+      '<div class="thesis-map-column map-col-writing"><div class="map-column-head"><span>7</span><strong>Writing</strong><small>'+s.chapters.length+' chapters</small></div>'+
         '<div class="map-node-stack">'+(writing||'<div class="map-empty-column">No chapters yet.</div>')+'</div></div>';
 
     mount.dataset.mode=viewMode;
