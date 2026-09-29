@@ -20,8 +20,12 @@
   function hasCitation(sentence){
     return /\([^)]*(?:19|20)\d{2}[^)]*\)|\[(?:\d+[,-]?\s*)+\]/.test(sentence);
   }
+  function framingLike(sentence){
+    return /\b(this (?:chapter|section|paper|thesis|study) (?:argues|explores|considers|examines|discusses)|i (?:argue|suggest|propose|consider)|we (?:argue|suggest|propose|consider)|the present (?:chapter|section|study)|in this (?:chapter|section|thesis))\b/i.test(sentence);
+  }
   function claimLike(sentence){
-    return /\b(is|are|was|were|shows?|suggests?|indicates?|demonstrates?|improves?|reduces?|increases?|associated|linked|results?|leads?|causes?|affects?|patients?|participants?)\b/i.test(sentence);
+    if(framingLike(sentence))return false;
+    return /\b(is|are|was|were|shows?|suggests?|indicates?|demonstrates?|improves?|reduces?|increases?|associated|linked|results?|leads?|causes?|affects?|patients?|participants?|reported|found|higher|lower|significant|prevalence|risk|rate)\b/i.test(sentence);
   }
 
   function activeSection(){
@@ -182,5 +186,5 @@
     });
   }
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireEvidenceCheck={audit,checkClaimAgainstArticle,showClaimCheck};
+  window.QuireEvidenceCheck={audit,checkClaimAgainstArticle,showClaimCheck,claimLike,framingLike,hasCitation,matchCandidates,projectEvidence,sentences};
 })();
