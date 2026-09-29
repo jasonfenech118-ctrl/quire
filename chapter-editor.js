@@ -104,6 +104,7 @@
       targetWordCount:Number(document.getElementById('sectionTargetWords').value)||null,
       status:document.getElementById('sectionStatus').value
     });
+    window.QuireInlineReferences?.syncSection?.(activeSectionId,editor);
     const chapter=window.QuireStore.listChapters().find(c=>c.id===activeChapterId);
     updateWordStats(updated,chapter);
     document.getElementById('editorSaveState').textContent='Saved';
