@@ -26,6 +26,9 @@
     ['reviewRounds','review_rounds',reviewRoundToDb],
     ['feedbackItems','feedback_items',feedbackToDb],
     ['sectionVersions','section_versions',sectionVersionToDb],
+    ['searchPlans','literature_search_plans',searchPlanToDb],
+    ['searchRuns','literature_search_runs',searchRunToDb],
+    ['screeningRecords','screening_records',screeningToDb],
     ['aiThreads','ai_threads',threadToDb],
     ['aiMessages','ai_messages',messageToDb]
   ];
@@ -194,6 +197,9 @@
   function reviewRoundToDb(x){return {id:x.id,project_id:x.projectId,title:x.title,reviewer_name:x.reviewerName||null,status:x.status||'awaiting_feedback',scope:x.scope||'whole_thesis',chapter_id:x.chapterId||null,submitted_at:x.submittedAt||null,response_due_date:x.responseDueDate||null,notes:x.notes||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function feedbackToDb(x){return {id:x.id,project_id:x.projectId,review_round_id:x.reviewRoundId||null,chapter_id:x.chapterId||null,section_id:x.sectionId||null,reviewer_name:x.reviewerName||null,category:x.category||'content',priority:x.priority||'normal',status:x.status||'open',selected_text:x.selectedText||null,comment:x.comment||'',researcher_response:x.researcherResponse||null,resolved_at:x.resolvedAt||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function sectionVersionToDb(x){return {id:x.id,project_id:x.projectId,chapter_id:x.chapterId||null,section_id:x.sectionId,review_round_id:x.reviewRoundId||null,label:x.label||'Snapshot',reason:x.reason||'manual',section_title:x.sectionTitle||null,content:x.content||'',word_count:Number(x.wordCount)||0,section_status:x.sectionStatus||'not_started',created_at:iso(x.createdAt)};}
+  function searchPlanToDb(x){return {id:x.id,project_id:x.projectId,framework:x.framework||null,concepts:x.concepts||[],databases:x.databases||[],limits:x.limits||null,notes:x.notes||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
+  function searchRunToDb(x){return {id:x.id,project_id:x.projectId,search_plan_id:x.searchPlanId||null,database_name:x.databaseName, searched_at:x.searchedAt||null,query_text:x.queryText||null,result_count:Number(x.resultCount)||0,imported_count:Number(x.importedCount)||0,duplicates_removed:Number(x.duplicatesRemoved)||0,notes:x.notes||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
+  function screeningToDb(x){return {id:x.id,project_id:x.projectId,article_id:x.articleId,title_abstract_decision:x.titleAbstractDecision||'pending',full_text_decision:x.fullTextDecision||'not_started',exclusion_reason:x.exclusionReason||null,notes:x.notes||null,screened_at:x.screenedAt||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function threadToDb(x){return {id:x.id,project_id:x.projectId,article_id:x.articleId||null,section_id:x.sectionId||null,mode:x.mode||'research',title:x.title||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function messageToDb(x){return {id:x.id,thread_id:x.threadId,role:x.role,content:x.content,source_refs:x.sourceRefs||[],created_at:iso(x.createdAt)};}
 
@@ -349,6 +355,9 @@
   const fromReviewRound=r=>({id:r.id,projectId:r.project_id,title:r.title,reviewerName:r.reviewer_name||'',status:r.status||'awaiting_feedback',scope:r.scope||'whole_thesis',chapterId:r.chapter_id||null,submittedAt:r.submitted_at||null,responseDueDate:r.response_due_date||null,notes:r.notes||'',createdAt:r.created_at,updatedAt:r.updated_at});
   const fromFeedback=r=>({id:r.id,projectId:r.project_id,reviewRoundId:r.review_round_id||null,chapterId:r.chapter_id||null,sectionId:r.section_id||null,reviewerName:r.reviewer_name||'',category:r.category||'content',priority:r.priority||'normal',status:r.status||'open',selectedText:r.selected_text||'',comment:r.comment||'',researcherResponse:r.researcher_response||'',resolvedAt:r.resolved_at||null,createdAt:r.created_at,updatedAt:r.updated_at});
   const fromSectionVersion=r=>({id:r.id,projectId:r.project_id,chapterId:r.chapter_id||null,sectionId:r.section_id,reviewRoundId:r.review_round_id||null,label:r.label||'Snapshot',reason:r.reason||'manual',sectionTitle:r.section_title||'',content:r.content||'',wordCount:r.word_count||0,sectionStatus:r.section_status||'not_started',createdAt:r.created_at});
+  const fromSearchPlan=r=>({id:r.id,projectId:r.project_id,framework:r.framework||'',concepts:r.concepts||[],databases:r.databases||[],limits:r.limits||'',notes:r.notes||'',createdAt:r.created_at,updatedAt:r.updated_at});
+  const fromSearchRun=r=>({id:r.id,projectId:r.project_id,searchPlanId:r.search_plan_id||null,databaseName:r.database_name,searchedAt:r.searched_at||null,queryText:r.query_text||'',resultCount:r.result_count||0,importedCount:r.imported_count||0,duplicatesRemoved:r.duplicates_removed||0,notes:r.notes||'',createdAt:r.created_at,updatedAt:r.updated_at});
+  const fromScreening=r=>({id:r.id,projectId:r.project_id,articleId:r.article_id,titleAbstractDecision:r.title_abstract_decision||'pending',fullTextDecision:r.full_text_decision||'not_started',exclusionReason:r.exclusion_reason||'',notes:r.notes||'',screenedAt:r.screened_at||null,createdAt:r.created_at,updatedAt:r.updated_at});
   const fromThread=r=>({id:r.id,projectId:r.project_id,articleId:r.article_id,sectionId:r.section_id,mode:r.mode,title:r.title||'',createdAt:r.created_at,updatedAt:r.updated_at});
   const fromMessage=r=>({id:r.id,threadId:r.thread_id,role:r.role,content:r.content,sourceRefs:r.source_refs||[],createdAt:r.created_at});
 
@@ -363,12 +372,13 @@
       if(!projects?.length) return {empty:true};
 
       const projectIds=projects.map(p=>p.id);
-      const [setups,objectives,chapters,sections,articles,highlights,notes,themes,evidenceLinks,milestones,progressSnapshots,reviewRounds,feedbackItems,sectionVersions,aiThreads]=await Promise.all([
+      const [setups,objectives,chapters,sections,articles,highlights,notes,themes,evidenceLinks,milestones,progressSnapshots,reviewRounds,feedbackItems,sectionVersions,searchPlans,searchRuns,screeningRecords,aiThreads]=await Promise.all([
         selectProjectRows('study_setups',projectIds),selectProjectRows('objectives',projectIds),selectProjectRows('chapters',projectIds),
         selectProjectRows('sections',projectIds),selectProjectRows('articles',projectIds),selectProjectRows('highlights',projectIds),
         selectProjectRows('notes',projectIds),selectProjectRows('themes',projectIds),selectProjectRows('evidence_links',projectIds),
         selectProjectRows('milestones',projectIds),selectProjectRows('progress_snapshots',projectIds),
         selectProjectRows('review_rounds',projectIds),selectProjectRows('feedback_items',projectIds),selectProjectRows('section_versions',projectIds),
+        selectProjectRows('literature_search_plans',projectIds),selectProjectRows('literature_search_runs',projectIds),selectProjectRows('screening_records',projectIds),
         selectProjectRows('ai_threads',projectIds)
       ]);
 
@@ -403,6 +413,9 @@
         reviewRounds:reviewRounds.map(fromReviewRound),
         feedbackItems:feedbackItems.map(fromFeedback),
         sectionVersions:sectionVersions.map(fromSectionVersion),
+        searchPlans:searchPlans.map(fromSearchPlan),
+        searchRuns:searchRuns.map(fromSearchRun),
+        screeningRecords:screeningRecords.map(fromScreening),
         aiThreads:aiThreads.map(fromThread),
         aiMessages:aiMessages.map(fromMessage)
       };
