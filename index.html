@@ -560,6 +560,7 @@
 
           <aside class="evidence-panel" id="sectionEvidencePanel">
             <div class="evidence-head"><strong>Evidence for this section</strong><span id="sectionEvidenceCount">0 sources</span></div>
+            <button class="soft-btn evidence-linker-btn" id="openEvidenceLinker" type="button">＋ Link evidence</button>
             <div id="sectionEvidenceMount" class="section-evidence-mount">
               <div class="empty-evidence"><strong>No linked evidence yet</strong><small>Step 11 will connect your highlights, notes and papers directly to this section.</small></div>
             </div>
@@ -882,6 +883,21 @@
 
 
 
+
+  <div id="evidenceLinkerModal" class="modal-backdrop" hidden>
+    <div class="modal evidence-linker-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">SECTION EVIDENCE</span><h2>Link research to this section</h2></div>
+        <button id="closeEvidenceLinker" type="button">×</button>
+      </div>
+      <div class="evidence-linker-tools">
+        <input id="evidenceLinkerSearch" type="search" placeholder="Search highlights, notes or article titles…">
+        <select id="evidenceLinkerFilter"><option value="all">All evidence</option><option value="unlinked">Not linked here</option><option value="linked">Already linked</option></select>
+      </div>
+      <div id="evidenceLinkerList" class="evidence-linker-list"></div>
+    </div>
+  </div>
+
   <div id="projectModal" class="modal-backdrop" hidden>
     <div class="modal project-modal">
       <div class="modal-head">
@@ -1145,6 +1161,7 @@
   <script src="data-model.js"></script>
   <script src="projects.js"></script>
   <script src="chapter-editor.js"></script>
+  <script src="evidence-writing.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
   <script src="metadata.js"></script>
