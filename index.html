@@ -427,6 +427,7 @@
           </div>
           <div class="reader-actions">
             <button class="soft-btn small" id="readerMetadataBtn" type="button">Find metadata</button>
+            <button class="soft-btn small" id="openOcrPanelBtn" type="button">OCR</button>
             <button class="soft-btn small" id="replacePdfBtn" type="button">Replace PDF</button>
             <button class="soft-btn small" type="button">⋯</button>
           </div>
@@ -496,6 +497,33 @@
               <button class="copilot-settings-btn" id="copilotSettingsBtn" type="button" title="Copilot settings">⚙</button>
             </div>
             <div class="copilot-status" id="copilotStatus"><span></span><small id="copilotStatusLabel">Local grounded mode</small></div>
+
+            <section id="ocrPanel" class="ocr-panel" hidden>
+              <div class="ocr-panel-head">
+                <div><span class="eyebrow">SCANNED PAPER</span><strong>Optical character recognition</strong></div>
+                <button id="closeOcrPanelBtn" type="button" title="Close OCR panel">×</button>
+              </div>
+              <p>Use OCR when a scanned PDF has no selectable text. The recognised text becomes searchable, highlightable and available to grounded Copilot.</p>
+              <div class="ocr-options">
+                <label><span>Language</span>
+                  <select id="ocrLanguage">
+                    <option value="eng">English</option>
+                    <option value="mlt">Maltese</option>
+                    <option value="eng+mlt">English + Maltese</option>
+                  </select>
+                </label>
+                <label class="ocr-check"><input id="ocrOnlyEmpty" type="checkbox" checked><span>Skip pages that already contain text</span></label>
+              </div>
+              <div class="ocr-actions">
+                <button class="soft-btn" id="ocrCurrentPageBtn" type="button">OCR current page</button>
+                <button class="primary-btn" id="ocrPdfBtn" type="button">OCR document</button>
+                <button class="text-btn danger-text" id="cancelOcrBtn" type="button" hidden>Cancel</button>
+              </div>
+              <div class="ocr-progress-track"><span id="ocrProgressBar"></span></div>
+              <strong id="ocrStatus" class="ocr-status">OCR not started</strong>
+              <small id="ocrDetail" class="ocr-detail">OCR runs in your browser. The first run downloads the recognition engine and language data.</small>
+            </section>
+
             <div class="quick-actions">
               <button data-ai="summary">Summarise</button>
               <button data-ai="methods">Methods</button>
@@ -1239,6 +1267,7 @@
   <script src="evidence-writing.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
+  <script src="ocr.js"></script>
   <script src="metadata.js"></script>
   <script src="copilot.js"></script>
   <script src="references.js"></script>
