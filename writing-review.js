@@ -161,6 +161,31 @@
 
     let message='Review this passage alongside the section-level suggestions. Quire keeps this guidance separate from the manuscript until you choose an edit.';
     let type='copilot';
+    const isCompanionReview=prompt.includes('reflect back what you understand this paragraph');
+    if(isCompanionReview&&focus){
+      const categories=window.QuireWritingCompanion?.reviewCategories?.(focus)||[];
+      const proposal=window.QuireWritingCompanion?.proposedWording?.(focus)||focus;
+      suggestions=categories.map((item,index)=>({
+        id:'companion_'+item.key+'_'+Date.now()+'_'+index,
+        type:item.key==='evidence'?'evidence':'coach',
+        original:item.key==='meaning'?focus:'',
+        replacement:null,
+        message:item.title+': '+item.body,
+        status:'open'
+      }));
+      if(proposal&&proposal!==focus){
+        suggestions.push({
+          id:'companion_wording_'+Date.now(),
+          type:'wording',
+          original:focus,
+          replacement:proposal,
+          message:'Optional wording proposal: this is a conservative language edit intended to preserve your meaning. Review every change before applying it.',
+          status:'open'
+        });
+      }
+      renderSuggestions();
+      return;
+    }
     if(prompt.includes('improve the academic clarity')){
       message='Focus on precision, sentence length, unnecessary intensifiers and claims that sound stronger than the evidence. The review below proposes only changes it can identify locally; no wording is inserted automatically.';
     }else if(prompt.includes('explain the argument')){
