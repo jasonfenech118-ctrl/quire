@@ -387,6 +387,60 @@
     announce('Quire workspace restored');
   }
 
+  async function resetWorkspace(){
+    const first=confirm('Start fresh in Quire? This will permanently remove the research, writing, ideas, feedback, progress and locally stored PDFs saved by Quire in this browser. The Quire app and GitHub files are not changed.');
+    if(!first)return;
+    const typed=prompt('To confirm, type START FRESH');
+    if(String(typed||'').trim().toUpperCase()!=='START FRESH'){
+      announce('Workspace reset cancelled');
+      return;
+    }
+
+    const current=window.QuireStore.getState();
+    const next={};
+    Object.entries(current).forEach(([key,value])=>{
+      if(Array.isArray(value))next[key]=[];
+    });
+    next.version=1;
+    next.schemaVersion=window.QuireStore?.schemaVersion||current.schemaVersion||2;
+    next.migrationHistory=[];
+    next.activeProjectId=null;
+    window.QuireStore.replaceState(next,{silent:true});
+    const project=window.QuireStore.createProject({
+      title:'Untitled thesis',
+      researchQuestion:'',
+      objectives:[],
+      themes:[]
+    });
+
+    const workspaceKeys=[];
+    for(let i=0;i<localStorage.length;i++){
+      const key=localStorage.key(i);
+      if(key && (
+        key==='quire:migration-recovery' ||
+        key==='quireStudySetup' ||
+        key==='quireProjectProgress' ||
+        key.startsWith('quire_session_checkpoint_v1:') ||
+        key.startsWith('quire_writing_growth_v1:')
+      )) workspaceKeys.push(key);
+    }
+    workspaceKeys.forEach(key=>localStorage.removeItem(key));
+
+    if('indexedDB' in window){
+      try{
+        await new Promise(resolve=>{
+          const req=indexedDB.deleteDatabase('quire-pdfs');
+          req.onsuccess=req.onerror=req.onblocked=()=>resolve();
+        });
+      }catch(e){}
+    }
+
+    window.dispatchEvent(new CustomEvent('quire:project-switched',{detail:{projectId:project.id}}));
+    announce('Clean Quire workspace created');
+    alert('Your Quire workspace is now clean. The app will reload so you can begin from scratch.');
+    location.reload();
+  }
+
   async function diagnostics(){
     const mount=document.getElementById('diagnosticsResults');
     if(!mount)return;
@@ -597,6 +651,7 @@
     document.getElementById('runDiagnosticsBtn')?.addEventListener('click',diagnostics);
     document.getElementById('repairWorkspaceBtn')?.addEventListener('click',repairWorkspace);
     document.getElementById('restoreRecoveryBtn')?.addEventListener('click',restoreMigrationRecovery);
+    document.getElementById('resetWorkspaceBtn')?.addEventListener('click',resetWorkspace);
 
     window.addEventListener('online',updateConnectivity);
     window.addEventListener('offline',updateConnectivity);
@@ -611,5 +666,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuirePolish={search,memoryAnswer,commandRows,buildSearchIndex,memoryTerms,downloadBackup,restoreBackup,diagnostics,repairWorkspace,restoreMigrationRecovery};
+  window.QuirePolish={search,memoryAnswer,commandRows,buildSearchIndex,memoryTerms,downloadBackup,restoreBackup,resetWorkspace,diagnostics,repairWorkspace,restoreMigrationRecovery};
 })();
