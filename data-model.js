@@ -41,7 +41,8 @@
     sectionVersions: [],
     searchPlans: [],
     searchRuns: [],
-    screeningRecords: []
+    screeningRecords: [],
+    appraisals: []
   });
 
   function readJson(key, fallback=null){
@@ -230,7 +231,7 @@
     const collections=[
       'projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes',
       'articleThemes','evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages',
-      'reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords'
+      'reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals'
     ];
     collections.forEach(key=>{if(!Array.isArray(state[key])) state[key]=[];});
     return state;
@@ -877,6 +878,7 @@
     state.articleThemes=state.articleThemes.filter(x=>x.articleId!==articleId);
     state.evidenceLinks=state.evidenceLinks.filter(x=>x.articleId!==articleId);
     state.screeningRecords=state.screeningRecords.filter(x=>x.articleId!==articleId);
+    state.appraisals=state.appraisals.filter(x=>x.articleId!==articleId);
     state.articles=state.articles.filter(a=>a.id!==articleId);
     writeState(state);
     return true;
@@ -1481,6 +1483,74 @@
     });
   }
 
+
+  function listAppraisals(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return clone(state.appraisals.filter(a=>a.projectId===projectId));
+  }
+
+  function getAppraisal(articleId){
+    const state=getState();
+    return clone(state.appraisals.find(a=>a.articleId===articleId)||null);
+  }
+
+  function saveAppraisal(articleId,data={}){
+    const state=getState();
+    const article=state.articles.find(a=>a.id===articleId);
+    if(!article)throw new Error('Article not found.');
+    const ts=nowIso();
+    let row=state.appraisals.find(a=>a.articleId===articleId);
+    if(!row){
+      row={
+        id:uid('appraisal'),projectId:article.projectId,articleId,
+        toolType:'generic',domains:[],overallJudgement:'not_started',
+        strengths:'',limitations:'',applicability:'',completedAt:null,
+        createdAt:ts,updatedAt:ts
+      };
+      state.appraisals.push(row);
+    }
+    if(Object.prototype.hasOwnProperty.call(data,'toolType'))row.toolType=data.toolType||'generic';
+    if(Object.prototype.hasOwnProperty.call(data,'domains')){
+      row.domains=Array.isArray(data.domains)?data.domains.map(d=>({
+        key:String(d.key||''),
+        label:String(d.label||''),
+        decision:['yes','no','unclear','na'].includes(d.decision)?d.decision:'unclear',
+        note:String(d.note||'')
+      })):[];
+    }
+    const judgements=['not_started','lower_concern','some_concerns','major_concerns','unclear'];
+    if(Object.prototype.hasOwnProperty.call(data,'overallJudgement')){
+      row.overallJudgement=judgements.includes(data.overallJudgement)?data.overallJudgement:'unclear';
+    }
+    ['strengths','limitations','applicability'].forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(data,key))row[key]=String(data[key]||'');
+    });
+    if(Object.prototype.hasOwnProperty.call(data,'completedAt'))row.completedAt=data.completedAt||null;
+    if(row.overallJudgement!=='not_started'&&row.domains.length&&row.domains.every(d=>d.decision)){
+      row.completedAt=row.completedAt||ts;
+    }else if(row.overallJudgement==='not_started'){
+      row.completedAt=null;
+    }
+    row.updatedAt=ts;
+    writeState(state);
+    return clone(row);
+  }
+
+  function appraisalSummary(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    const rows=state.appraisals.filter(a=>a.projectId===projectId);
+    return clone({
+      total:rows.length,
+      completed:rows.filter(a=>a.completedAt&&a.overallJudgement!=='not_started').length,
+      lowerConcern:rows.filter(a=>a.overallJudgement==='lower_concern').length,
+      someConcerns:rows.filter(a=>a.overallJudgement==='some_concerns').length,
+      majorConcerns:rows.filter(a=>a.overallJudgement==='major_concerns').length,
+      unclear:rows.filter(a=>a.overallJudgement==='unclear').length
+    });
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -1506,7 +1576,8 @@
       sectionVersions:byProject('sectionVersions'),
       searchPlans:byProject('searchPlans'),
       searchRuns:byProject('searchRuns'),
-      screeningRecords:byProject('screeningRecords')
+      screeningRecords:byProject('screeningRecords'),
+      appraisals:byProject('appraisals')
     });
   }
 
@@ -1582,6 +1653,10 @@
     listScreeningRecords,
     updateScreeningRecord,
     screeningSummary,
+    listAppraisals,
+    getAppraisal,
+    saveAppraisal,
+    appraisalSummary,
     getProjectBundle
   };
 
