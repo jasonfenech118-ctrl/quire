@@ -923,7 +923,19 @@
           </div>
 
           <aside class="evidence-panel" id="sectionEvidencePanel">
-            <div class="evidence-head"><strong>Evidence for this section</strong><span id="sectionEvidenceCount">0 sources</span></div>
+            <div class="writing-companion" id="writingCompanion">
+              <div class="evidence-head"><strong>Writing companion</strong><span id="writingCompanionState">Ready</span></div>
+              <div class="writing-companion-block">
+                <span class="eyebrow">WHAT QUIRE UNDERSTANDS</span>
+                <p id="writingUnderstanding">Start writing a paragraph. Quire will reflect back the main idea it understands so you can check whether your meaning is clear.</p>
+              </div>
+              <div class="writing-companion-block">
+                <span class="eyebrow">ENGLISH & CLARITY</span>
+                <div id="writingLanguageSuggestions" class="writing-language-suggestions"><small>Suggestions will appear as you write. Your manuscript is never changed automatically.</small></div>
+              </div>
+              <button class="soft-btn" id="reviewCurrentParagraphBtn" type="button">Review current paragraph</button>
+            </div>
+            <div class="evidence-head writing-evidence-head"><strong>Evidence for this section</strong><span id="sectionEvidenceCount">0 sources</span></div>
             <button class="soft-btn evidence-linker-btn" id="openEvidenceLinker" type="button">＋ Link evidence</button>
             <div id="sectionEvidenceMount" class="section-evidence-mount">
               <div class="empty-evidence"><strong>No linked evidence yet</strong><small>Link a paper, highlight or note to keep the evidence for this section beside your writing.</small></div>
@@ -2128,6 +2140,7 @@
   <script src="evidence-writing.js"></script>
   <script src="research-journey.js"></script>
   <script src="writing-ribbon.js"></script>
+  <script src="writing-companion.js"></script>
   <script src="evidence-discovery.js"></script>
   <script src="thesis-map.js"></script>
   <script src="cloud.js"></script>
