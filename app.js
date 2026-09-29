@@ -740,3 +740,9 @@ window.addEventListener('quire:project-switched',()=>{
 
 
 window.addEventListener('quire:bibliography-copied',()=>showToast('Bibliography copied'));
+
+
+window.addEventListener('quire:search-audit-exported',e=>{
+  const d=e.detail||{};
+  showToast('Search & screening audit exported · '+(d.runs||0)+' search runs · '+(d.screening||0)+' screening records');
+});
