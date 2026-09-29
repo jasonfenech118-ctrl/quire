@@ -1603,3 +1603,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
   .pace-intelligence-grid{grid-template-columns:1fr}
   .progress-breakdown-row{grid-template-columns:88px minmax(0,1fr) 28px}
 }
+
+.reader-actions #readerReviewStatusBtn.reviewed{
+  background:#e6eee8;border-color:#afc1b3;color:var(--forest);font-weight:700
+}
