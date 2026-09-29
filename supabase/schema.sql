@@ -607,3 +607,40 @@ for all using (
 with check (
   exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
 );
+
+
+-- Step 25: structured critical appraisal
+create table if not exists public.critical_appraisals (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  article_id text not null unique references public.articles(id) on delete cascade,
+  tool_type text not null default 'generic',
+  domains jsonb not null default '[]'::jsonb,
+  overall_judgement text not null default 'not_started'
+    check (overall_judgement in ('not_started','lower_concern','some_concerns','major_concerns','unclear')),
+  strengths text,
+  limitations text,
+  applicability text,
+  completed_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_critical_appraisals_project on public.critical_appraisals(project_id);
+create index if not exists idx_critical_appraisals_article on public.critical_appraisals(article_id);
+
+drop trigger if exists trg_critical_appraisals_updated_at on public.critical_appraisals;
+create trigger trg_critical_appraisals_updated_at
+before update on public.critical_appraisals
+for each row execute function public.set_updated_at();
+
+alter table public.critical_appraisals enable row level security;
+
+drop policy if exists "own critical appraisals" on public.critical_appraisals;
+create policy "own critical appraisals" on public.critical_appraisals
+for all using (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+)
+with check (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+);
