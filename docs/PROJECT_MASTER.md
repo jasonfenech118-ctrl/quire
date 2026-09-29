@@ -47,6 +47,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 45: Better Idea Capture & Source-to-Idea Handoffs — implemented.
 - Step 46: Research Memory Answer Builder — implemented.
 - Step 47: Personal Writing Growth Centre — implemented.
+- Step 48: Provenance Chain Inspector — implemented.
 
 ## Step 32 — implemented
 
@@ -155,7 +156,11 @@ Global Research Memory now includes an expandable **What Quire already knows abo
 
 A local Personal Writing Growth Centre records only wording edits the researcher explicitly accepts. Lessons are project-scoped, bounded, grouped by recurring area and can be marked mastered by the researcher. Quire explicitly does not turn this into an English score.
 
-## Added-value roadmap after Step 47
+## Step 48 — implemented
+
+Ideas now expose a provenance-chain inspector showing stored origin/source/page/excerpt and direct source reopening where possible. It also surfaces likely downstream thesis sections using shared-term matching, clearly labelled as inferred rather than proof that the text originated from the idea.
+
+## Added-value roadmap after Step 48
 
 A second product review identified the next high-value frontend milestones:
 
