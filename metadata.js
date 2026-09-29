@@ -90,14 +90,21 @@
     return [toArticle(json.message)];
   }
 
-  async function searchTitle(query){
+  async function searchBatch(query,{rows=20}={}){
+    const clean=String(query||'').trim();
+    if(!clean)throw new Error('Enter a scholarly search query.');
+    const count=Math.max(1,Math.min(50,Number(rows)||20));
     const params=new URLSearchParams({
-      'query.bibliographic':query,
-      rows:'6',
+      'query.bibliographic':clean,
+      rows:String(count),
       select:'DOI,title,author,container-title,published-print,published-online,issued,type,URL,abstract,publisher,volume,issue,page,ISSN,reference-count,is-referenced-by-count'
     });
     const json=await fetchJson('https://api.crossref.org/works?'+params.toString());
     return (json.message?.items||[]).map(toArticle);
+  }
+
+  async function searchTitle(query){
+    return searchBatch(query,{rows:6});
   }
 
   async function search(input){
@@ -271,6 +278,6 @@
     });
   }
 
-  window.QuireMetadata={open,close,search,normalizeDoi,saveToLibrary,applyToArticle};
+  window.QuireMetadata={open,close,search,searchBatch,normalizeDoi,saveToLibrary,applyToArticle};
   document.addEventListener('DOMContentLoaded',bind);
 })();
