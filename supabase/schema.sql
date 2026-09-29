@@ -474,3 +474,41 @@ with check (
     where t.id=thread_id and p.user_id=auth.uid()
   )
 );
+
+
+-- Step 22: private PDF storage
+insert into storage.buckets (id,name,public)
+values ('quire-pdfs','quire-pdfs',false)
+on conflict (id) do update set public=false;
+
+drop policy if exists "own quire pdfs select" on storage.objects;
+create policy "own quire pdfs select" on storage.objects
+for select using (
+  bucket_id='quire-pdfs'
+  and (storage.foldername(name))[1]=auth.uid()::text
+);
+
+drop policy if exists "own quire pdfs insert" on storage.objects;
+create policy "own quire pdfs insert" on storage.objects
+for insert with check (
+  bucket_id='quire-pdfs'
+  and (storage.foldername(name))[1]=auth.uid()::text
+);
+
+drop policy if exists "own quire pdfs update" on storage.objects;
+create policy "own quire pdfs update" on storage.objects
+for update using (
+  bucket_id='quire-pdfs'
+  and (storage.foldername(name))[1]=auth.uid()::text
+)
+with check (
+  bucket_id='quire-pdfs'
+  and (storage.foldername(name))[1]=auth.uid()::text
+);
+
+drop policy if exists "own quire pdfs delete" on storage.objects;
+create policy "own quire pdfs delete" on storage.objects
+for delete using (
+  bucket_id='quire-pdfs'
+  and (storage.foldername(name))[1]=auth.uid()::text
+);
