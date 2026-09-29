@@ -33,6 +33,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 31: Guided five-destination product framework — implemented; primary navigation simplified to Home, Research, Ideas, Thesis and Progress while specialist tools remain available contextually.
 - Step 32: Writing Understanding & Language Coach + Guided Research Flow — implemented.
 - Step 33: Claim-Aware Writing & Evidence Intelligence Foundation — implemented.
+- Step 34: Claim-Level Evidence Confidence — implemented.
 
 ## Step 32 — implemented
 
@@ -85,7 +86,11 @@ Claim awareness now runs contextually inside the Writing Companion. It distingui
 
 Step 33 reuses and exposes the existing Evidence Check primitives instead of creating a second evidence model.
 
-## Agreed future feature backlog — after Step 33
+## Step 34 — implemented
+
+Claim cards now expose a qualitative **Why this status?** evidence-confidence profile. It shows citation presence, matching saved passages, section linkage, appraisal context and possible direction/negation conflicts separately. Quire explicitly does not combine these signals into a validity or scientific-certainty score.
+
+## Agreed future feature backlog — after Step 34
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
