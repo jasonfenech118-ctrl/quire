@@ -41,6 +41,7 @@
         <button class="nav-item" data-view="supervision"><span>☷</span> Supervision</button>
         <button class="nav-item" data-view="export"><span>⇩</span> Thesis Export</button>
         <button class="nav-item" data-view="methodology"><span>◌</span> Methodology</button>
+        <button class="nav-item" data-view="analysis"><span>⌁</span> Data & Analysis</button>
         <button class="nav-item" data-view="setup"><span>⚙</span> Study Setup</button>
       </nav>
 
@@ -1009,6 +1010,47 @@
         </div>
       </section>
 
+
+      <section id="analysis" class="view">
+        <div class="page-heading compact analysis-heading">
+          <div>
+            <span class="eyebrow">RESEARCH DATA & ANALYSIS</span>
+            <h1>Keep analytic decisions connected to the thesis.</h1>
+            <p>Record de-identified analytic structures, results and findings, then link them to objectives and writing destinations.</p>
+          </div>
+          <div class="analysis-heading-actions">
+            <span id="analysisStudyType" class="analysis-type-badge">Flexible analysis</span>
+            <button class="primary-btn" id="newAnalysisItemBtn" type="button">＋ Add analysis item</button>
+          </div>
+        </div>
+
+        <div class="analysis-safety-note">
+          <strong>Do not store identifiable participant or patient data here.</strong>
+          <p>Use Quire for de-identified analytic summaries, codes, variables, aggregate results, interpretation and thesis-ready findings. Keep regulated/source datasets in your approved research data environment.</p>
+        </div>
+
+        <div class="analysis-stats">
+          <div><strong id="analysisTotal">0</strong><span>Analysis items</span></div>
+          <div><strong id="analysisReady">0</strong><span>Ready for writing</span></div>
+          <div><strong id="analysisVerified">0</strong><span>Verified / checked</span></div>
+          <div><strong id="analysisObjectives">0</strong><span>Objectives linked</span></div>
+          <div><strong id="analysisSections">0</strong><span>Writing sections linked</span></div>
+        </div>
+
+        <div class="analysis-toolbar">
+          <select id="analysisKindFilter" aria-label="Filter by analysis item type"><option value="all">All analysis items</option></select>
+          <select id="analysisStatusFilter" aria-label="Filter analysis status">
+            <option value="all">All statuses</option>
+            <option value="draft">Draft</option>
+            <option value="ready">Ready for writing</option>
+            <option value="verified">Verified / checked</option>
+          </select>
+          <input id="analysisSearch" type="search" placeholder="Search analysis items…">
+        </div>
+
+        <div id="analysisBoard" class="analysis-board"></div>
+      </section>
+
       <section id="setup" class="view">
         <div class="page-heading compact">
           <div>
@@ -1271,6 +1313,46 @@
 
 
 
+
+
+  <div id="analysisItemModal" class="modal-backdrop" hidden>
+    <div class="modal analysis-item-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">DATA & ANALYSIS</span><h2 id="analysisModalTitle">Add analysis item</h2></div>
+        <button id="closeAnalysisItemModal" type="button">×</button>
+      </div>
+
+      <div class="analysis-modal-warning">
+        <strong>De-identified content only</strong>
+        <span>Do not paste names, hospital numbers, contact details or other participant identifiers.</span>
+      </div>
+
+      <div class="form-grid">
+        <label class="field"><span>Item type</span><select id="analysisItemKind"></select></label>
+        <label class="field"><span>Status</span>
+          <select id="analysisItemStatus">
+            <option value="draft">Draft</option>
+            <option value="ready">Ready for writing</option>
+            <option value="verified">Verified / checked</option>
+          </select>
+        </label>
+        <label class="field wide"><span>Title</span><input id="analysisItemTitle" type="text" placeholder="Clear analytic label or finding"></label>
+        <label class="field"><span>Research objective</span><select id="analysisItemObjective"></select></label>
+        <label class="field"><span>Writing destination</span><select id="analysisItemSection"></select></label>
+      </div>
+
+      <div id="analysisDynamicFields" class="form-grid analysis-dynamic-fields"></div>
+
+      <small id="analysisModalMessage" class="analysis-modal-message"></small>
+      <div class="analysis-modal-actions">
+        <button class="text-btn danger-text" id="deleteAnalysisItemBtn" type="button" hidden>Delete item</button>
+        <div>
+          <button class="soft-btn" id="cancelAnalysisItem" type="button">Cancel</button>
+          <button class="primary-btn" id="saveAnalysisItem" type="button">Save analysis item</button>
+        </div>
+      </div>
+    </div>
+  </div>
 
   <div id="searchRunModal" class="modal-backdrop" hidden>
     <div class="modal search-run-modal">
@@ -1891,6 +1973,7 @@
   <script src="appraisal.js"></script>
   <script src="synthesis.js"></script>
   <script src="methodology.js"></script>
+  <script src="analysis-workspace.js"></script>
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
   <script src="supervision.js"></script>
