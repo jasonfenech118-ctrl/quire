@@ -113,10 +113,21 @@
     return total;
   }
 
+  function commandRows(){
+    return [
+      {type:'command',id:'new-idea',title:'Capture a new idea',meta:'Action · Ideas',text:'new capture add idea brainstorm thought'},
+      {type:'command',id:'continue-writing',title:'Continue thesis writing',meta:'Action · Thesis',text:'continue write thesis manuscript section'},
+      {type:'command',id:'link-evidence',title:'Link evidence to current section',meta:'Action · Evidence',text:'link add evidence source highlight current section'},
+      {type:'command',id:'writing-review',title:'Review current writing',meta:'Action · Review',text:'review writing clarity critical evidence'},
+      {type:'command',id:'end-session',title:'End session and save checkpoint',meta:'Action · Home',text:'end finish session checkpoint save resume'},
+      {type:'command',id:'progress',title:'Open thesis progress',meta:'Action · Progress',text:'open progress status milestones forecast'}
+    ];
+  }
+
   function search(query){
     const q=memoryTerms(query);
     if(!q.length)return [];
-    return buildSearchIndex()
+    return [...commandRows(),...buildSearchIndex()]
       .map(row=>{
         const hay=normalize(row.text),title=normalize(row.title);
         let total=0,hits=0;
@@ -136,7 +147,7 @@
   }
 
   function icon(type){
-    return ({article:'PDF',section:'§',chapter:'¶',highlight:'"',note:'✎',theme:'◇',objective:'◎',feedback:'☷'})[type]||'•';
+    return ({command:'⌘',article:'PDF',section:'§',chapter:'¶',highlight:'"',note:'✎',theme:'◇',objective:'◎',feedback:'☷'})[type]||'•';
   }
 
   function memoryAnswer(query,rows=search(query)){
@@ -189,7 +200,14 @@
   async function openResult(row){
     if(!row)return;
     closeSearch();
-    if(row.type==='article'){
+    if(row.type==='command'){
+      if(row.id==='new-idea')window.QuireIdeas?.capture?.();
+      if(row.id==='continue-writing')window.showView?.('chapters');
+      if(row.id==='link-evidence'){window.showView?.('chapters');setTimeout(()=>window.QuireEvidenceWriting?.open?.(),60);}
+      if(row.id==='writing-review'){window.showView?.('review');setTimeout(()=>document.getElementById('runWritingReview')?.click(),60);}
+      if(row.id==='end-session'){window.showView?.('dashboard');setTimeout(()=>window.QuireSessionCheckpoint?.save?.(),60);}
+      if(row.id==='progress')window.showView?.('overview');
+    }else if(row.type==='article'){
       window.showView?.('reader');
       try{await window.QuirePdfReader?.openArticle?.(row.id);}catch(e){}
     }else if(row.type==='section'){
@@ -580,5 +598,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuirePolish={search,memoryAnswer,buildSearchIndex,memoryTerms,downloadBackup,restoreBackup,diagnostics,repairWorkspace,restoreMigrationRecovery};
+  window.QuirePolish={search,memoryAnswer,commandRows,buildSearchIndex,memoryTerms,downloadBackup,restoreBackup,diagnostics,repairWorkspace,restoreMigrationRecovery};
 })();
