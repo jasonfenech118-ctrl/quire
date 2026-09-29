@@ -555,7 +555,9 @@ async function renderLibraryArticles(){
       const hasPdf=await window.QuirePdfStore.has(article.id);
       target.innerHTML=hasPdf
         ? '<span class="local-pdf-badge">● PDF on this device</span>'
-        : '<span class="local-pdf-badge missing-pdf-badge">○ Attach PDF</span>';
+        : article.pdfPath
+          ? '<span class="local-pdf-badge cloud-pdf-badge">☁ Cloud PDF · downloads on open</span>'
+          : '<span class="local-pdf-badge missing-pdf-badge">○ Attach PDF</span>';
     }catch(e){
       target.textContent='Local file status unavailable';
     }
