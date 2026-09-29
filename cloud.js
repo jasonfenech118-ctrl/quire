@@ -318,6 +318,8 @@
     suppressAutoSync=true;
     emit('syncing','Saving Quire to cloud…');
     try{
+      const audit=window.QuireStore?.auditIntegrity?.();
+      if(audit && !audit.healthy) window.QuireStore.repairIntegrity();
       await syncLocalPdfs(user);
       const state=window.QuireStore.getState();
       for(const [key,table,mapper] of tableMap){
