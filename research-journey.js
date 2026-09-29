@@ -55,7 +55,7 @@
     const action=document.getElementById('flowNextAction');
     if(title)title.textContent=rec.title;
     if(copy)copy.textContent=rec.copy;
-    if(action){action.textContent=rec.action+' →';action.dataset.flowTarget=rec.view;}
+    if(action){action.textContent=rec.action+' →';action.dataset.flowTarget=rec.view;action.setAttribute('aria-label',rec.action+': '+rec.copy);}
   }
 
   function showHandoff(detail={}){
@@ -68,15 +68,30 @@
     copy.textContent=detail.copy||'Continue when you are ready.';
     action.textContent=(detail.action||'Continue')+' →';
     action.dataset.flowTarget=detail.view||'dashboard';
+    action.setAttribute('aria-label',(detail.action||'Continue')+': '+(detail.copy||'Continue when you are ready.'));
     card.classList.add('handoff-ready');
     setTimeout(()=>card.classList.remove('handoff-ready'),1800);
   }
 
   function bind(){
-    document.querySelectorAll('[data-flow-stage]').forEach(btn=>btn.addEventListener('click',()=>{
-      const target=STAGES.find(x=>x.id===btn.dataset.flowStage)?.view;
-      if(target)window.showView?.(target);
-    }));
+    const stageButtons=[...document.querySelectorAll('[data-flow-stage]')];
+    stageButtons.forEach((btn,index)=>{
+      btn.setAttribute('aria-label',STAGES[index]?.label+': '+(STAGES[index]?.copy||''));
+      btn.addEventListener('click',()=>{
+        const target=STAGES.find(x=>x.id===btn.dataset.flowStage)?.view;
+        if(target)window.showView?.(target);
+      });
+      btn.addEventListener('keydown',e=>{
+        if(!['ArrowLeft','ArrowRight','Home','End'].includes(e.key))return;
+        e.preventDefault();
+        let next=index;
+        if(e.key==='ArrowRight')next=(index+1)%stageButtons.length;
+        if(e.key==='ArrowLeft')next=(index-1+stageButtons.length)%stageButtons.length;
+        if(e.key==='Home')next=0;
+        if(e.key==='End')next=stageButtons.length-1;
+        stageButtons[next]?.focus();
+      });
+    });
     document.getElementById('flowNextAction')?.addEventListener('click',e=>{
       const target=e.currentTarget.dataset.flowTarget;
       if(target)window.showView?.(target);
