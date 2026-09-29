@@ -1586,6 +1586,8 @@
       ],
       databases:[],
       limits:'',
+      inclusionCriteria:'',
+      exclusionCriteria:'',
       notes:'',
       createdAt:ts,updatedAt:ts
     };
@@ -1618,6 +1620,8 @@
     }
     if(Object.prototype.hasOwnProperty.call(data,'databases'))row.databases=Array.isArray(data.databases)?data.databases.map(x=>String(x).trim()).filter(Boolean):[];
     if(Object.prototype.hasOwnProperty.call(data,'limits'))row.limits=data.limits||'';
+    if(Object.prototype.hasOwnProperty.call(data,'inclusionCriteria'))row.inclusionCriteria=String(data.inclusionCriteria||'');
+    if(Object.prototype.hasOwnProperty.call(data,'exclusionCriteria'))row.exclusionCriteria=String(data.exclusionCriteria||'');
     if(Object.prototype.hasOwnProperty.call(data,'notes'))row.notes=data.notes||'';
     row.updatedAt=ts;
     writeState(state);
