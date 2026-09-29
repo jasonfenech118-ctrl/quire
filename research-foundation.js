@@ -335,6 +335,16 @@
     const mount=document.getElementById('researchFoundationGuide');
     if(!mount||!window.QuireStore)return;
     const ctx=context();
+    const starter=isStarter(ctx);
+    const heading=document.querySelector('.home-heading h1');
+    const headingCopy=document.querySelector('.home-heading p');
+    const endSession=document.getElementById('saveSessionCheckpointBtn');
+    if(heading)heading.textContent=starter?'Start your research.':'Pick up where you left off.';
+    if(headingCopy)headingCopy.textContent=starter
+      ? 'Begin with a broad research area. Quire will help you search, read, compare and refine the question as the literature develops.'
+      : 'Quire keeps the next useful action, your recent work and the state of your thesis in one place.';
+    if(endSession)endSession.hidden=starter;
+
     const review=reviewProgress(ctx.projectId);
     const mat=maturity(ctx.projectId);
     const currentStage=stage(ctx);
@@ -373,6 +383,17 @@
           '<span>'+pct(row.score)+'% · '+row.weight+'% weight</span>'+
         '</article>'
       ).join('');
+    }
+
+    const gapAction=document.getElementById('foundationGapAction');
+    const synthesisEvidence=review.components.find(row=>row.key==='synthesis')?.evidence||{};
+    const gapReady=ctx.reviewed.length>=3&&Number(synthesisEvidence.synthesized||0)>=2;
+    if(gapAction){
+      gapAction.disabled=!gapReady;
+      gapAction.textContent=gapReady?'Record a possible gap':'Compare papers first';
+      gapAction.title=gapReady
+        ? 'Record a possible gap signal to test with further searching.'
+        : 'Read and compare several papers before recording a possible knowledge gap.';
     }
 
     const gapTitle=document.getElementById('foundationGapTitle');
@@ -414,7 +435,7 @@
     const currentStage=stage(ctx);
     let target='launch';
 
-    if(isStarter(ctx)){
+    if(starter){
       if(eyebrow)eyebrow.textContent='START YOUR RESEARCH';
       title.textContent='Begin with the area you want to explore.';
       if(stats)stats.textContent='No final question needed yet · let the literature shape it';
