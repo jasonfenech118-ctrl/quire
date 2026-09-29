@@ -597,11 +597,24 @@ async function renderLibraryArticles(){
   });
 
   if(!allArticles.length){
-    mount.innerHTML='<div class="project-panel"><span class="eyebrow">RESEARCH LIBRARY</span><h3>No articles yet</h3><p>Upload your first PDF or add a reference by DOI to start building the evidence base for this thesis.</p><button class="primary-btn" id="emptyLibraryUpload" type="button">＋ Add article</button></div>';
+    mount.innerHTML=
+      '<div class="project-panel library-empty-onboarding">'+
+        '<span class="eyebrow">BUILD THE LITERATURE BASE</span>'+
+        '<h3>Start broad enough to learn what the field already knows.</h3>'+
+        '<p>Do not worry about finding the “perfect” first paper. Plan the search, collect relevant work from across the topic, then read and compare studies before narrowing the question or claiming a gap.</p>'+
+        '<div class="library-empty-actions">'+
+          '<button class="primary-btn" id="emptyLibraryPlanSearch" type="button">Plan literature search</button>'+
+          '<button class="soft-btn" id="emptyLibraryUpload" type="button">＋ Upload PDF</button>'+
+          '<button class="soft-btn" id="emptyLibraryReferences" type="button">⇄ Add / import references</button>'+
+        '</div>'+
+        '<small>Quire will track review progress from searching, screening, reading, appraisal, comparison and gap exploration—not from paper count alone.</small>'+
+      '</div>';
+    document.getElementById('emptyLibraryPlanSearch')?.addEventListener('click',()=>window.showView?.('searchscreen'));
     document.getElementById('emptyLibraryUpload')?.addEventListener('click',()=>{
       if(window.QuirePdfReader) window.QuirePdfReader.pendingArticleId=null;
       fileInput.click();
     });
+    document.getElementById('emptyLibraryReferences')?.addEventListener('click',()=>document.getElementById('openReferenceManager')?.click());
     return;
   }
 
@@ -768,10 +781,9 @@ window.addEventListener('quire:project-switched',()=>{
   updateResearchDeskCounts();
   const active=window.QuireStore?.getActiveProject?.();
   if(active){
-    const heroQuestion=document.querySelector('.hero-card h2');
-    if(heroQuestion) heroQuestion.textContent=active.researchQuestion||'Define your research question in Study Setup.';
     const sideTitle=document.getElementById('sidebarThesisTitle');
-    if(sideTitle) sideTitle.textContent=active.title||'Untitled thesis';
+    if(sideTitle) sideTitle.textContent=active.title||'Untitled research project';
+    window.QuireResearchFoundation?.renderHomeHero?.();
   }
 });
 
