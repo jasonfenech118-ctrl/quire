@@ -2,78 +2,62 @@
 
 ## Current position
 
-**Steps 31 and 32 are complete.**
+**Steps 1–33 are implemented. Step 22 backend activation remains deliberately deferred.**
 
-Quire now uses one primary product framework:
+Primary destinations: **Home → Research → Ideas → Thesis → Progress**
 
-**Home → Research → Ideas → Thesis → Progress**
+Research journey: **Discover → Understand → Organise → Write → Review**
 
-and one research-process mental model:
+## Step 33 completed and checked
 
-**Discover → Understand → Organise → Write → Review**
+**Claim-Aware Writing & Evidence Intelligence Foundation** is integrated into the existing Writing Companion.
 
-Specialist workflows remain available contextually or under grouped **More tools** rather than competing with the main navigation.
+- Separates obvious researcher framing/signposting from likely empirical/factual claims.
+- Does not force every sentence into a claim category.
+- Recognises obvious in-text citations.
+- Detects when related evidence is already linked to the active thesis section.
+- Searches saved highlights for possible existing evidence.
+- Opens the existing evidence-linking workflow for matching passages.
+- Uses cautious language when evidence may be missing; a heuristic flag is never presented as proof that a statement is false.
+- Reuses the established Step 14 Evidence Check primitives rather than creating a competing evidence model.
+- Empty and short-fragment states are guarded.
 
-## Step 32 completed
+Code-level reconciliation passed: module loaded, UI mount present, all claim statuses represented, evidence-link workflow reused, and evidence-check primitives exported.
 
-- Contextual **Writing Companion** beside the thesis editor.
-- **What Quire understands** reflects the apparent meaning of the current paragraph.
-- Optional English/clarity guidance for sentence length, repeated connectors, conversational/general wording, precision and overly strong claim language.
-- Empty text and short fragments are handled quietly rather than over-corrected.
-- Deeper paragraph review separates Meaning, Language & grammar, Academic clarity, Vocabulary, and Evidence & claim caution.
-- Conservative wording proposals require explicit acceptance; manuscript text is never silently rewritten.
-- Recurring writing habits are learned locally only after substantive samples and are never turned into a language score.
-- Writing Companion can be collapsed and its visibility preference is remembered locally.
-- Five-stage guided flow derives a **Sensible next step** from project state.
-- Event-driven handoffs connect reading → organising → writing → review/evidence checking.
-- High-level stage navigation stays on simple primary destinations; specialist screens are surfaced contextually.
-- Five-stage controls support keyboard navigation and descriptive accessibility labels.
-- Home is simplified around current thesis, recent work, project snapshot and milestones; duplicate Copilot/next-step surfaces were removed.
-- **More tools** is grouped into Project, Research, Understand & Organise, and Review & Finish.
-- The agreed future feature backlog is preserved in PROJECT_MASTER.
+## Automated milestone sequence
 
-## Next milestone
+Continue one numbered step at a time. Implement, inspect/test, reconcile documentation, then proceed.
 
-Define **Step 33** from the agreed backlog before implementation.
+- **Step 34 — Claim-level Evidence Confidence.** Build a transparent qualitative confidence profile from source passage match, direct section linkage, citation presence, appraisal context and possible contradiction. Never collapse this into a simplistic scientific-validity score.
+- **Step 35 — Structured “Why do I care?” Paper Intelligence.** Turn existing grounded article analysis into thesis-useful study/findings/limitations/relevance/destination/passage cards.
+- **Step 36 — Contradiction & Counter-Evidence Workspace.** Extend existing negation/direction checks across multiple saved sources and surface disagreements without claiming one source is correct.
+- **Step 37 — Critical Writing Coach.** Distinguish description, comparison, interpretation and critique; prompt for limitations, alternative explanations and cross-source synthesis.
+- **Step 38 — Reading Assistant for Selected Passages.** Explain selected text simply or academically and show relevance, limitations and relation to the research question using grounded source context.
+- **Step 39 — Research Memory & Natural-Language Recall.** Search papers, highlights, notes and prior ideas with provenance-preserving results.
+- **Step 40 — Idea Provenance.** Mark whether a thought originated as researcher idea, source-derived note/highlight, supervisor feedback, analysis memo or brainstorming item.
+- **Step 41 — Living Argument Map.** Maintain research question → objectives → themes → arguments → claims → supporting/counter evidence → thesis sections using existing graph relationships.
+- **Step 42 — Supervisor Review Package.** Assemble changes, unresolved questions, weak-evidence areas and revision actions from existing review/version data.
+- **Step 43 — End-of-Session Checkpoint.** Summarise completed work, unresolved questions and the best starting point next time, locally and non-destructively.
+- **Step 44 — Integrated Value & UX Audit.** Re-test the full Discover → Understand → Organise → Write → Review journey, accessibility and duplication; then identify additional high-value milestones before implementation.
 
-Recommended first dependency: **Claim-aware writing & evidence intelligence foundation**.
-
-Why first:
-- it builds directly on the Step 32 Writing Companion;
-- Quire already has source-linked evidence, exact passages, citations and evidence checking;
-- it unlocks later evidence-confidence, contradiction detection and stronger critical-writing guidance;
-- it can remain contextual inside Thesis rather than adding another destination.
-
-Proposed Step 33 scope:
-1. Detect likely factual/empirical claims in the current paragraph without treating every sentence as a claim.
-2. Distinguish likely **researcher interpretation / framing** from statements that probably require evidence.
-3. Show claim-level status beside writing: evidence linked, citation present, evidence may be missing, or review needed.
-4. Let the researcher open matching existing library evidence before searching externally.
-5. Preserve uncertainty: Quire suggests that evidence may be needed; it does not declare unsupported claims as false.
-6. Keep all assistance non-destructive and frontend-first.
-
-Do not start Step 34 features until Step 33 is reconciled and usable.
-
-## Product principles to preserve
+## Development rules
 
 - The researcher remains the author.
 - Never silently rewrite manuscript text.
 - Never invent evidence or references.
-- Separate the researcher's interpretation from sourced claims.
-- Preserve source/page provenance where available.
-- Language improvement must preserve intended meaning.
-- Prefer clear, precise academic English over ornamental vocabulary.
-- The platform should lead naturally from one task to the next rather than requiring the user to remember where tools live.
+- Separate researcher interpretation from sourced claims.
+- Preserve source/page provenance.
+- Prefer precise natural academic English over ornamental wording.
+- Heuristics must communicate uncertainty.
+- Reuse existing models/workflows before adding screens.
 - Quire should become simpler as it becomes more capable.
+- Keep work frontend-first/local.
+- **Do not activate Supabase, run SQL, or touch the separate Customer Roster project.**
 
-## Backend rule
+## Recovery
 
-Supabase activation remains deliberately deferred. Do not run SQL or connect Quire to an external Supabase project during the next frontend milestone. The separate Customer Roster project must remain untouched.
-
-## New-chat recovery
-
-Read `README.md`, `docs/PROJECT_MASTER.md`, and this file, then inspect the actual implementation before adding features.
+Read `README.md`, `docs/PROJECT_MASTER.md`, and this file, then inspect the current milestone implementation before changing it.
 
 Resume phrase:
 
-> “Continue Quire from docs/CONTINUE_HERE.md. Step 32 is complete; define and implement Step 33 claim-aware writing frontend-first.”
+> “Continue Quire autonomously from docs/CONTINUE_HERE.md. Complete and QA each numbered frontend milestone before proceeding; do not activate Supabase.”
