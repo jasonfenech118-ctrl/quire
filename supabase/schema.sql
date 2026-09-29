@@ -172,7 +172,7 @@ create table if not exists public.evidence_links (
   objective_id text references public.objectives(id) on delete set null,
   chapter_id text references public.chapters(id) on delete set null,
   section_id text references public.sections(id) on delete cascade,
-  relationship text not null default 'supports' check (relationship in ('supports','contradicts','contextualises','critiques','method')),
+  relationship text not null default 'supports' check (relationship in ('supports','contradicts','contextualises','critiques','method','cites')),
   rationale text,
   created_at timestamptz not null default now(),
   check (article_id is not null or highlight_id is not null or note_id is not null)
@@ -220,6 +220,64 @@ alter table public.progress_snapshots add column if not exists sections_with_evi
 alter table public.progress_snapshots add column if not exists overall_progress integer not null default 0;
 alter table public.progress_snapshots add column if not exists source text not null default 'legacy';
 
+alter table public.evidence_links drop constraint if exists evidence_links_relationship_check;
+alter table public.evidence_links add constraint evidence_links_relationship_check
+  check (relationship in ('supports','contradicts','contextualises','critiques','method','cites'));
+
+create table if not exists public.review_rounds (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  title text not null,
+  reviewer_name text,
+  status text not null default 'awaiting_feedback'
+    check (status in ('draft','awaiting_feedback','feedback_received','revising','complete')),
+  scope text not null default 'whole_thesis'
+    check (scope in ('whole_thesis','chapter')),
+  chapter_id text references public.chapters(id) on delete set null,
+  submitted_at date,
+  response_due_date date,
+  notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.feedback_items (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  review_round_id text references public.review_rounds(id) on delete set null,
+  chapter_id text references public.chapters(id) on delete set null,
+  section_id text references public.sections(id) on delete cascade,
+  reviewer_name text,
+  category text not null default 'content'
+    check (category in ('content','structure','methodology','evidence','language','formatting','other')),
+  priority text not null default 'normal'
+    check (priority in ('low','normal','high')),
+  status text not null default 'open'
+    check (status in ('open','in_progress','resolved')),
+  selected_text text,
+  comment text not null,
+  researcher_response text,
+  resolved_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.section_versions (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  chapter_id text references public.chapters(id) on delete set null,
+  section_id text not null references public.sections(id) on delete cascade,
+  review_round_id text references public.review_rounds(id) on delete set null,
+  label text not null,
+  reason text not null default 'manual'
+    check (reason in ('manual','review_submission','before_restore')),
+  section_title text,
+  content text not null default '',
+  word_count integer not null default 0 check (word_count >= 0),
+  section_status text not null default 'not_started',
+  created_at timestamptz not null default now()
+);
+
 create table if not exists public.ai_threads (
   id text primary key default gen_random_uuid()::text,
   project_id text not null references public.thesis_projects(id) on delete cascade,
@@ -251,6 +309,10 @@ create index if not exists idx_themes_project on public.themes(project_id);
 create index if not exists idx_evidence_section on public.evidence_links(section_id);
 create index if not exists idx_milestones_project_due on public.milestones(project_id,due_date);
 create index if not exists idx_progress_project_date on public.progress_snapshots(project_id,snapshot_date desc);
+create index if not exists idx_review_rounds_project on public.review_rounds(project_id,created_at desc);
+create index if not exists idx_feedback_project_status on public.feedback_items(project_id,status);
+create index if not exists idx_feedback_section on public.feedback_items(section_id);
+create index if not exists idx_section_versions_section on public.section_versions(section_id,created_at desc);
 create index if not exists idx_ai_threads_project on public.ai_threads(project_id);
 
 drop trigger if exists trg_projects_updated_at on public.thesis_projects;
@@ -273,6 +335,10 @@ drop trigger if exists trg_themes_updated_at on public.themes;
 create trigger trg_themes_updated_at before update on public.themes for each row execute function public.set_updated_at();
 drop trigger if exists trg_milestones_updated_at on public.milestones;
 create trigger trg_milestones_updated_at before update on public.milestones for each row execute function public.set_updated_at();
+drop trigger if exists trg_review_rounds_updated_at on public.review_rounds;
+create trigger trg_review_rounds_updated_at before update on public.review_rounds for each row execute function public.set_updated_at();
+drop trigger if exists trg_feedback_items_updated_at on public.feedback_items;
+create trigger trg_feedback_items_updated_at before update on public.feedback_items for each row execute function public.set_updated_at();
 drop trigger if exists trg_ai_threads_updated_at on public.ai_threads;
 create trigger trg_ai_threads_updated_at before update on public.ai_threads for each row execute function public.set_updated_at();
 
@@ -290,6 +356,9 @@ alter table public.article_themes enable row level security;
 alter table public.evidence_links enable row level security;
 alter table public.milestones enable row level security;
 alter table public.progress_snapshots enable row level security;
+alter table public.review_rounds enable row level security;
+alter table public.feedback_items enable row level security;
+alter table public.section_versions enable row level security;
 alter table public.ai_threads enable row level security;
 alter table public.ai_messages enable row level security;
 
@@ -366,6 +435,21 @@ with check (exists(select 1 from public.thesis_projects p where p.id=project_id 
 
 drop policy if exists "own progress snapshots" on public.progress_snapshots;
 create policy "own progress snapshots" on public.progress_snapshots
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own review rounds" on public.review_rounds;
+create policy "own review rounds" on public.review_rounds
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own feedback items" on public.feedback_items;
+create policy "own feedback items" on public.feedback_items
+for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
+with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
+
+drop policy if exists "own section versions" on public.section_versions;
+create policy "own section versions" on public.section_versions
 for all using (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()))
 with check (exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid()));
 
