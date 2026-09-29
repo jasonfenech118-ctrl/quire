@@ -2747,3 +2747,14 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .nav-tool-group{display:grid;gap:1px;padding:7px 0;border-bottom:1px solid rgba(255,255,255,.08)}
 .nav-tool-group:last-child{border-bottom:0}
 .nav-tool-group>small{font-size:6px;letter-spacing:.13em;color:#9f978d;padding:5px 12px 3px}
+
+
+/* ---------- Step 32: simplified Home ---------- */
+.home-focus-grid{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(330px,.9fr);gap:13px;align-items:stretch}
+.home-thesis-card{min-height:240px}
+.home-recent-panel{min-height:240px}
+.home-secondary-grid{display:grid;grid-template-columns:1fr 1fr;gap:13px;margin-top:13px}
+@media(max-width:900px){
+  .home-focus-grid,.home-secondary-grid{grid-template-columns:1fr}
+  .home-thesis-card,.home-recent-panel{min-height:0}
+}
