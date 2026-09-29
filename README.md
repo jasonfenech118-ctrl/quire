@@ -54,6 +54,22 @@ Never put a Supabase service-role key in the browser.
 
 See `docs/cloud-sync.md`.
 
+## Step 3 — Real PDF upload & rendering ✅
+
+Quire now has a real PDF workflow using PDF.js and IndexedDB:
+
+- Upload actual PDF research papers
+- Persist PDF files locally on the device
+- Render genuine PDF pages inside Quire
+- Page thumbnails and navigation
+- Zoom, fit-width and full-screen reading
+- Basic PDF metadata extraction
+- Attach/replace a PDF for an existing article
+
+This step does **not** require Supabase. PDF binaries remain local until a Quire cloud storage project is configured.
+
+See `docs/pdf-reader.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -63,11 +79,10 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Next build stage
 
-1. Real PDF upload and rendering
-2. Persistent PDF highlights and notes
-3. Article metadata / DOI import
-4. AI summarisation grounded in uploaded papers
-5. Page-level citations for AI answers
-6. Reference-manager integration
+1. Persistent PDF highlights and notes
+2. Article metadata / DOI import
+3. AI summarisation grounded in uploaded papers
+4. Page-level citations for AI answers
+5. Reference-manager integration
 
 © Quire prototype.
