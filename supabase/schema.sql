@@ -644,3 +644,40 @@ for all using (
 with check (
   exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
 );
+
+
+-- Step 26: de-identified research analysis items
+create table if not exists public.analysis_items (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  kind text not null,
+  objective_id text references public.objectives(id) on delete set null,
+  section_id text references public.sections(id) on delete set null,
+  title text not null,
+  payload jsonb not null default '{}'::jsonb,
+  status text not null default 'draft'
+    check (status in ('draft','ready','verified')),
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_analysis_items_project on public.analysis_items(project_id);
+create index if not exists idx_analysis_items_objective on public.analysis_items(objective_id);
+create index if not exists idx_analysis_items_section on public.analysis_items(section_id);
+create index if not exists idx_analysis_items_kind on public.analysis_items(project_id,kind);
+
+drop trigger if exists trg_analysis_items_updated_at on public.analysis_items;
+create trigger trg_analysis_items_updated_at
+before update on public.analysis_items
+for each row execute function public.set_updated_at();
+
+alter table public.analysis_items enable row level security;
+
+drop policy if exists "own analysis items" on public.analysis_items;
+create policy "own analysis items" on public.analysis_items
+for all using (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+)
+with check (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+);
