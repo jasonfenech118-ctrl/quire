@@ -133,70 +133,42 @@
       </section>
 
       <section id="dashboard" class="view active">
-        <div class="page-heading">
+        <div class="page-heading home-heading">
           <div>
-            <span class="eyebrow">GOOD EVENING</span>
-            <h1>Keep the thesis moving.</h1>
-            <p>Bring articles, ideas, evidence and chapters into one connected workspace.</p>
+            <span class="eyebrow">HOME</span>
+            <h1>Pick up where you left off.</h1>
+            <p>Quire keeps the next useful action, your recent work and the state of your thesis in one place.</p>
           </div>
-          <button class="ghost-btn" data-go="map">Open thesis map →</button>
+          <button class="ghost-btn" data-go="overview">View progress →</button>
         </div>
 
-        <div class="hero-grid">
-          <article class="hero-card">
+        <div class="home-focus-grid">
+          <article class="hero-card home-thesis-card">
             <div>
-              <span class="eyebrow light">THESIS FOCUS</span>
+              <span class="eyebrow light">CURRENT THESIS</span>
               <h2>How can patient education support self-management after stoma formation?</h2>
               <p id="dashboardThesisStats">0 objectives · 0 themes · 0 evidence-backed papers</p>
             </div>
-            <button class="hero-action" data-go="overview">Open thesis project →</button>
+            <button class="hero-action" data-go="chapters">Continue thesis →</button>
           </article>
-
-          <article class="copilot-card">
-            <div class="copilot-orb">✦</div>
-            <div>
-              <span class="eyebrow">QUIRE COPILOT</span>
-              <h3>What would you like to work through?</h3>
-            </div>
-            <div class="prompt-row">
-              <button class="prompt-chip">Structure my literature review</button>
-              <button class="prompt-chip">Compare two papers</button>
-              <button class="prompt-chip">Brainstorm a research gap</button>
-            </div>
-            <div class="copilot-input">
-              <input id="dashboardPrompt" placeholder="Ask Quire…" />
-              <button id="dashboardAsk">↑</button>
-            </div>
-          </article>
-        </div>
-
-        <div class="section-title">
-          <div><span class="eyebrow">TODAY</span><h2>Your research desk</h2></div>
-          <button class="text-btn">Customize</button>
-        </div>
-
-        <div class="desk-grid">
-          <article class="panel continue-panel">
-            <div class="panel-head">
-              <div><span class="eyebrow">CONTINUE</span><h3>Recent work</h3></div>
-              <button class="text-btn">View all</button>
-            </div>
+          <article class="panel continue-panel home-recent-panel">
+            <div class="panel-head"><div><span class="eyebrow">CONTINUE</span><h3>Recent work</h3></div></div>
             <div class="recent-list" id="dashboardRecentWork"></div>
           </article>
+        </div>
 
+        <div class="home-secondary-grid">
           <article class="panel stat-panel">
-            <div class="panel-head"><div><span class="eyebrow">LIBRARY</span><h3>Research at a glance</h3></div></div>
+            <div class="panel-head"><div><span class="eyebrow">PROJECT SNAPSHOT</span><h3>Research at a glance</h3></div></div>
             <div class="stats">
               <div><strong>0</strong><span>Articles</span></div>
               <div><strong>0</strong><span>Highlights</span></div>
               <div><strong>0</strong><span>Notes</span></div>
               <div><strong>0</strong><span>Themes</span></div>
             </div>
-            <button class="soft-btn" data-go="library">Open research library</button>
           </article>
-
           <article class="panel milestones-panel">
-            <div class="panel-head"><div><span class="eyebrow">MILESTONES</span><h3>Next steps</h3></div></div>
+            <div class="panel-head"><div><span class="eyebrow">UPCOMING</span><h3>Milestones</h3></div></div>
             <div id="dashboardMilestones" class="dashboard-milestones"></div>
           </article>
         </div>
