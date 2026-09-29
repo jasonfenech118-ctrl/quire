@@ -101,7 +101,7 @@
             <div>
               <span class="eyebrow light">THESIS FOCUS</span>
               <h2>How can patient education support self-management after stoma formation?</h2>
-              <p>3 objectives · 6 themes · 24 articles linked</p>
+              <p id="dashboardThesisStats">0 objectives · 0 themes · 0 evidence-backed papers</p>
             </div>
             <button class="hero-action" data-go="overview">Open thesis project →</button>
           </article>
@@ -167,10 +167,7 @@
 
           <article class="panel milestones-panel">
             <div class="panel-head"><div><span class="eyebrow">MILESTONES</span><h3>Next steps</h3></div></div>
-            <label class="task done"><input type="checkbox" checked><span>Refine research question</span></label>
-            <label class="task done"><input type="checkbox" checked><span>Define literature search strategy</span></label>
-            <label class="task"><input type="checkbox"><span>Complete thematic matrix</span><small>Oct 08</small></label>
-            <label class="task"><input type="checkbox"><span>Literature review first draft</span><small>Oct 24</small></label>
+            <div id="dashboardMilestones" class="dashboard-milestones"></div>
           </article>
         </div>
       </section>
@@ -260,14 +257,29 @@
             <article class="project-panel">
               <div class="project-panel-head">
                 <div><span class="eyebrow">PROGRESS</span><h3>What you've achieved</h3></div>
-                <button class="text-btn" id="editProgressBtn">Update numbers</button>
+                <button class="text-btn" id="refreshProgressBtn">Refresh metrics</button>
               </div>
               <div class="achievement-list">
                 <div class="achievement done"><span>✓</span><div><strong>Research question defined</strong><small id="achievementQuestion">Waiting for Study Setup</small></div></div>
-                <div class="achievement done"><span>✓</span><div><strong>Research library established</strong><small>24 papers added · 18 reviewed</small></div></div>
-                <div class="achievement done"><span>✓</span><div><strong>Evidence captured</strong><small>67 highlights · 31 research notes</small></div></div>
+                <div class="achievement"><span>○</span><div><strong>Research library established</strong><small id="achievementLibrary">No research papers added yet</small></div></div>
+                <div class="achievement"><span>○</span><div><strong>Evidence captured</strong><small id="achievementEvidence">No evidence captured yet</small></div></div>
                 <div class="achievement current"><span>→</span><div><strong>Literature review in progress</strong><small id="achievementWriting">6,840 words written across current draft work</small></div></div>
                 <div class="achievement"><span>○</span><div><strong>Analysis & findings</strong><small id="achievementAnalysis">Will adapt to your selected analysis plan</small></div></div>
+              </div>
+            </article>
+
+
+            <article class="project-panel progress-history-panel">
+              <div class="project-panel-head">
+                <div><span class="eyebrow">PROGRESS HISTORY</span><h3>Momentum over time</h3></div>
+                <small id="historyRangeLabel">Building history</small>
+              </div>
+              <div id="progressHistoryChart" class="progress-history-chart"></div>
+              <div class="history-delta-grid">
+                <div><strong id="historyWordsDelta">—</strong><span>words added</span></div>
+                <div><strong id="historyArticlesDelta">—</strong><span>papers reviewed</span></div>
+                <div><strong id="historyEvidenceDelta">—</strong><span>evidence links added</span></div>
+                <div><strong id="historySnapshotCount">0</strong><span>dated snapshots</span></div>
               </div>
             </article>
 
@@ -277,7 +289,7 @@
                 <button class="text-btn" data-go="setup">Edit deadlines</button>
               </div>
               <div class="time-summary">
-                <div><strong id="daysRemaining">—</strong><span>days to submission</span></div>
+                <div><strong id="daysRemaining">—</strong><span id="daysRemainingLabel">days to submission</span></div>
                 <div><strong id="scheduleStatus">—</strong><span>schedule status</span></div>
                 <div><strong id="weeklyTarget">—</strong><span>words/week needed</span></div>
               </div>
@@ -287,16 +299,24 @@
 
           <aside class="project-side-column">
             <article class="project-panel pace-panel">
-              <span class="eyebrow">COMPLETION ESTIMATE</span>
-              <h3>Writing pace</h3>
-              <p>Set your recent average so Quire can estimate when the remaining writing may be completed.</p>
-              <label class="field"><span>Average words written per week</span><input id="wordsPerWeek" type="number" min="1" step="100" value="900"></label>
-              <label class="field"><span>Current words written</span><input id="currentWordsWritten" type="number" min="0" step="100" value="6840"></label>
-              <button class="soft-btn" id="recalculateForecast">Recalculate forecast</button>
+              <span class="eyebrow">PROGRESS INTELLIGENCE</span>
+              <h3>Observed writing pace</h3>
+              <p>Quire learns your pace from dated snapshots of the actual words stored in thesis sections.</p>
+              <div class="pace-intelligence-grid">
+                <div><strong id="observedPace">—</strong><span>observed words/week</span><small id="paceHistoryWindow">Waiting for history</small></div>
+                <div><strong id="requiredPace">—</strong><span>needed words/week</span><small>to saved submission date</small></div>
+              </div>
               <div class="forecast-explainer">
                 <strong id="forecastWeeks">—</strong>
-                <small>Estimated writing time remaining. This is a planning estimate, not a guaranteed completion date.</small>
+                <small>Estimated writing time remaining. A forecast appears only after Quire has enough real history.</small>
               </div>
+            </article>
+
+            <article class="project-panel progress-breakdown-panel">
+              <span class="eyebrow">HOW PROGRESS IS CALCULATED</span>
+              <h3>Progress breakdown</h3>
+              <p>Overall progress is weighted across writing, research, evidence, chapters, milestones and study setup.</p>
+              <div id="progressBreakdown" class="progress-breakdown"></div>
             </article>
 
             <article class="project-panel">
@@ -1341,6 +1361,7 @@
   <script src="methodology.js"></script>
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
+  <script src="progress-intelligence.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
