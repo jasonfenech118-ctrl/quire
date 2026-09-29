@@ -402,6 +402,19 @@
     add('Secure browser context',window.isSecureContext?'ok':'warning',window.isSecureContext?'HTTPS / secure context detected.':'Some install and storage features work best over HTTPS.');
     add('Service worker','serviceWorker' in navigator?'ok':'warning','serviceWorker' in navigator?'Offline support is available in this browser.':'Service workers are not supported.');
     add('Cloud configuration',window.QuireCloud?.isConfigured?.()?'ok':'info',window.QuireCloud?.isConfigured?.()?'Supabase project configured.':'Local-only mode; Supabase is not configured.');
+
+    [
+      ['Guided research journey',Boolean(window.QuireJourney?.render),'Discover → Understand → Organise → Write → Review module'],
+      ['Writing companion',Boolean(window.QuireWritingCompanion?.render),'Meaning and language companion'],
+      ['Claim awareness',Boolean(window.QuireClaimAwareness?.render),'Claim/evidence awareness'],
+      ['Ideas & provenance',Boolean(window.QuireIdeas?.render),'Persistent idea workflow'],
+      ['Argument map',Boolean(window.QuireThesisMap?.buildGraphData),'Argument/claim graph'],
+      ['Research memory',Boolean(window.QuirePolish?.memoryAnswer||memoryAnswer),'Workspace recall'],
+      ['Writing growth',Boolean(window.QuireWritingGrowth?.rows),'Accepted-edit learning'],
+      ['Session checkpoint',Boolean(window.QuireSessionCheckpoint?.build),'Return-to-work checkpoint']
+    ].forEach(([name,ok,detail])=>add(name,ok?'ok':'error',ok?detail+' loaded.':detail+' is unavailable.'));
+    const activeSection=window.QuireChapterEditor?.getActive?.().sectionId;
+    add('Active writing context',activeSection?'ok':'info',activeSection?'A thesis section is active.':'No thesis section is currently open; this is normal outside writing.');
     add('Cloud account',window.QuireCloud?.getUser?.()?'ok':'info',window.QuireCloud?.getUser?.()?'Signed in.':'No cloud user signed in.');
 
     if(navigator.storage?.estimate){
