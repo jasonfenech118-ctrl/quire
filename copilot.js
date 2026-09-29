@@ -162,7 +162,34 @@
     }));
   }
 
+  function thesisValueAnalysis(index){
+    const setup=window.QuireStore?.getStudySetupData?.()||{};
+    const rq=setup.researchQuestion||window.QuireStore?.getActiveProject?.()?.researchQuestion||'the thesis research question';
+    const groups=[
+      ['STUDY','study design participants sample setting methods methodology'],
+      ['FINDINGS','results findings outcomes conclusion'],
+      ['LIMITATIONS','limitations bias confounding weakness uncertainty generalisability transferability'],
+      ['THESIS RELEVANCE',rq],
+      ['POSSIBLE DESTINATION','discussion literature review background implications '+rq]
+    ];
+    const claims=[];
+    groups.forEach(([label,query])=>{
+      const match=searchPassages(index,query,2)[0];
+      if(match){
+        const sentence=sentences(match.text)[0]||match.text;
+        claims.push({text:label+': '+clip(sentence,300),citations:[citationFromPassage(match,sentence)]});
+      }
+    });
+    return {
+      title:'Why this paper may matter to your thesis',
+      intro:'Quire has organised grounded source passages around the questions a researcher usually needs to answer before deciding how to use a paper.',
+      claims,
+      notice:'These are grounded retrieval cues, not a substitute for reading the paper. “Thesis relevance” and “possible destination” are suggestions for your judgement, not claims made by the source.'
+    };
+  }
+
   function localAnalysis(mode,index,question=''){
+    if(mode==='thesis-value')return thesisValueAnalysis(index);
     const query=question||MODE_QUERIES[mode]||MODE_QUERIES.summary;
     const passages=searchPassages(index,query,mode==='summary'?10:8);
     if(!passages.length){
@@ -211,6 +238,7 @@
   }
 
   function buildContexts(index,mode,question){
+    if(mode==='thesis-value')return searchPassages(index,(window.QuireStore?.getStudySetupData?.()?.researchQuestion||'study findings limitations methods implications'),10).map(p=>({context_id:p.id,page:p.page,text:p.text,rects:p.rects||[]}));
     const query=question||MODE_QUERIES[mode]||MODE_QUERIES.summary;
     return searchPassages(index,query,8).map(p=>({
       context_id:p.id,
@@ -478,6 +506,6 @@
     updateStatus();
   }
 
-  window.QuireCopilot={analyse,searchPassages,localAnalysis,setConfig,getConfig:config};
+  window.QuireCopilot={analyse,searchPassages,localAnalysis,thesisValueAnalysis,setConfig,getConfig:config};
   document.addEventListener('DOMContentLoaded',bind);
 })();
