@@ -84,6 +84,16 @@
       });
     });
 
+    (state.analysisItems||[]).filter(x=>x.projectId===projectId).forEach(item=>{
+      const section=(state.sections||[]).find(s=>s.id===item.sectionId);
+      rows.push({
+        type:'analysis',id:item.id,sectionId:item.sectionId,
+        title:item.title,
+        meta:'Analysis · '+String(item.kind||'item').replace(/_/g,' ')+(section?' · '+section.title:''),
+        text:[item.title,JSON.stringify(item.payload||{}),item.status,section?.title].join(' ')
+      });
+    });
+
     return rows;
   }
 
@@ -174,6 +184,9 @@
     }else if(row.type==='feedback'){
       if(row.sectionId)window.QuireChapterEditor?.openSection?.(row.sectionId);
       window.showView?.('supervision');
+    }else if(row.type==='analysis'){
+      window.showView?.('analysis');
+      setTimeout(()=>window.QuireAnalysis?.openModal?.(row.id),50);
     }
   }
 
@@ -261,6 +274,14 @@
         type:'feedback',id:item.id,sectionId:item.sectionId,
         title:truncate(item.comment,72),detail:'Supervisor feedback · '+(item.status||'open').replace(/_/g,' '),
         at:item.updatedAt||item.createdAt,icon:'☷',iconClass:'note'
+      });
+    });
+
+    (state.analysisItems||[]).filter(x=>x.projectId===projectId).forEach(item=>{
+      rows.push({
+        type:'analysis',id:item.id,sectionId:item.sectionId,
+        title:item.title,detail:'Analysis · '+String(item.kind||'item').replace(/_/g,' '),
+        at:item.updatedAt||item.createdAt,icon:'⌁',iconClass:'note'
       });
     });
 
