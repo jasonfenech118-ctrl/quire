@@ -7,6 +7,7 @@
   let syncTimer=null;
   let syncing=false;
   let suppressAutoSync=false;
+  const PDF_BUCKET='quire-pdfs';
 
   const tableMap=[
     ['projects','thesis_projects',projectToDb],
@@ -202,12 +203,114 @@
     if(error) throw new Error(table+': '+error.message);
   }
 
+
+  function pdfPathFor(user,article){
+    return user.id+'/'+article.projectId+'/'+article.id+'.pdf';
+  }
+
+  async function uploadPdf(articleId,user=currentUser){
+    user=user||await requireUser();
+    const article=window.QuireStore?.getArticle?.(articleId);
+    if(!article) throw new Error('Article not found.');
+    const local=await window.QuirePdfStore?.get?.(articleId);
+    if(!local?.blob) return {uploaded:false,reason:'no_local_pdf'};
+
+    const expectedPath=pdfPathFor(user,article);
+    const uploadedAt=article.citationData?.cloudPdfUploadedAt||'';
+    if(article.pdfPath===expectedPath && uploadedAt && String(uploadedAt)>=String(local.updatedAt||'')){
+      return {uploaded:false,reason:'current',path:expectedPath};
+    }
+
+    const {error}=await client.storage.from(PDF_BUCKET).upload(expectedPath,local.blob,{
+      contentType:local.type||'application/pdf',
+      upsert:true,
+      cacheControl:'3600'
+    });
+    if(error) throw new Error('PDF upload: '+error.message);
+
+    const now=new Date().toISOString();
+    window.QuireStore.updateArticle(articleId,{
+      pdfPath:expectedPath,
+      citationData:{
+        ...(article.citationData||{}),
+        cloudPdf:true,
+        cloudPdfUploadedAt:now,
+        cloudPdfSize:local.size||local.blob.size||null
+      }
+    });
+    return {uploaded:true,path:expectedPath};
+  }
+
+  async function syncLocalPdfs(user=currentUser){
+    if(!window.QuirePdfStore?.get) return {checked:0,uploaded:0};
+    user=user||await requireUser();
+    const articles=window.QuireStore?.listArticles?.()||[];
+    let checked=0,uploaded=0;
+    for(const article of articles){
+      const local=await window.QuirePdfStore.get(article.id).catch(()=>null);
+      if(!local?.blob) continue;
+      checked++;
+      const result=await uploadPdf(article.id,user);
+      if(result.uploaded)uploaded++;
+    }
+    return {checked,uploaded};
+  }
+
+  async function downloadPdfToLocal(articleId){
+    const user=await requireUser();
+    const article=window.QuireStore?.getArticle?.(articleId);
+    if(!article) throw new Error('Article not found.');
+    const path=article.pdfPath||pdfPathFor(user,article);
+    if(!path) return false;
+
+    const allowedPrefix=user.id+'/'+article.projectId+'/';
+    if(!String(path).startsWith(allowedPrefix)) throw new Error('This PDF path does not belong to the signed-in project.');
+
+    const {data,error}=await client.storage.from(PDF_BUCKET).download(path);
+    if(error){
+      if(/not found/i.test(error.message||'')) return false;
+      throw new Error('PDF download: '+error.message);
+    }
+    if(!data) return false;
+
+    const filename=article.citationData?.localFileName || (article.title||'research-paper').replace(/[\\/:*?"<>|]+/g,'_')+'.pdf';
+    const file=typeof File!=='undefined'
+      ? new File([data],filename,{type:data.type||'application/pdf'})
+      : Object.assign(data,{name:filename});
+    await window.QuirePdfStore.save(articleId,file);
+
+    window.QuireStore.updateArticle(articleId,{
+      pdfPath:path,
+      citationData:{
+        ...(article.citationData||{}),
+        localPdf:true,
+        cloudPdf:true,
+        cloudPdfDownloadedAt:new Date().toISOString()
+      }
+    });
+    return true;
+  }
+
+  async function deleteCloudPdf(articleId){
+    const user=await requireUser();
+    const article=window.QuireStore?.getArticle?.(articleId);
+    if(!article?.pdfPath) return false;
+    const allowedPrefix=user.id+'/'+article.projectId+'/';
+    if(!String(article.pdfPath).startsWith(allowedPrefix)) throw new Error('This PDF path does not belong to the signed-in project.');
+    const {error}=await client.storage.from(PDF_BUCKET).remove([article.pdfPath]);
+    if(error) throw new Error('PDF delete: '+error.message);
+    return true;
+  }
+
   async function pushAll(){
     if(syncing) return;
     const user=await requireUser();
     syncing=true;
+    const previousSuppress=suppressAutoSync;
+    suppressAutoSync=true;
     emit('syncing','Saving Quire to cloud…');
     try{
+      await syncLocalPdfs(user);
       const state=window.QuireStore.getState();
       for(const [key,table,mapper] of tableMap){
         const rows=(state[key]||[]).map(row=>mapper(row,user));
@@ -218,6 +321,7 @@
       emit('synced','Saved to cloud');
       return stamp;
     }finally{
+      suppressAutoSync=previousSuppress;
       syncing=false;
     }
   }
@@ -338,6 +442,7 @@
   window.QuireCloud={
     init,setConfig,clearConfig,getConfig:config,isConfigured,
     getClient:()=>client,getUser:()=>currentUser,getLastSync:()=>localStorage.getItem(LAST_SYNC_KEY),
-    signUp,signIn,signOut,pushAll,pullAll,queueSync
+    signUp,signIn,signOut,pushAll,pullAll,queueSync,
+    uploadPdf,syncLocalPdfs,downloadPdfToLocal,deleteCloudPdf
   };
 })();
