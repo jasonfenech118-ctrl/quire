@@ -330,6 +330,7 @@ showView = function(id){
   originalShowView(id);
   if(id === 'overview') window.QuireProgress?.renderOverview?.();
   if(id === 'dashboard') window.QuireProgress?.renderDashboard?.();
+  window.dispatchEvent(new CustomEvent('quire:view-changed',{detail:{viewId:id}}));
 };
 window.showView=showView;
 
