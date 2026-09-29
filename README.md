@@ -142,7 +142,7 @@ See `docs/reference-manager.md`.
 - Step 27 — Critical Appraisal & Quality Assessment ✅
 - Step 28 — Research Data & Analysis Workspace ✅
 - Step 29 — Submission Readiness & Integrity ✅
-- Step 30 — Unified Writing Workspace & Academic Ribbon 🟡 existing foundation under reconciliation
+- Step 30 — Unified Writing Workspace & Academic Ribbon ✅
 
 **Frontend-first rule:** Quire is currently being developed and refined locally. Do not activate or modify the external Supabase backend until the frontend workflow is reviewed and approved. Step 22 means the integration code exists; it does not mean a Supabase project is currently connected.
 
@@ -249,7 +249,7 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-Steps 1–29 have implementation in the repository. Step 22 is code-complete but external Supabase activation is deliberately deferred while Quire remains frontend-first. Step 30 already has a writing-ribbon/evidence-discovery foundation in the codebase and is currently being reconciled and refined rather than rebuilt from scratch.
+Steps 1–29 have implementation in the repository. Step 22 is code-complete but external Supabase activation is deliberately deferred while Quire remains frontend-first. Step 30 is implemented: the Word-style academic ribbon now connects writing, references, contextual library search, evidence discovery, claim review and manuscript assistance while preserving the active section and return-to-writing context.
 
 Before continuing beyond Step 30, review `docs/PROJECT_MASTER.md` and `docs/CONTINUE_HERE.md` so unfinished work is not skipped.
 
