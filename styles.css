@@ -2758,3 +2758,20 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .home-focus-grid,.home-secondary-grid{grid-template-columns:1fr}
   .home-thesis-card,.home-recent-panel{min-height:0}
 }
+
+
+/* ---------- Step 33: claim-aware writing ---------- */
+.claim-awareness-head{display:flex;justify-content:space-between;align-items:center;gap:8px}
+.claim-awareness-head>span:last-child{font-size:7px;color:var(--muted)}
+.claim-awareness-mount{display:grid;gap:6px;margin-top:7px}
+.claim-awareness-mount>small{font-size:8px;line-height:1.45;color:var(--muted)}
+.claim-awareness-row{display:grid;grid-template-columns:minmax(0,1fr) auto;gap:8px;align-items:start;padding:8px 9px;border-left:2px solid #c8c0b4;background:#faf8f4}
+.claim-awareness-row strong{font-size:8px;color:var(--ink)}
+.claim-awareness-row p{font-size:8px;line-height:1.4;margin:3px 0;color:var(--ink)}
+.claim-awareness-row small{display:block;font-size:7px;line-height:1.4;color:var(--muted)}
+.claim-awareness-row button{border:0;background:transparent;color:var(--forest);font-size:7px;font-weight:700;cursor:pointer;padding:2px}
+.claim-awareness-row.cited,.claim-awareness-row.linked{border-left-color:#718b73}
+.claim-awareness-row.candidate{border-left-color:#b28b52}
+.claim-awareness-row.missing{border-left-color:#a96858}
+.claim-awareness-row.framing,.claim-awareness-row.interpretation{border-left-color:#a8a29a;background:#f8f6f2}
+@media(max-width:600px){.claim-awareness-row{grid-template-columns:1fr}.claim-awareness-row button{text-align:left}}
