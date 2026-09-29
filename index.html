@@ -1321,8 +1321,17 @@
                 <label class="field"><span>Proposal word count</span><input id="proposalWordCount" type="number" min="0" step="250" placeholder="e.g. 2,500"></label>
                 <label class="field"><span>Programme / degree</span><input id="degreeName" type="text" placeholder="e.g. MSc Advanced Nursing"></label>
                 <label class="field"><span>Institution</span><input id="institutionName" type="text" placeholder="University or institution"></label>
-                <label class="field wide"><span>Main research question</span><textarea id="researchQuestion" rows="3" placeholder="What is the central question your thesis will answer?"></textarea></label>
+                <label class="field wide"><span>Current working research question</span><textarea id="researchQuestion" rows="3" placeholder="This can remain provisional while the literature develops."></textarea></label>
               </div>
+
+              <section class="question-evolution-panel" aria-labelledby="questionEvolutionTitle">
+                <div class="question-evolution-head">
+                  <div><span class="eyebrow">QUESTION EVOLUTION</span><h3 id="questionEvolutionTitle">Keep the reasoning behind each refinement.</h3><p>Use this when the literature genuinely changes the focus of the question—not for every wording edit.</p></div>
+                  <button class="soft-btn" id="recordQuestionRefinementBtn" type="button">＋ Record refinement</button>
+                </div>
+                <div id="questionEvolutionStatus" class="question-evolution-status"></div>
+                <div id="questionEvolutionTimeline" class="question-evolution-timeline"></div>
+              </section>
             </article>
 
             <article class="setup-card" id="deadlines">
@@ -2201,6 +2210,7 @@
   <script src="inline-references.js"></script>
   <script src="search-screening.js"></script>
   <script src="gap-search.js"></script>
+  <script src="question-evolution.js"></script>
   <script src="appraisal.js"></script>
   <script src="analysis-workspace.js"></script>
   <script src="synthesis.js"></script>
