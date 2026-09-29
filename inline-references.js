@@ -298,8 +298,13 @@
     window.addEventListener('quire:references-imported',()=>{
       if(!document.getElementById('inlineReferenceModal')?.hidden)renderLibrary();
     });
+    window.addEventListener('quire:cite-article-request',e=>{
+      const articleId=e.detail?.articleId;
+      const article=articleId?window.QuireStore?.getArticle?.(articleId):null;
+      if(article) insertCitation(article);
+    });
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireInlineReferences={open,close,insertCitation,syncSection,refreshInsertedCitations};
+  window.QuireInlineReferences={open,close,insertCitation,syncSection,refreshInsertedCitations,captureSelection:saveSelection};
 })();
