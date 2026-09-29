@@ -39,6 +39,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 37: Critical Writing Coach — implemented.
 - Step 38: Selected-Passage Reading Assistant — implemented.
 - Step 39: Provenance-Aware Research Memory Search — implemented.
+- Step 40: Persistent Ideas & Provenance — implemented.
 
 ## Step 32 — implemented
 
@@ -115,7 +116,11 @@ Selected PDF text now exposes an **Explain** action. The reader keeps the exact 
 
 Global search now acts as lightweight research memory: question scaffolding is ignored, concept coverage is ranked without requiring every query word to match, and results retain visible provenance across papers, source highlights, research notes, thesis text/structure, supervisor feedback and analysis memos.
 
-## Agreed future feature backlog — after Step 39
+## Step 40 — implemented
+
+The Ideas workspace is no longer only static prototype content. Ideas are persisted through the existing local analysis-item store, move through Inbox → Developing themes → Ready for thesis, and carry explicit origin metadata (researcher, source-derived, supervisor, analysis or brainstorming) plus source/page identifiers where available. Ready ideas hand off naturally into thesis writing.
+
+## Agreed future feature backlog — after Step 40
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
