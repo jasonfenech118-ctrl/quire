@@ -26,6 +26,7 @@
         <button class="nav-item" data-view="projects"><span>▦</span> My Research <b id="projectCount" class="nav-count">1</b></button>
         <button class="nav-item" data-view="overview"><span>◈</span> Thesis Overview</button>
         <button class="nav-item" data-view="library"><span>▤</span> Research Library</button>
+        <button class="nav-item" data-view="synthesis"><span>≋</span> Synthesis</button>
         <button class="nav-item" data-view="reader"><span>◫</span> Article Reader</button>
         <button class="nav-item" data-view="map"><span>⌘</span> Thesis Map</button>
         <button class="nav-item" data-view="chapters"><span>¶</span> Chapters</button>
@@ -393,6 +394,25 @@
               </div>
               <button class="soft-btn small">Summarise with AI</button>
             </article>
+          </div>
+        </div>
+      </section>
+
+
+      <section id="synthesis" class="view">
+        <div class="page-heading compact">
+          <div><span class="eyebrow">RESEARCH SYNTHESIS</span><h1>Compare papers without losing the source.</h1><p>Build an evidence matrix from article metadata, highlights and your own interpretation.</p></div>
+          <button class="soft-btn" id="refreshSynthesisBtn" type="button">Refresh matrix</button>
+        </div>
+        <div class="synthesis-layout">
+          <aside class="synthesis-picker-panel">
+            <span class="eyebrow">PAPERS TO COMPARE</span>
+            <div id="synthesisArticlePicker" class="synthesis-article-picker"></div>
+          </aside>
+          <div class="synthesis-main">
+            <div class="synthesis-table-wrap"><table id="synthesisMatrix" class="synthesis-matrix"></table></div>
+            <div class="section-title compact-title"><div><span class="eyebrow">SYNTHESIS SIGNALS</span><h2>What to examine next</h2></div></div>
+            <div id="synthesisInsights" class="synthesis-insights"></div>
           </div>
         </div>
       </section>
@@ -1190,6 +1210,7 @@
   <script src="copilot.js"></script>
   <script src="references.js"></script>
   <script src="citations.js"></script>
+  <script src="synthesis.js"></script>
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
   <script src="app.js"></script>
