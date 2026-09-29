@@ -622,6 +622,42 @@
     return clone(state.evidenceLinks.filter(e=>!highlightId || e.highlightId===highlightId));
   }
 
+
+  function getOrCreateArticleThread(articleId, mode='article'){
+    const state=getState();
+    const article=state.articles.find(a=>a.id===articleId);
+    if(!article) throw new Error('Article not found.');
+    let thread=state.aiThreads.find(t=>t.articleId===articleId && t.mode===mode);
+    if(!thread){
+      const ts=nowIso();
+      thread={
+        id:uid('thread'),projectId:article.projectId,articleId,sectionId:null,
+        mode,title:'Copilot · '+article.title,createdAt:ts,updatedAt:ts
+      };
+      state.aiThreads.push(thread);
+      writeState(state);
+    }
+    return clone(thread);
+  }
+
+  function addAiMessage(threadId,role,content,sourceRefs=[]){
+    const state=getState();
+    const thread=state.aiThreads.find(t=>t.id===threadId);
+    if(!thread) throw new Error('AI thread not found.');
+    const ts=nowIso();
+    const row={id:uid('message'),threadId,role,content,sourceRefs:Array.isArray(sourceRefs)?sourceRefs:[],createdAt:ts};
+    state.aiMessages.push(row);
+    thread.updatedAt=ts;
+    writeState(state);
+    return clone(row);
+  }
+
+  function listAiMessages(threadId){
+    const state=getState();
+    return clone(state.aiMessages.filter(m=>m.threadId===threadId)
+      .sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||'')));
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -675,6 +711,9 @@
     listChapters,
     addEvidenceLink,
     listEvidenceLinks,
+    getOrCreateArticleThread,
+    addAiMessage,
+    listAiMessages,
     getProjectBundle
   };
 
