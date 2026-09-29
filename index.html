@@ -608,21 +608,20 @@
 
       <section id="review" class="view">
         <div class="page-heading compact">
-          <div><span class="eyebrow">WRITING REVIEW</span><h1>Polish without losing your voice.</h1><p>Review grammar, clarity, academic tone, structure and evidence — suggestion by suggestion.</p></div>
-          <button class="primary-btn">Review chapter</button>
+          <div><span class="eyebrow">WRITING REVIEW</span><h1>Polish without losing your voice.</h1><p>Review clarity, academic tone, structure, repetition and evidence — suggestion by suggestion.</p></div>
+          <div class="review-heading-actions">
+            <select id="reviewSectionSelect" aria-label="Section to review"></select>
+            <button class="primary-btn" id="runWritingReview" type="button">Review section</button>
+          </div>
         </div>
         <div class="review-layout">
           <div class="review-doc">
-            <div class="review-doc-head"><strong>2.2 Patient education</strong><span>3 suggestions</span></div>
-            <p>Education is a central component of adjustment following stoma formation. Patients are expected to acquire practical skills while simultaneously adapting to significant physical and psychological change.</p>
-            <p>Recent literature <span class="issue clarity">shows that</span> education is most effective when it is repeated, practical and responsive to the person's changing needs.</p>
-            <p><span class="issue evidence">This clearly improves outcomes for all patients.</span> Follow-up teaching may therefore be an important component of continuity of care.</p>
+            <div class="review-doc-head"><strong id="reviewDocumentTitle">Section</strong><span id="writingSuggestionCount">0 suggestions</span></div>
+            <div id="reviewDocument" class="review-document-live"></div>
           </div>
           <aside class="review-sidebar">
-            <div class="review-tabs"><button class="active">Suggestions</button><button>Structure</button></div>
-            <article class="suggestion-card"><span class="suggestion-type">CLARITY</span><p><strong>“shows that”</strong> may sound overly definitive for the evidence described.</p><div class="replacement">Consider: “suggests that”</div><div class="suggestion-actions"><button>Accept</button><button>Dismiss</button></div></article>
-            <article class="suggestion-card"><span class="suggestion-type warning">EVIDENCE</span><p>The statement <strong>“improves outcomes for all patients”</strong> is broader than the evidence currently linked to this section.</p><div class="replacement">Narrow the claim or add supporting evidence.</div><div class="suggestion-actions"><button>Find evidence</button><button>Dismiss</button></div></article>
-            <article class="suggestion-card"><span class="suggestion-type">STRUCTURE</span><p>Consider introducing the concept of staged education before discussing follow-up teaching.</p><div class="suggestion-actions"><button>Show outline</button><button>Dismiss</button></div></article>
+            <div class="review-tabs"><button class="active">Suggestions</button><button disabled>History</button></div>
+            <div id="writingSuggestions" class="writing-suggestions"></div>
           </aside>
         </div>
       </section>
@@ -1188,6 +1187,7 @@
   <script src="copilot.js"></script>
   <script src="references.js"></script>
   <script src="citations.js"></script>
+  <script src="writing-review.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
