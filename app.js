@@ -770,9 +770,9 @@ async function renderLibraryArticles(){
         '<div class="article-main">'+
           '<div class="pdf-thumb">PDF</div>'+
           '<div>'+
-            '<div class="tags"><span>'+escapeHtml(articleYearLabel(article))+'</span><span>'+escapeHtml(reviewed)+'</span></div>'+
+            '<div class="tags"><span>'+escapeHtml(articleYearLabel(article))+'</span><span>'+escapeHtml(reviewed)+'</span>'+(article.doi?'<span>DOI</span>':'')+'</div>'+
             '<h3>'+escapeHtml(article.title || 'Untitled article')+'</h3>'+
-            '<p>'+escapeHtml(meta)+'</p>'+
+            '<p>'+escapeHtml(meta)+(article.doi?' · DOI '+escapeHtml(article.doi):'')+'</p>'+
             '<div class="meta-row"><span>'+escapeHtml(pageText)+'</span><span>◫ '+highlightTotal+' highlights</span><span>▱ '+noteTotal+' notes</span><span data-pdf-status="'+escapeHtml(article.id)+'">Checking PDF…</span></div>'+
           '</div>'+
         '</div>'+
