@@ -43,6 +43,7 @@
     if(rel==='critiques')return 'critiques';
     if(rel==='contextualises')return 'contextualises';
     if(rel==='method')return 'method';
+    if(rel==='cites')return 'cites';
     return 'supports';
   }
 
