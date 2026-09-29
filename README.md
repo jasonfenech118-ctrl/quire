@@ -143,6 +143,8 @@ See `docs/reference-manager.md`.
 - Step 28 — Research Data & Analysis Workspace ✅
 - Step 29 — Submission Readiness & Integrity ✅
 - Step 30 — Unified Writing Workspace & Academic Ribbon ✅
+- Step 31 — Guided Five-Destination Product Framework ✅
+- Step 32 — Writing Understanding, Language Coach & Guided Research Flow ✅
 
 **Frontend-first rule:** Quire is currently being developed and refined locally. Do not activate or modify the external Supabase backend until the frontend workflow is reviewed and approved. Step 22 means the integration code exists; it does not mean a Supabase project is currently connected.
 
@@ -249,8 +251,8 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-Steps 1–29 have implementation in the repository. Step 22 is code-complete but external Supabase activation is deliberately deferred while Quire remains frontend-first. Step 30 is implemented: the Word-style academic ribbon now connects writing, references, contextual library search, evidence discovery, claim review and manuscript assistance while preserving the active section and return-to-writing context.
+Steps 1–32 have implementation in the repository. Step 22 is code-complete but external Supabase activation is deliberately deferred while Quire remains frontend-first. Step 30 introduced the unified academic writing ribbon; Step 31 simplified primary navigation; Step 32 added the optional Writing Companion and consolidated the working journey around Discover → Understand → Organise → Write → Review with contextual next-step handoffs.
 
-Before continuing beyond Step 30, review `docs/PROJECT_MASTER.md` and `docs/CONTINUE_HERE.md` so unfinished work is not skipped.
+Before starting the next numbered milestone, review `docs/PROJECT_MASTER.md` and `docs/CONTINUE_HERE.md` so the agreed future feature backlog is implemented in dependency order rather than as disconnected tools.
 
 © Quire prototype.
