@@ -132,11 +132,9 @@ See `docs/reference-manager.md`.
 - Step 21 — Thesis Export ✅
 - Step 22 — Real Cloud Backend — code complete, activation pending
 - Step 23 — Final Product Polish ✅
-- Step 24 — Literature Search & Screening ✅
-- Step 25 — Critical Appraisal & Quality Assessment ✅
-- Step 26 — Research Data & Analysis Workspace ✅
 - Step 24 — Guided Project Launch ✅
 - Step 25 — Data Integrity & Migration Hardening ✅
+- Step 26 — Literature Search & Screening ✅
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -206,6 +204,12 @@ Quire now version-controls its local data shape, migrates older workspaces forwa
 
 See `docs/data-integrity.md`.
 
+### Step 26 — Literature Search & Screening
+
+Quire now supports reproducible PICO/PCC/SPIDER/custom search planning, Boolean query construction, database search-run logging and two-stage title/abstract + full-text screening with live flow counts.
+
+See `docs/search-screening.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -215,6 +219,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–25 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 26 — Literature Search & Screening Workflow**.
+The original eight foundation steps and Phase 2 Steps 9–26 are implemented. Step 22 is code-complete but still requires an external Supabase project for activation. The next local build step is **Step 27 — Critical Appraisal & Quality Assessment**.
 
 © Quire prototype.
