@@ -325,12 +325,38 @@
     renderVersions();render();
   }
 
+  function buildReviewPackage(){
+    const state=window.QuireStore.getState();
+    const projectId=window.QuireStore.getActiveProjectId();
+    const project=state.projects.find(p=>p.id===projectId)||{};
+    const latest=(state.reviewRounds||[]).filter(r=>r.projectId===projectId).sort((a,b)=>String(b.submittedAt||b.createdAt||'').localeCompare(String(a.submittedAt||a.createdAt||'')))[0]||null;
+    const since=latest?.submittedAt||latest?.createdAt||'';
+    const secs=(state.sections||[]).filter(s=>s.projectId===projectId);
+    const changed=secs.filter(s=>!since||String(s.updatedAt||'')>String(since));
+    const feedback=(state.feedbackItems||[]).filter(x=>x.projectId===projectId);
+    const unresolved=feedback.filter(x=>x.status!=='resolved');
+    const weak=secs.filter(sec=>!(state.evidenceLinks||[]).some(e=>e.sectionId===sec.id));
+    const mount=document.getElementById('supervisorReviewPackage');if(!mount)return;
+    mount.hidden=false;
+    mount.innerHTML='<div class="review-package-head"><div><span class="eyebrow">REVIEW PACKAGE</span><h3>'+escapeHtml(project.title||'Thesis review')+'</h3></div><button type="button" id="downloadReviewPackageBtn">Download summary</button></div>'+
+      '<div class="review-package-grid">'+
+      '<section><strong>Changes since '+escapeHtml(latest?pretty(since):'project start')+'</strong>'+(changed.length?'<ul>'+changed.slice(0,12).map(s=>'<li>'+escapeHtml(s.title)+' · '+Number(s.currentWordCount||0)+' words</li>').join('')+'</ul>':'<p>No later section updates recorded.</p>')+'</section>'+
+      '<section><strong>Unresolved questions / feedback</strong>'+(unresolved.length?'<ul>'+unresolved.slice(0,12).map(x=>'<li>'+escapeHtml(shorten(x.comment||'Feedback item',130))+' · '+escapeHtml(String(x.status||'open').replace(/_/g,' '))+'</li>').join('')+'</ul>':'<p>No unresolved supervisor feedback recorded.</p>')+'</section>'+
+      '<section><strong>Evidence areas to discuss</strong>'+(weak.length?'<ul>'+weak.slice(0,12).map(s=>'<li>'+escapeHtml(s.title)+' · no section evidence link recorded</li>').join('')+'</ul>':'<p>Every current section has at least one evidence link recorded.</p>')+'</section>'+
+      '<section><strong>Revision actions</strong>'+(unresolved.length?'<ul>'+unresolved.slice(0,12).map(x=>'<li>'+escapeHtml(shorten(x.comment||'Review feedback',130))+'</li>').join('')+'</ul>':'<p>No active revision actions recorded.</p>')+'</section></div>'+
+      '<small>Quire assembles recorded changes and gaps. This package does not decide academic quality or supervisor priorities.</small>';
+    document.getElementById('downloadReviewPackageBtn')?.addEventListener('click',()=>{
+      const text=mount.innerText;const blob=new Blob([text],{type:'text/plain'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='quire-supervisor-review-package.txt';a.click();setTimeout(()=>URL.revokeObjectURL(url),500);
+    });
+  }
+
   function render(){
     renderStats();renderRounds();renderFeedback();renderSectionFeedbackBadge();
   }
 
   function bind(){
     document.getElementById('newReviewRoundBtn')?.addEventListener('click',openRoundModal);
+    document.getElementById('buildReviewPackageBtn')?.addEventListener('click',buildReviewPackage);
     document.getElementById('addSupervisorFeedbackBtn')?.addEventListener('click',()=>openFeedbackModal());
     document.getElementById('openSectionFeedbackBtn')?.addEventListener('mousedown',()=>{selectedTextBuffer=currentSelectedText();});
     document.getElementById('openSectionFeedbackBtn')?.addEventListener('click',openFeedbackForCurrentSection);
@@ -368,5 +394,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireSupervision={render,openFeedbackForCurrentSection,openVersions};
+  window.QuireSupervision={render,openFeedbackForCurrentSection,openVersions,buildReviewPackage};
 })();
