@@ -823,6 +823,14 @@
       hideSelectionToolbar();clearNativeSelection();
       window.dispatchEvent(new CustomEvent('quire:explain-passage',{detail}));
     });
+    document.getElementById('selectionToIdeaBtn')?.addEventListener('mousedown',e=>e.preventDefault());
+    document.getElementById('selectionToIdeaBtn')?.addEventListener('click',()=>{
+      if(!pendingSelection)return;
+      const article=window.QuireStore.getArticle(pendingSelection.articleId);
+      const detail={origin:'source',sourceId:null,sourcePage:pendingSelection.pageNumber,sourceExcerpt:pendingSelection.highlightedText,sourceLabel:(article?.title||'Source')+' · p. '+pendingSelection.pageNumber};
+      hideSelectionToolbar();clearNativeSelection();
+      window.dispatchEvent(new CustomEvent('quire:idea-capture-request',{detail}));
+    });
     document.getElementById('pagesTab')?.addEventListener('click',()=>switchReaderSide('pages'));
     document.getElementById('highlightsTab')?.addEventListener('click',()=>switchReaderSide('highlights'));
 
