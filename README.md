@@ -13,6 +13,7 @@ Quire currently includes:
 - Real PDF reading workspace
 - Persistent highlights, notes and thesis evidence links
 - DOI / scholarly metadata import
+- BibTeX / RIS reference-manager import and export
 - Grounded article Copilot with real PDF text retrieval
 - Thesis map
 - Chapter planner and editor
@@ -103,6 +104,14 @@ The PDF text index now preserves source geometry, and the secure AI endpoint con
 
 See `docs/claim-level-citations.md`.
 
+## Step 8 — Reference-manager interoperability ✅
+
+The active thesis library can now import BibTeX and RIS files and export the complete bibliography back to either format. This provides a portable workflow with Zotero, Mendeley, EndNote and other tools that support these standards.
+
+Quire detects duplicates by DOI or normalised title, merges bibliographic metadata without disturbing PDFs or research annotations, and processes large imports in a single project-store update.
+
+See `docs/reference-manager.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -110,8 +119,8 @@ See `docs/claim-level-citations.md`.
 
 For reliable authentication redirects and later PDF features, serving the app over HTTPS or a local development server is preferable to opening it through a `file://` URL.
 
-## Next build stage
+## Original build sequence
 
-1. Reference-manager integration
+All eight planned foundation steps are now implemented. A logical next phase is to turn these foundations into deeper research workflows such as direct reference-manager sync, bibliography/citation-style formatting, multi-project management, automated thesis-structure generation, and more complete AI writing review.
 
 © Quire prototype.
