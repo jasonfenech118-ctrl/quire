@@ -144,47 +144,20 @@
 
         <div id="sessionCheckpointCard" class="session-checkpoint-card" hidden></div>
 
-        <section id="researchFoundationGuide" class="research-foundation-guide" hidden aria-labelledby="researchFoundationTitle">
-          <div class="foundation-head">
-            <div>
-              <span class="eyebrow">START WITH THE LITERATURE</span>
-              <h2 id="researchFoundationTitle">Build the evidence base before you build the argument.</h2>
-              <p id="researchFoundationIntro">Begin with the area you want to explore. Read broadly, compare studies and let the gap in knowledge emerge from the literature rather than forcing a final question too early.</p>
-            </div>
-            <div class="foundation-status" aria-live="polite">
-              <strong id="foundationStatusTitle">Research foundation</strong>
-              <small id="foundationStatusMeta">No papers collected yet</small>
-            </div>
+        <section id="thesisSetupGuide" class="thesis-setup-guide" aria-labelledby="thesisSetupGuideTitle">
+          <div class="thesis-setup-copy">
+            <span class="eyebrow">STEP 1 · THESIS SETUP</span>
+            <h2 id="thesisSetupGuideTitle">Set the foundations of your thesis first.</h2>
+            <p>Quire will guide you one decision at a time. You do not need to know every answer yet—working decisions can be refined as your research develops.</p>
           </div>
-
-          <div class="foundation-path" aria-label="Early research journey">
-            <div data-foundation-stage="define"><span>1</span><strong>Define the area</strong><small>Start with a broad interest or working topic.</small></div>
-            <div data-foundation-stage="collect"><span>2</span><strong>Search & collect</strong><small>Build a broad literature base before narrowing.</small></div>
-            <div data-foundation-stage="read"><span>3</span><strong>Read & compare</strong><small>Capture findings, methods, limitations and disagreements.</small></div>
-            <div data-foundation-stage="gap"><span>4</span><strong>Explore the gap</strong><small>Look for what is missing, uncertain or under-researched.</small></div>
-            <div data-foundation-stage="refine"><span>5</span><strong>Refine the question</strong><small>Shape the question around what the literature actually shows.</small></div>
+          <div class="thesis-setup-status">
+            <div class="thesis-setup-progress"><span id="thesisSetupGuideBar"></span></div>
+            <strong id="thesisSetupGuideStatus">Thesis setup not completed</strong>
+            <small id="thesisSetupGuideMeta">Start with your current stage and research area.</small>
           </div>
-
-          <div id="foundationSignals" class="foundation-signals" aria-label="Research foundation signals"></div>
-
-          <details class="foundation-review-breakdown">
-            <summary>How research review progress is calculated</summary>
-            <div id="foundationReviewBreakdown" class="foundation-review-breakdown-grid"></div>
-            <p>This score measures the review process recorded in Quire. It never means that you have read a particular percentage of all research that exists on the topic.</p>
-          </details>
-
-          <div class="foundation-gap-note">
-            <div>
-              <span class="eyebrow">LIVING GAP EXPLORER</span>
-              <strong id="foundationGapTitle">No gap claimed yet</strong>
-              <small id="foundationGapCopy">Quire will collect possible gap signals as you read. A possible gap is something to test with further searching—not something Quire will invent for you.</small>
-            </div>
-            <button class="soft-btn" id="foundationGapAction" type="button">Record a possible gap</button>
-          </div>
-
-          <div class="foundation-actions">
-            <button class="primary-btn" id="foundationPrimaryAction" type="button">Define my research area</button>
-            <button class="soft-btn" id="foundationResearchAction" type="button">Open Research</button>
+          <div class="thesis-setup-actions">
+            <button class="primary-btn" id="openThesisSetupGuideBtn" type="button">Start guided setup →</button>
+            <button class="soft-btn" data-go="setup" type="button">View all parameters</button>
           </div>
         </section>
 
@@ -1874,115 +1847,89 @@
 
 
   <div id="guidedLaunchModal" class="modal-backdrop" hidden>
-    <div class="modal guided-launch-modal">
+    <div class="modal guided-launch-modal thesis-wizard-modal">
       <div class="modal-head">
-        <div>
-          <span class="eyebrow">GUIDED PROJECT LAUNCH</span>
-          <h2>Start with the area you want to explore</h2>
-        </div>
+        <div><span class="eyebrow">GUIDED THESIS SETUP</span><h2>Build your thesis blueprint</h2></div>
         <button id="closeGuidedLaunchModal" type="button">×</button>
       </div>
-
       <div class="launch-stepper">
-        <span id="launchStepLabel">Step 1 of 5</span>
-        <div>
-          <i class="active" data-launch-dot="1">1</i>
-          <i data-launch-dot="2">2</i>
-          <i data-launch-dot="3">3</i>
-          <i data-launch-dot="4">4</i>
-          <i data-launch-dot="5">5</i>
-        </div>
+        <span id="launchStepLabel">Step 1 of 6</span>
+        <div><i class="active" data-launch-dot="1">1</i><i data-launch-dot="2">2</i><i data-launch-dot="3">3</i><i data-launch-dot="4">4</i><i data-launch-dot="5">5</i><i data-launch-dot="6">6</i></div>
       </div>
-
       <section class="launch-step" data-launch-step="1">
-        <span class="eyebrow">RESEARCH AREA</span>
-        <h3>What area are you interested in exploring?</h3>
-        <p>You do not need a final thesis title or confirmed gap yet. Start broad enough to let the literature teach you what is already known.</p>
-        <div class="form-grid">
-          <label class="field wide"><span>Research area or working topic *</span><input id="launchTitle" type="text" placeholder="e.g. Patient education and self-management after stoma formation"></label>
-          <label class="field"><span>Degree / programme</span><input id="launchDegree" type="text" placeholder="MSc, PhD, dissertation…"></label>
-          <label class="field"><span>Institution</span><input id="launchInstitution" type="text" placeholder="University or institution"></label>
-          <label class="field wide"><span>Supervisor</span><input id="launchSupervisor" type="text" placeholder="Supervisor / advisor name"></label>
+        <span class="eyebrow">WHERE ARE YOU NOW?</span><h3>What stage are you at?</h3>
+        <p>This lets Quire guide you without pretending that decisions are final before you are ready.</p>
+        <div class="launch-study-types thesis-stage-options">
+          <label><input type="radio" name="launchStage" value="topic" checked><span><strong>I only have a general topic</strong><small>Start broad and explore the field.</small></span></label>
+          <label><input type="radio" name="launchStage" value="idea"><span><strong>I have an idea but no research question yet</strong><small>Help me turn the idea into a working direction.</small></span></label>
+          <label><input type="radio" name="launchStage" value="question"><span><strong>I already have a research question</strong><small>Record it as working or confirmed.</small></span></label>
+          <label><input type="radio" name="launchStage" value="approved"><span><strong>My proposal has been approved</strong><small>Capture the agreed parameters.</small></span></label>
+          <label><input type="radio" name="launchStage" value="started"><span><strong>I have already started my research</strong><small>Set up Quire around the work already underway.</small></span></label>
         </div>
       </section>
-
       <section class="launch-step" data-launch-step="2" hidden>
-        <span class="eyebrow">EARLY DIRECTION</span>
-        <h3>What are you curious about right now?</h3>
-        <p>This is deliberately provisional. Your question and objectives can change as you read, compare studies and discover what is missing.</p>
-        <label class="field wide"><span>Current question, curiosity or problem (optional)</span><textarea id="launchQuestion" rows="4" placeholder="What are you currently trying to understand? It is fine if this changes later."></textarea></label>
-        <div class="launch-objectives">
-          <label class="field"><span>Early objective / line of enquiry 1</span><input id="launchObjective1" type="text" placeholder="Optional — this can evolve"></label>
-          <label class="field"><span>Early objective / line of enquiry 2</span><input id="launchObjective2" type="text" placeholder="Optional"></label>
-          <label class="field"><span>Early objective / line of enquiry 3</span><input id="launchObjective3" type="text" placeholder="Optional"></label>
-        </div>
-      </section>
-
-      <section class="launch-step" data-launch-step="3" hidden>
-        <span class="eyebrow">STUDY DESIGN</span>
-        <h3>What kind of research project is this?</h3>
-        <p>Quire uses this choice to adapt Methodology, analysis planning and later prompts. Choose “Not decided yet” if the design is still evolving.</p>
-        <div class="launch-study-types">
-          <label><input type="radio" name="launchStudyType" value=""><span><strong>Not decided yet</strong><small>Keep the workspace flexible for now</small></span></label>
-          <label><input type="radio" name="launchStudyType" value="qualitative"><span><strong>Qualitative</strong><small>Interviews, focus groups, observations, qualitative data</small></span></label>
-          <label><input type="radio" name="launchStudyType" value="quantitative"><span><strong>Quantitative</strong><small>Measurements, surveys, statistical analysis</small></span></label>
-          <label><input type="radio" name="launchStudyType" value="mixed"><span><strong>Mixed methods</strong><small>Integrated qualitative and quantitative strands</small></span></label>
-          <label><input type="radio" name="launchStudyType" value="meta"><span><strong>Systematic review / meta-analysis</strong><small>Search, screening, appraisal and evidence synthesis</small></span></label>
-        </div>
-        <div class="form-grid launch-context-grid">
-          <label class="field"><span>Population / participants</span><input id="launchPopulation" type="text" placeholder="Who or what is being studied?"></label>
-          <label class="field"><span>Setting / context</span><input id="launchSetting" type="text" placeholder="Clinical, community, database, service…"></label>
-        </div>
-      </section>
-
-      <section class="launch-step" data-launch-step="4" hidden>
-        <span class="eyebrow">TARGETS & TIMELINE</span>
-        <h3>Give Quire enough information to plan with you.</h3>
-        <p>Word targets and dates feed Progress Intelligence, milestones and the completion forecast.</p>
+        <span class="eyebrow">RESEARCH AREA</span><h3>What are you interested in researching?</h3>
+        <p>Describe it naturally. A working title is enough; Quire should not force a final research gap at this stage.</p>
         <div class="form-grid">
-          <label class="field"><span>Thesis word target</span><input id="launchWordTarget" type="number" min="0" step="500" value="20000"></label>
-          <label class="field"><span>Proposal deadline</span><input id="launchProposalDeadline" type="date"></label>
-          <label class="field wide"><span>Final submission deadline</span><input id="launchFinalDeadline" type="date"></label>
+          <label class="field wide"><span>Research area / working title *</span><input id="launchTitle" type="text" placeholder="e.g. Patient education and self-management after stoma formation"></label>
+          <label class="field wide"><span>What problem or issue interests you?</span><textarea id="launchProblem" rows="3" placeholder="Describe the problem in your own words."></textarea></label>
+          <label class="field"><span>Population / participants</span><input id="launchPopulation" type="text" placeholder="Who or what is involved?"></label>
+          <label class="field"><span>Setting / context</span><input id="launchSetting" type="text" placeholder="Where or in what context?"></label>
         </div>
       </section>
-
+      <section class="launch-step" data-launch-step="3" hidden>
+        <span class="eyebrow">WORKING DIRECTION</span><h3>What do you want to understand?</h3>
+        <p>These can remain provisional while you read the literature. Quire will not treat a working question as a proven research gap.</p>
+        <label class="field wide"><span>Working research question</span><textarea id="launchQuestion" rows="3" placeholder="Leave blank if you are not ready to define it."></textarea></label>
+        <label class="field wide"><span>Working aim</span><input id="launchAim" type="text" placeholder="What is the overall purpose of the thesis?"></label>
+        <div class="launch-objectives">
+          <label class="field"><span>Working objective 1</span><input id="launchObjective1" type="text"></label>
+          <label class="field"><span>Working objective 2</span><input id="launchObjective2" type="text"></label>
+          <label class="field"><span>Working objective 3</span><input id="launchObjective3" type="text"></label>
+        </div>
+      </section>
+      <section class="launch-step" data-launch-step="4" hidden>
+        <span class="eyebrow">STUDY APPROACH</span><h3>What kind of thesis is this?</h3>
+        <p>Choose “Not decided yet” if your design still depends on what you discover.</p>
+        <div class="launch-study-types">
+          <label><input type="radio" name="launchStudyType" value="" checked><span><strong>Not decided yet</strong><small>Keep the workspace flexible.</small></span></label>
+          <label><input type="radio" name="launchStudyType" value="qualitative"><span><strong>Qualitative</strong><small>Interviews, focus groups, observations or qualitative data.</small></span></label>
+          <label><input type="radio" name="launchStudyType" value="quantitative"><span><strong>Quantitative</strong><small>Measurements, surveys or statistical analysis.</small></span></label>
+          <label><input type="radio" name="launchStudyType" value="mixed"><span><strong>Mixed methods</strong><small>Qualitative and quantitative strands.</small></span></label>
+          <label><input type="radio" name="launchStudyType" value="meta"><span><strong>Systematic review / meta-analysis</strong><small>Search, screening, appraisal and evidence synthesis.</small></span></label>
+        </div>
+      </section>
       <section class="launch-step" data-launch-step="5" hidden>
-        <span class="eyebrow">INITIAL STRUCTURE</span>
-        <h3>Choose the starting chapter framework.</h3>
-        <p>This is a scaffold, not a locked template. Chapters can be renamed, added or reordered later.</p>
-
-        <div class="launch-template-cards">
-          <label><input type="radio" name="launchTemplate" value="empirical" checked><span><strong>Empirical thesis</strong><small>Introduction → Literature Review → Methodology → Results → Discussion → Conclusion</small></span></label>
-          <label><input type="radio" name="launchTemplate" value="review"><span><strong>Evidence synthesis</strong><small>Includes Review Methods and Evidence Synthesis chapters</small></span></label>
-          <label><input type="radio" name="launchTemplate" value="compact"><span><strong>Compact structure</strong><small>A simpler five-chapter starting point</small></span></label>
-        </div>
-
-        <div class="launch-final-grid">
-          <div>
-            <span class="eyebrow">CHAPTER PREVIEW</span>
-            <div id="launchStructurePreview" class="launch-structure-preview"></div>
-          </div>
-          <aside class="launch-summary-card">
-            <span class="eyebrow">PROJECT SUMMARY</span>
-            <strong id="launchSummaryTitle">Untitled thesis</strong>
-            <p id="launchSummaryQuestion">Research question not yet defined</p>
-            <div><span>Design</span><b id="launchSummaryType">Not decided yet</b></div>
-            <div><span>Objectives</span><b id="launchSummaryObjectives">0 objectives entered</b></div>
-            <div><span>Timeline</span><b id="launchSummaryTimeline">20,000 word target</b></div>
-            <div><span>Structure</span><b id="launchSummaryStructure">6 chapter structure</b></div>
-          </aside>
+        <span class="eyebrow">UNIVERSITY REQUIREMENTS</span><h3>What rules does your thesis need to follow?</h3>
+        <p>These parameters become Quire's working rules for planning, writing and final checks.</p>
+        <div class="form-grid">
+          <label class="field"><span>Degree / programme</span><input id="launchDegree" type="text"></label>
+          <label class="field"><span>Institution</span><input id="launchInstitution" type="text"></label>
+          <label class="field"><span>Supervisor</span><input id="launchSupervisor" type="text"></label>
+          <label class="field"><span>Referencing style</span><select id="launchReferenceStyle"><option value="">Not decided / not entered</option><option>Harvard</option><option>APA 7th</option><option>Vancouver</option><option>Chicago</option><option>Other</option></select></label>
+          <label class="field"><span>Thesis word target</span><input id="launchWordTarget" type="number" min="0" step="500" placeholder="e.g. 20000"></label>
+          <label class="field"><span>Final submission deadline</span><input id="launchFinalDeadline" type="date"></label>
+          <label class="field wide"><span>Other university requirements</span><textarea id="launchRequirements" rows="3" placeholder="Formatting rules, abstract limit, mandatory chapters, ethics/proposal requirements…"></textarea></label>
+          <input id="launchProposalDeadline" type="hidden">
         </div>
       </section>
-
-      <small id="launchMessage" class="launch-message"></small>
-      <div class="launch-actions">
-        <button class="text-btn" id="cancelGuidedLaunch" type="button">Cancel</button>
-        <div>
-          <button class="soft-btn" id="launchBackBtn" type="button" hidden>← Back</button>
-          <button class="primary-btn" id="launchNextBtn" type="button">Continue →</button>
-          <button class="primary-btn" id="finishLaunchBtn" type="button" hidden>Create thesis workspace</button>
+      <section class="launch-step" data-launch-step="6" hidden>
+        <span class="eyebrow">YOUR THESIS BLUEPRINT</span><h3>Here is what Quire knows so far.</h3>
+        <p>Nothing here is locked. Working decisions can be refined as your understanding develops.</p>
+        <div class="launch-final-grid">
+          <div class="launch-blueprint">
+            <div><span>Topic</span><strong id="launchSummaryTitle">Not defined</strong></div>
+            <div><span>Question</span><strong id="launchSummaryQuestion">Not decided yet</strong></div>
+            <div><span>Design</span><strong id="launchSummaryType">Not decided yet</strong></div>
+            <div><span>Objectives</span><strong id="launchSummaryObjectives">0 working objectives</strong></div>
+            <div><span>Requirements</span><strong id="launchSummaryTimeline">Still being defined</strong></div>
+          </div>
+          <aside class="launch-summary-card"><span class="eyebrow">NEXT SENSIBLE STEP</span><strong id="launchNextStep">Begin exploring the literature</strong><p>Quire will use this blueprint to guide the research workflow without treating provisional decisions as final.</p><b id="launchSummaryStructure" hidden></b><div id="launchStructurePreview" hidden></div></aside>
         </div>
-      </div>
+        <input type="radio" name="launchTemplate" value="empirical" checked hidden>
+      </section>
+      <small id="launchMessage" class="launch-message"></small>
+      <div class="launch-actions"><button class="text-btn" id="cancelGuidedLaunch" type="button">Cancel</button><div><button class="soft-btn" id="launchBackBtn" type="button" hidden>← Back</button><button class="primary-btn" id="launchNextBtn" type="button">Continue →</button><button class="primary-btn" id="finishLaunchBtn" type="button" hidden>Save thesis blueprint</button></div></div>
     </div>
   </div>
 
