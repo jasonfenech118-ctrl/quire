@@ -30,6 +30,7 @@
     ['searchRuns','literature_search_runs',searchRunToDb],
     ['screeningRecords','screening_records',screeningToDb],
     ['appraisals','critical_appraisals',appraisalToDb],
+    ['analysisItems','analysis_items',analysisItemToDb],
     ['aiThreads','ai_threads',threadToDb],
     ['aiMessages','ai_messages',messageToDb]
   ];
@@ -202,6 +203,7 @@
   function searchRunToDb(x){return {id:x.id,project_id:x.projectId,search_plan_id:x.searchPlanId||null,database_name:x.databaseName, searched_at:x.searchedAt||null,query_text:x.queryText||null,result_count:Number(x.resultCount)||0,imported_count:Number(x.importedCount)||0,duplicates_removed:Number(x.duplicatesRemoved)||0,notes:x.notes||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function screeningToDb(x){return {id:x.id,project_id:x.projectId,article_id:x.articleId,title_abstract_decision:x.titleAbstractDecision||'pending',full_text_decision:x.fullTextDecision||'not_started',exclusion_reason:x.exclusionReason||null,notes:x.notes||null,screened_at:x.screenedAt||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function appraisalToDb(x){return {id:x.id,project_id:x.projectId,article_id:x.articleId,tool_type:x.toolType||'generic',domains:x.domains||[],overall_judgement:x.overallJudgement||'not_started',strengths:x.strengths||null,limitations:x.limitations||null,applicability:x.applicability||null,completed_at:x.completedAt||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
+  function analysisItemToDb(x){return {id:x.id,project_id:x.projectId,kind:x.kind,objective_id:x.objectiveId||null,section_id:x.sectionId||null,title:x.title,payload:x.payload||{},status:x.status||'draft',created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function threadToDb(x){return {id:x.id,project_id:x.projectId,article_id:x.articleId||null,section_id:x.sectionId||null,mode:x.mode||'research',title:x.title||null,created_at:iso(x.createdAt),updated_at:iso(x.updatedAt)};}
   function messageToDb(x){return {id:x.id,thread_id:x.threadId,role:x.role,content:x.content,source_refs:x.sourceRefs||[],created_at:iso(x.createdAt)};}
 
@@ -363,6 +365,7 @@
   const fromSearchRun=r=>({id:r.id,projectId:r.project_id,searchPlanId:r.search_plan_id||null,databaseName:r.database_name,searchedAt:r.searched_at||null,queryText:r.query_text||'',resultCount:r.result_count||0,importedCount:r.imported_count||0,duplicatesRemoved:r.duplicates_removed||0,notes:r.notes||'',createdAt:r.created_at,updatedAt:r.updated_at});
   const fromScreening=r=>({id:r.id,projectId:r.project_id,articleId:r.article_id,titleAbstractDecision:r.title_abstract_decision||'pending',fullTextDecision:r.full_text_decision||'not_started',exclusionReason:r.exclusion_reason||'',notes:r.notes||'',screenedAt:r.screened_at||null,createdAt:r.created_at,updatedAt:r.updated_at});
   const fromAppraisal=r=>({id:r.id,projectId:r.project_id,articleId:r.article_id,toolType:r.tool_type||'generic',domains:r.domains||[],overallJudgement:r.overall_judgement||'not_started',strengths:r.strengths||'',limitations:r.limitations||'',applicability:r.applicability||'',completedAt:r.completed_at||null,createdAt:r.created_at,updatedAt:r.updated_at});
+  const fromAnalysisItem=r=>({id:r.id,projectId:r.project_id,kind:r.kind,objectiveId:r.objective_id||null,sectionId:r.section_id||null,title:r.title,payload:r.payload||{},status:r.status||'draft',createdAt:r.created_at,updatedAt:r.updated_at});
   const fromThread=r=>({id:r.id,projectId:r.project_id,articleId:r.article_id,sectionId:r.section_id,mode:r.mode,title:r.title||'',createdAt:r.created_at,updatedAt:r.updated_at});
   const fromMessage=r=>({id:r.id,threadId:r.thread_id,role:r.role,content:r.content,sourceRefs:r.source_refs||[],createdAt:r.created_at});
 
@@ -377,14 +380,14 @@
       if(!projects?.length) return {empty:true};
 
       const projectIds=projects.map(p=>p.id);
-      const [setups,objectives,chapters,sections,articles,highlights,notes,themes,evidenceLinks,milestones,progressSnapshots,reviewRounds,feedbackItems,sectionVersions,searchPlans,searchRuns,screeningRecords,appraisals,aiThreads]=await Promise.all([
+      const [setups,objectives,chapters,sections,articles,highlights,notes,themes,evidenceLinks,milestones,progressSnapshots,reviewRounds,feedbackItems,sectionVersions,searchPlans,searchRuns,screeningRecords,appraisals,analysisItems,aiThreads]=await Promise.all([
         selectProjectRows('study_setups',projectIds),selectProjectRows('objectives',projectIds),selectProjectRows('chapters',projectIds),
         selectProjectRows('sections',projectIds),selectProjectRows('articles',projectIds),selectProjectRows('highlights',projectIds),
         selectProjectRows('notes',projectIds),selectProjectRows('themes',projectIds),selectProjectRows('evidence_links',projectIds),
         selectProjectRows('milestones',projectIds),selectProjectRows('progress_snapshots',projectIds),
         selectProjectRows('review_rounds',projectIds),selectProjectRows('feedback_items',projectIds),selectProjectRows('section_versions',projectIds),
         selectProjectRows('literature_search_plans',projectIds),selectProjectRows('literature_search_runs',projectIds),selectProjectRows('screening_records',projectIds),
-        selectProjectRows('critical_appraisals',projectIds),
+        selectProjectRows('critical_appraisals',projectIds),selectProjectRows('analysis_items',projectIds),
         selectProjectRows('ai_threads',projectIds)
       ]);
 
@@ -423,6 +426,7 @@
         searchRuns:searchRuns.map(fromSearchRun),
         screeningRecords:screeningRecords.map(fromScreening),
         appraisals:appraisals.map(fromAppraisal),
+        analysisItems:analysisItems.map(fromAnalysisItem),
         aiThreads:aiThreads.map(fromThread),
         aiMessages:aiMessages.map(fromMessage)
       };
