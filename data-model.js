@@ -435,6 +435,71 @@
     return clone(normalized);
   }
 
+
+  function listArticles(projectId){
+    const state=getState();
+    projectId=projectId || getActiveProjectId(state);
+    return clone(state.articles.filter(a=>a.projectId===projectId));
+  }
+
+  function getArticle(articleId){
+    const state=getState();
+    return clone(state.articles.find(a=>a.id===articleId) || null);
+  }
+
+  function addArticle(data={}, projectId){
+    const state=getState();
+    projectId=projectId || getActiveProjectId(state);
+    if(!projectId) throw new Error('No active thesis project.');
+    const ts=nowIso();
+    const article={
+      id:uid('article'),
+      projectId,
+      title:data.title || 'Untitled article',
+      authors:data.authors || '',
+      journal:data.journal || '',
+      year:data.year || null,
+      doi:data.doi || '',
+      abstract:data.abstract || '',
+      pdfPath:data.pdfPath || '',
+      sourceUrl:data.sourceUrl || '',
+      readingStatus:data.readingStatus || 'unread',
+      aiProcessed:Boolean(data.aiProcessed),
+      citationData:data.citationData || {},
+      createdAt:ts,
+      updatedAt:ts
+    };
+    state.articles.push(article);
+    writeState(state);
+    return clone(article);
+  }
+
+  function updateArticle(articleId,patch={}){
+    const state=getState();
+    const article=state.articles.find(a=>a.id===articleId);
+    if(!article) return null;
+    const allowed=['title','authors','journal','year','doi','abstract','pdfPath','sourceUrl','readingStatus','aiProcessed','citationData'];
+    allowed.forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) article[key]=patch[key];
+    });
+    article.updatedAt=nowIso();
+    writeState(state);
+    return clone(article);
+  }
+
+  function removeArticle(articleId){
+    const state=getState();
+    const article=state.articles.find(a=>a.id===articleId);
+    if(!article) return false;
+    state.highlights=state.highlights.filter(h=>h.articleId!==articleId);
+    state.notes=state.notes.filter(n=>n.articleId!==articleId);
+    state.articleThemes=state.articleThemes.filter(x=>x.articleId!==articleId);
+    state.evidenceLinks=state.evidenceLinks.filter(x=>x.articleId!==articleId);
+    state.articles=state.articles.filter(a=>a.id!==articleId);
+    writeState(state);
+    return true;
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -470,6 +535,11 @@
     saveStudySetupData,
     getLatestProgress,
     saveProgressSnapshot,
+    listArticles,
+    getArticle,
+    addArticle,
+    updateArticle,
+    removeArticle,
     getProjectBundle
   };
 
