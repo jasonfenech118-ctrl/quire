@@ -44,6 +44,15 @@
     paragraphs.forEach(p=>{
       const wc=(p.match(/\b[\w’'-]+\b/g)||[]).length;
       if(wc>180) add('structure',p,null,'This paragraph is long ('+wc+' words). Consider separating one supporting idea into a new paragraph.');
+      if(wc>=45){
+        const comparison=/\b(however|whereas|in contrast|similarly|both|unlike|compared|conversely)\b/i.test(p);
+        const interpretation=/\b(suggests?|may indicate|could reflect|implies?|therefore|this may|this could)\b/i.test(p);
+        const critique=/\b(limitations?|bias|confound|uncertain|alternative explanation|strength|weakness|generalis|transferab|applicab)\w*/i.test(p);
+        const citations=(p.match(/\([^)]*(?:19|20)\d{2}[^)]*\)|\[(?:\d+[,-]?\s*)+\]/g)||[]).length;
+        if(citations>=2&&!comparison)add('critical-writing',p,null,'You cite multiple sources here, but the paragraph may still read source-by-source. Consider making the relationship explicit: agreement, difference, context or methodological reason for the difference.');
+        if(citations>=1&&!interpretation)add('critical-writing',p,null,'Evidence is present, but your interpretation is not obvious. Consider stating what the evidence means for your research question rather than ending at description.');
+        if(citations>=1&&!critique)add('critical-writing',p,null,'Consider whether a limitation, contextual boundary, alternative explanation or source-quality issue changes how strongly this evidence should be used.');
+      }
     });
 
     const starters=new Map();
@@ -90,7 +99,7 @@
     const open=suggestions.filter(s=>s.status==='open');
     if(count)count.textContent=open.length+' suggestions';
     if(!open.length){
-      mount.innerHTML='<div class="review-empty"><strong>No open suggestions</strong><small>Run a review to check clarity, academic tone, sentence length, repetition, structure and obvious evidence gaps.</small></div>';
+      mount.innerHTML='<div class="review-empty"><strong>No open suggestions</strong><small>Run a review to check clarity, academic tone, sentence length, repetition, structure, evidence gaps and critical engagement.</small></div>';
       return;
     }
     mount.innerHTML=open.map(s=>
