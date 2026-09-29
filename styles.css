@@ -1194,3 +1194,20 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 .bibliography-entry span{font-size:9px;line-height:1.55}
 .bibliography-note{display:block;color:var(--muted);font-size:7px;line-height:1.5;margin-top:12px}
 @media(max-width:700px){.bibliography-controls{grid-template-columns:1fr}.bibliography-diagnostics{grid-template-columns:1fr 1fr}}
+
+
+/* ---------- Step 13: advanced writing review ---------- */
+.review-heading-actions{display:flex;gap:8px;align-items:center}
+.review-heading-actions select{
+  max-width:330px;border:1px solid var(--line);background:var(--sheet);border-radius:3px;
+  padding:9px 10px;font-size:9px;color:var(--ink)
+}
+.review-document-live{font-family:"Libre Caslon Text",serif;font-size:15px;line-height:1.85;padding:18px 4px 80px}
+.review-document-live p{margin:0 0 17px}
+.writing-suggestions{display:grid;gap:8px}
+.live-suggestion{margin:0}
+.review-empty{padding:20px 8px;text-align:center;border:1px dashed #cfc5b8}
+.review-empty strong,.review-empty small{display:block}
+.review-empty strong{font-family:"Libre Caslon Text",serif;font-weight:400}
+.review-empty small{font-size:8px;line-height:1.5;color:var(--muted);margin-top:6px}
+@media(max-width:760px){.review-heading-actions{width:100%;flex-direction:column;align-items:stretch}.review-heading-actions select{max-width:none}}
