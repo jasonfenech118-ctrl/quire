@@ -512,3 +512,98 @@ for delete using (
   bucket_id='quire-pdfs'
   and (storage.foldername(name))[1]=auth.uid()::text
 );
+
+
+-- Step 24: literature search strategy, search log and screening
+create table if not exists public.literature_search_plans (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null unique references public.thesis_projects(id) on delete cascade,
+  framework text,
+  concepts jsonb not null default '[]'::jsonb,
+  databases jsonb not null default '[]'::jsonb,
+  limits text,
+  notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.literature_search_runs (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  search_plan_id text references public.literature_search_plans(id) on delete set null,
+  database_name text not null,
+  searched_at date,
+  query_text text,
+  result_count integer not null default 0 check (result_count >= 0),
+  imported_count integer not null default 0 check (imported_count >= 0),
+  duplicates_removed integer not null default 0 check (duplicates_removed >= 0),
+  notes text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create table if not exists public.screening_records (
+  id text primary key default gen_random_uuid()::text,
+  project_id text not null references public.thesis_projects(id) on delete cascade,
+  article_id text not null unique references public.articles(id) on delete cascade,
+  title_abstract_decision text not null default 'pending'
+    check (title_abstract_decision in ('pending','include','exclude','maybe')),
+  full_text_decision text not null default 'not_started'
+    check (full_text_decision in ('not_started','include','exclude','maybe')),
+  exclusion_reason text,
+  notes text,
+  screened_at timestamptz,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+
+create index if not exists idx_search_plans_project on public.literature_search_plans(project_id);
+create index if not exists idx_search_runs_project_date on public.literature_search_runs(project_id,searched_at desc);
+create index if not exists idx_screening_project on public.screening_records(project_id);
+create index if not exists idx_screening_article on public.screening_records(article_id);
+
+drop trigger if exists trg_literature_search_plans_updated_at on public.literature_search_plans;
+create trigger trg_literature_search_plans_updated_at
+before update on public.literature_search_plans
+for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_literature_search_runs_updated_at on public.literature_search_runs;
+create trigger trg_literature_search_runs_updated_at
+before update on public.literature_search_runs
+for each row execute function public.set_updated_at();
+
+drop trigger if exists trg_screening_records_updated_at on public.screening_records;
+create trigger trg_screening_records_updated_at
+before update on public.screening_records
+for each row execute function public.set_updated_at();
+
+alter table public.literature_search_plans enable row level security;
+alter table public.literature_search_runs enable row level security;
+alter table public.screening_records enable row level security;
+
+drop policy if exists "own literature search plans" on public.literature_search_plans;
+create policy "own literature search plans" on public.literature_search_plans
+for all using (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+)
+with check (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+);
+
+drop policy if exists "own literature search runs" on public.literature_search_runs;
+create policy "own literature search runs" on public.literature_search_runs
+for all using (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+)
+with check (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+);
+
+drop policy if exists "own screening records" on public.screening_records;
+create policy "own screening records" on public.screening_records
+for all using (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+)
+with check (
+  exists(select 1 from public.thesis_projects p where p.id=project_id and p.user_id=auth.uid())
+);
