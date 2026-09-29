@@ -24,15 +24,13 @@
       const articles=(window.QuireStore.getState().articles||[]).filter(a=>a.projectId===project.id).length;
       const chapters=(window.QuireStore.getState().chapters||[]).filter(c=>c.projectId===project.id).length;
       const percent=pct(project.id);
-      const launch=window.QuireLaunch?.readiness?.(project.id)||{percent:100};
       return '<article class="research-project-card '+(project.id===activeId?'active':'')+'" data-project-card="'+project.id+'">'+
         '<div class="project-card-top"><span class="eyebrow">'+(project.id===activeId?'ACTIVE PROJECT':'THESIS PROJECT')+'</span><button type="button" class="project-menu-btn" data-project-edit="'+project.id+'">⋯</button></div>'+
         '<h2>'+escapeHtml(project.title||'Untitled thesis')+'</h2>'+
         '<p>'+escapeHtml(project.researchQuestion||'Research question not yet defined')+'</p>'+
         '<div class="project-card-meta"><span>'+articles+' articles</span><span>'+chapters+' chapters</span><span>'+pretty(project.finalDeadline)+'</span></div>'+
         '<div class="project-card-progress"><div><span style="width:'+percent+'%"></span></div><strong>'+percent+'%</strong></div>'+
-        (launch.percent<100?'<div class="project-launch-readiness"><span>Launch readiness</span><strong>'+launch.percent+'%</strong></div>':'')+
-        '<div class="project-card-actions"><button type="button" class="primary-btn" data-project-open="'+project.id+'">'+(project.id===activeId?'Open workspace':'Switch & open')+'</button><button type="button" class="soft-btn" data-project-setup="'+project.id+'">'+(launch.percent<100?'Setup guide':'Study setup')+'</button></div>'+
+        '<div class="project-card-actions"><button type="button" class="primary-btn" data-project-open="'+project.id+'">'+(project.id===activeId?'Open workspace':'Switch & open')+'</button><button type="button" class="soft-btn" data-project-setup="'+project.id+'">Study setup</button></div>'+
       '</article>';
     }).join('')+
     '<button class="new-project-card" id="createProjectCard" type="button"><span>＋</span><strong>New research project</strong><small>Start another thesis, dissertation, review or study</small></button>';
@@ -50,13 +48,7 @@
       switchProject(btn.dataset.projectOpen,'dashboard');
     }));
     document.querySelectorAll('[data-project-setup]').forEach(btn=>btn.addEventListener('click',()=>{
-      const id=btn.dataset.projectSetup;
-      const launch=window.QuireLaunch?.readiness?.(id)||{percent:100};
-      switchProject(id,launch.percent<100?'dashboard':'setup');
-      if(launch.percent<100){
-        localStorage.removeItem('quire:launch-dismissed:'+id);
-        setTimeout(()=>window.QuireLaunch?.renderGuide?.(),0);
-      }
+      switchProject(btn.dataset.projectSetup,'setup');
     }));
     document.querySelectorAll('[data-project-edit]').forEach(btn=>btn.addEventListener('click',e=>{
       e.stopPropagation();openEdit(btn.dataset.projectEdit);
