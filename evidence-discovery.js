@@ -49,8 +49,9 @@
   }
 
   async function crossrefSearch(claim){
-    const q=encodeURIComponent(claim.slice(0,350));
-    const url='https://api.crossref.org/works?rows=8&select=DOI,title,author,published-print,published-online,container-title,URL,type&query.bibliographic='+q;
+    const concepts=terms(claim).slice(0,8);
+    const q=encodeURIComponent(concepts.join(' '));
+    const url='https://api.crossref.org/works?rows=24&select=DOI,title,author,published-print,published-online,container-title,URL,type&query.bibliographic='+q;
     const response=await fetch(url,{headers:{Accept:'application/json'}});
     if(!response.ok)throw new Error('Scholarly search returned '+response.status);
     const data=await response.json();
@@ -63,18 +64,22 @@
   function crossrefAuthors(item){
     return (item.author||[]).map(a=>[a.given,a.family].filter(Boolean).join(' ')).join('; ');
   }
-  function renderWeb(rows){
+  function renderWeb(rows,claim){
+    const claimWords=terms(claim);
+    const stomaTerms=['stoma','ostomy','colostomy','ileostomy','enterostomy','urostomy','stomal','peristomal'];
+    const claimNeedsStoma=stomaTerms.some(t=>String(claim).toLowerCase().includes(t));
+    rows=rows.map(item=>{const title=(Array.isArray(item.title)?item.title[0]:item.title||'').toLowerCase();const journal=(Array.isArray(item['container-title'])?item['container-title'][0]:item['container-title']||'').toLowerCase();const hay=title+' '+journal;const hits=claimWords.filter(w=>hay.includes(w)).length;const stomaHit=stomaTerms.some(t=>hay.includes(t));return {item,score:hits+(stomaHit?5:0),stomaHit};}).filter(x=>(!claimNeedsStoma||x.stomaHit)&&x.score>=2).sort((a,b)=>b.score-a.score).slice(0,10).map(x=>x.item);
     const mount=document.getElementById('evidenceDiscoveryResults');
     if(!rows.length){
       mount.innerHTML='<div class="discovery-empty"><strong>No scholarly candidates found</strong><p>Try a shorter claim containing the main concepts rather than the whole paragraph.</p></div>';
       return;
     }
-    mount.innerHTML=rows.map((item,index)=>{
+    mount.innerHTML='<div class="discovery-relevance-note"><strong>Relevance screening on</strong><span>Off-topic metadata matches are hidden. A relevant result is still only a candidate until you inspect the abstract or full paper.</span></div>'+rows.map((item,index)=>{
       const title=Array.isArray(item.title)?item.title[0]:item.title||'Untitled result';
       const journal=Array.isArray(item['container-title'])?item['container-title'][0]:item['container-title']||'';
       const doi=item.DOI||'';
       return '<article class="discovery-result web" data-web-index="'+index+'">'+
-        '<div class="discovery-result-head"><span>SCHOLARLY DISCOVERY · NOT YET VERIFIED</span><strong>'+escapeHtml(title)+'</strong><small>'+escapeHtml([crossrefAuthors(item),crossrefYear(item),journal].filter(Boolean).join(' · '))+'</small></div>'+
+        '<div class="discovery-result-head"><span>RELEVANT SCHOLARLY CANDIDATE · NOT YET VERIFIED</span><strong>'+escapeHtml(title)+'</strong><small>'+escapeHtml([crossrefAuthors(item),crossrefYear(item),journal].filter(Boolean).join(' · '))+'</small></div>'+
         '<p>'+(doi?'DOI '+escapeHtml(doi):'No DOI supplied in this search result')+'. Inspect the abstract/full paper before deciding whether it supports your claim.</p>'+
         '<div class="discovery-result-actions">'+
           (doi?'<button type="button" data-web-doi="'+escapeHtml(doi)+'">Import DOI</button>':'')+
@@ -120,8 +125,8 @@
     document.getElementById('evidenceDiscoveryResults').innerHTML='<div class="discovery-loading">Searching scholarly metadata for candidate papers…</div>';
     try{
       const rows=await crossrefSearch(claim);
-      renderWeb(rows);
-      status.textContent=rows.length+' candidate'+(rows.length===1?'':'s')+' found';
+      renderWeb(rows,claim);
+      status.textContent='Relevance screening complete — weak or off-topic matches are hidden';
     }catch(error){
       status.textContent='Search unavailable';
       document.getElementById('evidenceDiscoveryResults').innerHTML='<div class="discovery-empty"><strong>Scholarly search could not be reached</strong><p>'+escapeHtml(error.message)+'. Your local library remains available.</p></div>';
