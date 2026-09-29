@@ -46,6 +46,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 44: Integrated Value & UX Audit — implemented.
 - Step 45: Better Idea Capture & Source-to-Idea Handoffs — implemented.
 - Step 46: Research Memory Answer Builder — implemented.
+- Step 47: Personal Writing Growth Centre — implemented.
 
 ## Step 32 — implemented
 
@@ -150,7 +151,11 @@ Idea capture now uses an in-app provenance-aware modal rather than browser promp
 
 Global Research Memory now includes an expandable **What Quire already knows about this** view. It groups retrieved workspace excerpts by provenance and explicitly states that it is assembling stored records rather than generating new factual claims.
 
-## Added-value roadmap after Step 46
+## Step 47 — implemented
+
+A local Personal Writing Growth Centre records only wording edits the researcher explicitly accepts. Lessons are project-scoped, bounded, grouped by recurring area and can be marked mastered by the researcher. Quire explicitly does not turn this into an English score.
+
+## Added-value roadmap after Step 47
 
 A second product review identified the next high-value frontend milestones:
 
