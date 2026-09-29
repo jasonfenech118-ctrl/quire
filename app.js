@@ -14,10 +14,16 @@ document.querySelectorAll('[data-go]').forEach(btn => btn.addEventListener('clic
 document.querySelectorAll('[data-open-reader]').forEach(card => card.addEventListener('click', () => showView('reader')));
 
 document.getElementById('newItemBtn').addEventListener('click', () => modal.hidden = false);
-document.getElementById('uploadArticleBtn').addEventListener('click', () => fileInput.click());
+document.getElementById('uploadArticleBtn').addEventListener('click', () => {
+  if(window.QuirePdfReader) window.QuirePdfReader.pendingArticleId=null;
+  fileInput.click();
+});
 document.getElementById('closeModal').addEventListener('click', () => modal.hidden = true);
 modal.addEventListener('click', e => { if(e.target === modal) modal.hidden = true; });
-document.querySelector('[data-action="upload"]').addEventListener('click', () => fileInput.click());
+document.querySelector('[data-action="upload"]').addEventListener('click', () => {
+  if(window.QuirePdfReader) window.QuirePdfReader.pendingArticleId=null;
+  fileInput.click();
+});
 document.querySelectorAll('[data-go-modal]').forEach(btn => btn.addEventListener('click', () => {
   modal.hidden = true; showView(btn.dataset.goModal);
 }));
@@ -743,7 +749,10 @@ async function renderLibraryArticles(){
 
   if(!articles.length){
     mount.innerHTML='<div class="project-panel"><span class="eyebrow">RESEARCH LIBRARY</span><h3>No articles yet</h3><p>Upload your first PDF to start building the evidence base for this thesis.</p><button class="primary-btn" id="emptyLibraryUpload" type="button">＋ Add article</button></div>';
-    document.getElementById('emptyLibraryUpload')?.addEventListener('click',()=>fileInput.click());
+    document.getElementById('emptyLibraryUpload')?.addEventListener('click',()=>{
+      if(window.QuirePdfReader) window.QuirePdfReader.pendingArticleId=null;
+      fileInput.click();
+    });
     return;
   }
 
@@ -779,7 +788,7 @@ async function renderLibraryArticles(){
   });
 
   for(const article of articles){
-    const target=mount.querySelector('[data-pdf-status="'+CSS.escape(article.id)+'"]');
+    const target=[...mount.querySelectorAll('[data-pdf-status]')].find(el=>el.dataset.pdfStatus===article.id);
     if(!target) continue;
     try{
       const hasPdf=await window.QuirePdfStore.has(article.id);
