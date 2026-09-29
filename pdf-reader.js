@@ -433,6 +433,11 @@
     hideSelectionToolbar();clearNativeSelection();
     renderHighlights();
     window.dispatchEvent(new CustomEvent('quire:annotation-changed',{detail:{articleId:currentArticleId}}));
+    window.dispatchEvent(new CustomEvent('quire:workflow-handoff',{detail:{
+      title:'You captured useful evidence',
+      copy:'Give this highlight a destination so it can become part of your argument rather than an isolated note.',
+      action:'Organise evidence',view:'map'
+    }}));
     return highlight;
   }
 
@@ -535,6 +540,12 @@
     pendingSelection=null;editingHighlightId=null;clearNativeSelection();
     renderHighlights();
     window.dispatchEvent(new CustomEvent('quire:annotation-changed',{detail:{articleId:currentArticleId}}));
+    window.dispatchEvent(new CustomEvent('quire:workflow-handoff',{detail:{
+      title:(themeId||objectiveId||chapterId)?'Evidence organised':'Your reading has produced an idea',
+      copy:(themeId||objectiveId||chapterId)?'This evidence now has a destination. The next useful move is to develop the point in your thesis.':'Connect this note or highlight to a theme, objective or thesis section while its meaning is fresh.',
+      action:(themeId||objectiveId||chapterId)?'Use it in writing':'Organise evidence',
+      view:(themeId||objectiveId||chapterId)?'chapters':'map'
+    }}));
   }
 
   function refreshHighlightSidebar(){
