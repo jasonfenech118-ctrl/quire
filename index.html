@@ -39,6 +39,7 @@
         <button class="nav-item" data-view="brainstorm"><span>✦</span> Brainstorm</button>
         <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
         <button class="nav-item" data-view="supervision"><span>☷</span> Supervision</button>
+        <button class="nav-item" data-view="readiness"><span>✓</span> Submission Check</button>
         <button class="nav-item" data-view="export"><span>⇩</span> Thesis Export</button>
         <button class="nav-item" data-view="methodology"><span>◌</span> Methodology</button>
         <button class="nav-item" data-view="analysis"><span>⌁</span> Data & Analysis</button>
@@ -934,6 +935,62 @@
         </div>
       </section>
 
+
+
+      <section id="readiness" class="view">
+        <div class="page-heading compact readiness-heading">
+          <div>
+            <span class="eyebrow">SUBMISSION READINESS & INTEGRITY</span>
+            <h1>Check the structure before the final hand-in.</h1>
+            <p>Quire checks recorded structure, references, evidence links, review status and project completeness. It does not certify academic quality or institutional approval.</p>
+          </div>
+          <div class="readiness-heading-actions">
+            <button class="soft-btn" id="downloadReadinessReportBtn" type="button">↓ Download report</button>
+            <button class="primary-btn" id="runReadinessBtn" type="button">Run checks</button>
+          </div>
+        </div>
+
+        <div id="readinessStatus" class="readiness-status review">
+          <span>CHECKING PROJECT</span>
+          <strong>Building readiness summary…</strong>
+          <p>Quire is evaluating the records currently stored in this thesis.</p>
+        </div>
+
+        <div class="readiness-stats">
+          <div><strong id="readinessBlockers">0</strong><span>Structural blockers</span></div>
+          <div><strong id="readinessReviews">0</strong><span>Items to review</span></div>
+          <div><strong id="readinessClear">0</strong><span>Checks clear</span></div>
+          <div><strong id="readinessCustomOpen">0</strong><span>Local checklist open</span></div>
+          <div><strong id="readinessLastRun">Not checked</strong><span>Last run</span></div>
+        </div>
+
+        <div class="readiness-layout">
+          <main>
+            <div id="readinessChecks" class="readiness-checks"></div>
+          </main>
+
+          <aside class="submission-local-panel">
+            <div class="submission-local-head">
+              <span class="eyebrow">INSTITUTION / LOCAL REQUIREMENTS</span>
+              <h2>Your own checklist</h2>
+              <p>Add requirements Quire cannot infer automatically from your programme handbook, supervisor or institution.</p>
+            </div>
+
+            <div class="submission-add-row">
+              <input id="submissionItemTitle" type="text" placeholder="e.g. Declaration of originality completed">
+              <input id="submissionItemCategory" type="text" placeholder="Category (optional)" value="Institution / local requirements">
+              <button class="soft-btn" id="addSubmissionItemBtn" type="button">＋ Add</button>
+            </div>
+
+            <div id="submissionChecklist" class="submission-checklist"></div>
+
+            <div class="readiness-boundary-note">
+              <strong>What this page does not decide</strong>
+              <p>Supervisor approval, academic merit, ethics compliance, plagiarism/similarity interpretation and formal university acceptance remain human/institutional decisions.</p>
+            </div>
+          </aside>
+        </div>
+      </section>
 
       <section id="export" class="view">
         <div class="page-heading compact export-page-heading">
@@ -1994,6 +2051,7 @@
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
   <script src="supervision.js"></script>
+  <script src="submission-readiness.js"></script>
   <script src="thesis-export.js"></script>
   <script src="progress-intelligence.js"></script>
   <script src="app.js"></script>
