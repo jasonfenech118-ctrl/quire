@@ -10,15 +10,16 @@ Quire currently includes:
 - Adaptive study setup for qualitative, quantitative, mixed-methods and systematic review/meta-analysis projects
 - Word-count targets, deadlines, milestones and pace-based completion estimates
 - Research library
-- Article/PDF reading workspace prototype
-- Highlight and note concepts
+- Real PDF reading workspace
+- Persistent highlights, notes and thesis evidence links
+- DOI / scholarly metadata import
 - Quire Copilot prototype
 - Thesis map
 - Chapter planner and editor
 - Brainstorm board
 - Writing and evidence review
 
-The AI buttons and PDF reader are still front-end prototypes. No external AI model or real PDF extraction pipeline is connected yet.
+The AI buttons are still prototypes. The PDF reader, annotations and scholarly metadata workflow are functional locally; no external AI model is connected yet.
 
 ## Step 1 — Data model ✅
 
@@ -78,6 +79,14 @@ Annotations remember the exact source page and normalised PDF location so they c
 
 See `docs/highlights-notes.md`.
 
+## Step 5 — Article metadata / DOI import ✅
+
+Quire can now retrieve bibliographic details from Crossref using a DOI, DOI URL, or article-title search.
+
+The metadata preview includes title, authors, journal, year, DOI, abstract and a reference preview. DOI duplicates update the existing library record instead of creating a second article, and metadata can be applied directly to an already imported PDF.
+
+See `docs/article-metadata.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -87,9 +96,8 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Next build stage
 
-1. Article metadata / DOI import
-2. AI summarisation grounded in uploaded papers
-3. Page-level citations for AI answers
-4. Reference-manager integration
+1. AI summarisation grounded in uploaded papers
+2. Page-level citations for AI answers
+3. Reference-manager integration
 
 © Quire prototype.
