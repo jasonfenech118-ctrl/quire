@@ -1,3 +1,24 @@
+# CONTINUE HERE — Quire
+
+## Latest completed work — Step 31
+
+Quire now has a simplified user-facing framework while retaining the deeper research tools underneath.
+
+- Primary navigation: **Home → Research → Ideas → Thesis → Progress**.
+- Specialist workflows remain available under **More tools** rather than competing in the main navigation.
+- The thesis editor keeps a Word-style ribbon: **Home, Insert, References, Evidence, Review, AI Assist**.
+- Evidence-aware writing actions now include **Check against source**, **Find opposing evidence**, **Mark as my idea**, and **Check interpretation**.
+- Writing context is preserved when moving to research/evidence/review tools so the user can return to the active section.
+- This remains frontend-first. Do not activate or connect the Supabase backend yet; the user's Customer Roster project must remain isolated.
+
+## Next build direction
+
+Continue simplifying the workflow around the five-stage mental model: **Discover → Understand → Organise → Write → Review**. The next priority is a contextual right-side writing assistant that surfaces relevant library evidence and interpretation warnings without forcing the user to leave the manuscript.
+
+## Safety / continuity
+
+Do not remove the existing advanced modules. Hide complexity contextually and reuse the existing library, reader, evidence graph, appraisal, analysis, supervision, readiness and export systems. Before backend activation, review the separate Supabase project/configuration so Quire cannot share tables, storage or credentials with Customer Roster.
+
 # Continue Here
 
 ## Current position
@@ -16,30 +37,4 @@ Do not start Step 31 yet.
 - Steps 1–29 have corresponding implementation in the repository.
 - Submission Readiness is already implemented and documented.
 - `writing-ribbon.js`, `evidence-discovery.js`, `research-journey.js` and `submission-readiness.js` are loaded by `index.html`.
-- The writing ribbon already contains actions for inserting references, searching the library, finding/linking evidence, checking claims, improving academic wording, reviewing a section, explaining an argument, challenging a paragraph and finding evidence gaps.
-- No obvious TODO/FIXME/placeholder/coming-soon markers were found in the audit.
-- README numbering drift was corrected.
-- Supabase activation remains deferred.
-
-## Safety constraint
-
-Continue frontend-only. Do not run Supabase SQL, activate cloud persistence, or connect/modify an external Supabase project unless the user later explicitly decides to begin backend integration.
-
-## Next exact work
-
-Audit Step 30 end-to-end in the visible writing workspace:
-1. verify the refined Step 30 workflow end-to-end in the live app (selection → evidence/reference/review/Copilot → return to the same section);
-2. refine any remaining ribbon layout or mobile usability issues found during that verification;
-3. verify writing-assistance requests are surfaced as reviewable suggestions rather than destructive edits;
-4. identify duplicated navigation/actions that make Quire feel scattered;
-5. simplify the writing workspace and contextual transitions;
-6. test empty states and no-selection behaviour;
-7. update Step 30 documentation and only then mark Step 30 complete.
-
-## Do not lose
-
-The user's central UX requirement is simplicity: Quire should guide the researcher through the research/thesis process without requiring them to remember how the system is organised. The writing area should have a familiar Word-like ribbon. Reference/evidence help should be contextual and should be able to surface useful literature/evidence, while clearly separating the researcher's ideas from sourced claims and preserving academic integrity.
-
-## How to resume in a new chat
-
-Say: **"Continue Quire from docs/CONTINUE_HERE.md. Reconcile the current step against the code before implementing anything new."**
+- The writing ribbon already contains actions for inserting references, searching the library, finding/linking evidence, checking claims, improving academic wording, reviewing a section, explaining an argument, chal
