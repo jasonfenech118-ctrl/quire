@@ -611,7 +611,8 @@
           <div><span class="eyebrow">WRITING REVIEW</span><h1>Polish without losing your voice.</h1><p>Review clarity, academic tone, structure, repetition and evidence — suggestion by suggestion.</p></div>
           <div class="review-heading-actions">
             <select id="reviewSectionSelect" aria-label="Section to review"></select>
-            <button class="primary-btn" id="runWritingReview" type="button">Review section</button>
+            <button class="soft-btn" id="runEvidenceCheck" type="button">Check evidence</button>
+            <button class="primary-btn" id="runWritingReview" type="button">Review writing</button>
           </div>
         </div>
         <div class="review-layout">
@@ -622,6 +623,8 @@
           <aside class="review-sidebar">
             <div class="review-tabs"><button class="active">Suggestions</button><button disabled>History</button></div>
             <div id="writingSuggestions" class="writing-suggestions"></div>
+            <div class="evidence-audit-head"><strong>Evidence audit</strong><span id="evidenceAuditCount">0 checks</span></div>
+            <div id="evidenceAuditMount" class="evidence-audit-mount"></div>
           </aside>
         </div>
       </section>
@@ -1188,6 +1191,7 @@
   <script src="references.js"></script>
   <script src="citations.js"></script>
   <script src="writing-review.js"></script>
+  <script src="evidence-check.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
