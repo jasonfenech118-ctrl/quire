@@ -430,6 +430,7 @@
     if(!title||!action)return;
 
     const ctx=context();
+    const starter=isStarter(ctx);
     const review=reviewProgress(ctx.projectId);
     const mat=maturity(ctx.projectId);
     const currentStage=stage(ctx);
