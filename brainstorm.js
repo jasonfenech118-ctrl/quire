@@ -49,8 +49,8 @@
       '<section class="idea-trace-section"><strong>Origin</strong><p>'+escapeHtml(ORIGINS[p.origin]||p.origin||'Unknown')+(p.sourceLabel?' · '+escapeHtml(p.sourceLabel):'')+(p.sourcePage?' · p. '+escapeHtml(p.sourcePage):'')+'</p>'+(p.sourceExcerpt?'<blockquote>'+escapeHtml(p.sourceExcerpt)+'</blockquote>':'')+(sourceArticle?'<button type="button" id="openIdeaSource">Open source</button>':'')+'</section>'+
       '<section class="idea-trace-section"><strong>Downstream thesis matches</strong><p>These are inferred from shared terms, not proof that the thesis text came from this idea.</p>'+(downstream.length?downstream.map(x=>'<button type="button" data-trace-section="'+x.section.id+'">'+escapeHtml(x.section.title)+' · '+x.hits+' shared terms</button>').join(''):'<small>No clear downstream match found yet.</small>')+'</section>';
     document.getElementById('closeIdeaTrace').addEventListener('click',()=>{modal.hidden=true;modal.remove();ensureModal();});
-    document.getElementById('openIdeaSource')?.addEventListener('click',async()=>{modal.hidden=true;window.showView?.('reader');await window.QuirePdfReader?.openArticle?.(sourceArticle.id);if(p.sourcePage)await window.QuirePdfReader?.renderPage?.(Number(p.sourcePage));});
-    modal.querySelectorAll('[data-trace-section]').forEach(btn=>btn.addEventListener('click',()=>{modal.hidden=true;window.QuireChapterEditor?.openSection?.(btn.dataset.traceSection);window.showView?.('chapters');}));
+    document.getElementById('openIdeaSource')?.addEventListener('click',async()=>{modal.remove();ensureModal();window.showView?.('reader');await window.QuirePdfReader?.openArticle?.(sourceArticle.id);if(p.sourcePage)await window.QuirePdfReader?.renderPage?.(Number(p.sourcePage));});
+    modal.querySelectorAll('[data-trace-section]').forEach(btn=>btn.addEventListener('click',()=>{modal.remove();ensureModal();window.QuireChapterEditor?.openSection?.(btn.dataset.traceSection);window.showView?.('chapters');}));
   }
 
   function advance(id){
