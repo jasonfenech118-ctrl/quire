@@ -499,19 +499,91 @@ window.QuireCloud?.init?.();
 
 
 // ---------- Step 3: live research library + PDF opening ----------
+let libraryFilter='all';
+let libraryThemeId='all';
+let librarySort='recent';
+
 function articleYearLabel(article){
   return article.year ? String(article.year) : 'PDF';
+}
+
+function libraryArticleIdsWithEvidence(state,articles){
+  const articleIds=new Set();
+  const highlightArticle=new Map((state.highlights||[]).map(h=>[h.id,h.articleId]));
+  (state.evidenceLinks||[]).forEach(link=>{
+    const id=link.articleId || (link.highlightId?highlightArticle.get(link.highlightId):null);
+    if(id && articles.some(a=>a.id===id)) articleIds.add(id);
+  });
+  return articleIds;
+}
+
+function renderLibraryControls(articles){
+  const state=window.QuireStore.getState();
+  const highlighted=new Set((state.highlights||[]).filter(h=>articles.some(a=>a.id===h.articleId)).map(h=>h.articleId));
+  const linked=libraryArticleIdsWithEvidence(state,articles);
+  const counts={
+    all:articles.length,
+    unread:articles.filter(a=>a.readingStatus==='unread').length,
+    highlighted:highlighted.size,
+    linked:linked.size
+  };
+  document.querySelectorAll('[data-library-filter]').forEach(btn=>{
+    const span=btn.querySelector('span');
+    if(span) span.textContent=String(counts[btn.dataset.libraryFilter]||0);
+    btn.classList.toggle('active',btn.dataset.libraryFilter===libraryFilter);
+  });
+
+  const projectId=window.QuireStore.getActiveProjectId();
+  const themes=(state.themes||[]).filter(t=>t.projectId===projectId);
+  const articleThemes=(state.articleThemes||[]);
+  const evidence=(state.evidenceLinks||[]);
+  const mount=document.getElementById('libraryCollections');
+  if(mount){
+    const themeRows=themes.map(theme=>{
+      const ids=new Set(articleThemes.filter(x=>x.themeId===theme.id).map(x=>x.articleId));
+      evidence.filter(x=>x.themeId===theme.id&&x.articleId).forEach(x=>ids.add(x.articleId));
+      return {theme,count:[...ids].filter(id=>articles.some(a=>a.id===id)).length};
+    });
+    mount.innerHTML='<button class="collection '+(libraryThemeId==='all'?'active':'')+'" type="button" data-library-theme="all">All research <span>'+articles.length+'</span></button>'+
+      themeRows.map(({theme,count})=>
+        '<button class="collection '+(libraryThemeId===theme.id?'active':'')+'" type="button" data-library-theme="'+escapeHtml(theme.id)+'">'+escapeHtml(theme.name)+' <span>'+count+'</span></button>'
+      ).join('');
+    mount.querySelectorAll('[data-library-theme]').forEach(btn=>btn.addEventListener('click',()=>{
+      libraryThemeId=btn.dataset.libraryTheme;
+      renderLibraryArticles();
+    }));
+  }
 }
 
 async function renderLibraryArticles(){
   const mount=document.getElementById('articleListMount');
   if(!mount || !window.QuireStore) return;
-  const articles=window.QuireStore.listArticles();
-  const count=document.querySelector('.filter-tabs button:first-child span');
-  if(count) count.textContent=String(articles.length);
+  const allArticles=window.QuireStore.listArticles();
+  const state=window.QuireStore.getState();
+  renderLibraryControls(allArticles);
 
-  if(!articles.length){
-    mount.innerHTML='<div class="project-panel"><span class="eyebrow">RESEARCH LIBRARY</span><h3>No articles yet</h3><p>Upload your first PDF to start building the evidence base for this thesis.</p><button class="primary-btn" id="emptyLibraryUpload" type="button">＋ Add article</button></div>';
+  const highlighted=new Set((state.highlights||[]).map(h=>h.articleId));
+  const linked=libraryArticleIdsWithEvidence(state,allArticles);
+  let articles=allArticles.filter(article=>{
+    if(libraryFilter==='unread'&&article.readingStatus!=='unread') return false;
+    if(libraryFilter==='highlighted'&&!highlighted.has(article.id)) return false;
+    if(libraryFilter==='linked'&&!linked.has(article.id)) return false;
+    if(libraryThemeId!=='all'){
+      const themeLinked=(state.articleThemes||[]).some(x=>x.articleId===article.id&&x.themeId===libraryThemeId) ||
+        (state.evidenceLinks||[]).some(x=>x.articleId===article.id&&x.themeId===libraryThemeId);
+      if(!themeLinked) return false;
+    }
+    return true;
+  });
+
+  articles=articles.slice().sort((x,y)=>{
+    if(librarySort==='author') return String(x.authors||x.title||'').localeCompare(String(y.authors||y.title||''));
+    if(librarySort==='year') return Number(y.year||0)-Number(x.year||0) || String(x.title||'').localeCompare(String(y.title||''));
+    return String(y.updatedAt||y.createdAt||'').localeCompare(String(x.updatedAt||x.createdAt||''));
+  });
+
+  if(!allArticles.length){
+    mount.innerHTML='<div class="project-panel"><span class="eyebrow">RESEARCH LIBRARY</span><h3>No articles yet</h3><p>Upload your first PDF or add a reference by DOI to start building the evidence base for this thesis.</p><button class="primary-btn" id="emptyLibraryUpload" type="button">＋ Add article</button></div>';
     document.getElementById('emptyLibraryUpload')?.addEventListener('click',()=>{
       if(window.QuirePdfReader) window.QuirePdfReader.pendingArticleId=null;
       fileInput.click();
@@ -519,29 +591,36 @@ async function renderLibraryArticles(){
     return;
   }
 
-  mount.innerHTML=articles
-    .slice()
-    .sort((x,y)=>(y.createdAt||'').localeCompare(x.createdAt||''))
-    .map(article=>{
-      const citation=article.citationData || {};
-      const meta=[article.authors,article.journal].filter(Boolean).join(' · ') || 'Imported PDF';
-      const pageText=citation.pageCount ? citation.pageCount+' pages' : 'PDF';
-      const reviewed=article.readingStatus==='reviewed'?'Reviewed':article.readingStatus==='reading'?'Reading':'Unread';
-      const highlightTotal=window.QuireStore.listHighlights(article.id).length;
-      const noteTotal=window.QuireStore.listNotes(article.id).length;
-      return '<article class="article-card" data-article-id="'+escapeHtml(article.id)+'">'+
-        '<div class="article-main">'+
-          '<div class="pdf-thumb">PDF</div>'+
-          '<div>'+
-            '<div class="tags"><span>'+escapeHtml(articleYearLabel(article))+'</span><span>'+escapeHtml(reviewed)+'</span>'+(article.doi?'<span>DOI</span>':'')+'</div>'+
-            '<h3>'+escapeHtml(article.title || 'Untitled article')+'</h3>'+
-            '<p>'+escapeHtml(meta)+(article.doi?' · DOI '+escapeHtml(article.doi):'')+'</p>'+
-            '<div class="meta-row"><span>'+escapeHtml(pageText)+'</span><span>◫ '+highlightTotal+' highlights</span><span>▱ '+noteTotal+' notes</span><span data-pdf-status="'+escapeHtml(article.id)+'">Checking PDF…</span></div>'+
-          '</div>'+
+  if(!articles.length){
+    mount.innerHTML='<div class="project-panel"><span class="eyebrow">FILTERED LIBRARY</span><h3>No matching papers</h3><p>Try another status filter or theme collection.</p></div>';
+    return;
+  }
+
+  mount.innerHTML=articles.map(article=>{
+    const citation=article.citationData || {};
+    const meta=[article.authors,article.journal].filter(Boolean).join(' · ') || 'Reference';
+    const pageText=citation.pageCount ? citation.pageCount+' pages' : 'Reference record';
+    const reviewed=article.readingStatus==='reviewed'?'Reviewed':article.readingStatus==='reading'?'Reading':'Unread';
+    const highlightTotal=window.QuireStore.listHighlights(article.id).length;
+    const noteTotal=window.QuireStore.listNotes(article.id).length;
+    const linkTotal=(state.evidenceLinks||[]).filter(link=>{
+      if(link.articleId===article.id)return true;
+      if(link.highlightId)return (state.highlights||[]).some(h=>h.id===link.highlightId&&h.articleId===article.id);
+      return false;
+    }).length;
+    return '<article class="article-card" data-article-id="'+escapeHtml(article.id)+'">'+
+      '<div class="article-main">'+
+        '<div class="pdf-thumb">PDF</div>'+
+        '<div>'+
+          '<div class="tags"><span>'+escapeHtml(articleYearLabel(article))+'</span><span>'+escapeHtml(reviewed)+'</span>'+(article.doi?'<span>DOI</span>':'')+'</div>'+
+          '<h3>'+escapeHtml(article.title || 'Untitled article')+'</h3>'+
+          '<p>'+escapeHtml(meta)+(article.doi?' · DOI '+escapeHtml(article.doi):'')+'</p>'+
+          '<div class="meta-row"><span>'+escapeHtml(pageText)+'</span><span>◫ '+highlightTotal+' highlights</span><span>▱ '+noteTotal+' notes</span><span>§ '+linkTotal+' links</span><span data-pdf-status="'+escapeHtml(article.id)+'">Checking PDF…</span></div>'+
         '</div>'+
-        '<div class="article-score"><strong>Open paper</strong><span>Quire reader</span></div>'+
-      '</article>';
-    }).join('');
+      '</div>'+
+      '<div class="article-score"><strong>Open paper</strong><span>Quire reader</span></div>'+
+    '</article>';
+  }).join('');
 
   mount.querySelectorAll('[data-article-id]').forEach(card=>{
     card.addEventListener('click',async()=>{
@@ -568,10 +647,21 @@ async function renderLibraryArticles(){
   }
 }
 
+document.querySelectorAll('[data-library-filter]').forEach(btn=>btn.addEventListener('click',()=>{
+  libraryFilter=btn.dataset.libraryFilter;
+  renderLibraryArticles();
+}));
+document.getElementById('librarySort')?.addEventListener('change',e=>{
+  librarySort=e.target.value;
+  renderLibraryArticles();
+});
+window.addEventListener('quire:project-switched',()=>{
+  libraryFilter='all';libraryThemeId='all';librarySort='recent';
+  const sort=document.getElementById('librarySort');if(sort)sort.value='recent';
+});
 window.addEventListener('quire:store-changed',()=>renderLibraryArticles());
 window.addEventListener('quire:cloud-pulled',()=>renderLibraryArticles());
 renderLibraryArticles();
-
 
 function updateResearchDeskCounts(){
   if(!window.QuireStore) return;
