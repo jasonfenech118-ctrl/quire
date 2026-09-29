@@ -139,6 +139,18 @@
     return ({article:'PDF',section:'§',chapter:'¶',highlight:'"',note:'✎',theme:'◇',objective:'◎',feedback:'☷'})[type]||'•';
   }
 
+  function memoryAnswer(query,rows=search(query)){
+    const top=rows.slice(0,8);
+    const groups=new Map();
+    top.forEach(row=>{
+      const provenance=({article:'Papers',highlight:'Source highlights',note:'Research notes',section:'Thesis writing',chapter:'Thesis structure',theme:'Themes',objective:'Objectives',feedback:'Supervisor feedback',analysis:'Ideas / analysis'})[row.type]||'Other';
+      if(!groups.has(provenance))groups.set(provenance,[]);
+      const sourceText=String(row.text||'').replace(/\s+/g,' ').trim();
+      groups.get(provenance).push({...row,excerpt:truncate(sourceText,180)});
+    });
+    return {query,groups:[...groups.entries()].map(([label,items])=>({label,items}))};
+  }
+
   function renderSearch(query){
     const box=document.getElementById('globalSearchResults');
     if(!box)return;
@@ -153,7 +165,10 @@
       box.innerHTML='<div class="global-search-empty"><strong>No matches</strong><small>Search papers, authors, chapter text, notes, highlights, themes or feedback.</small></div>';
       return;
     }
+    const memory=memoryAnswer(value,searchResults);
     box.innerHTML='<div class="global-search-head"><span>'+searchResults.length+' results</span><small>↑↓ navigate · Enter open · Esc close</small></div>'+
+      '<details class="research-memory-answer"><summary>What Quire already knows about this</summary><p>Retrieved from your stored workspace only. Quire is grouping matching records, not generating new factual claims.</p>'+
+      memory.groups.map(group=>'<section><strong>'+escapeHtml(group.label)+'</strong>'+group.items.slice(0,3).map(item=>'<div><span>'+escapeHtml(item.title)+'</span><small>'+escapeHtml(item.excerpt)+'</small></div>').join('')+'</section>').join('')+'</details>'+
       searchResults.map((row,index)=>
         '<button type="button" class="global-search-result '+(index===searchIndex?'active':'')+'" data-search-result="'+index+'">'+
           '<span class="global-search-icon">'+escapeHtml(icon(row.type))+'</span>'+
@@ -565,5 +580,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuirePolish={search,buildSearchIndex,memoryTerms,downloadBackup,restoreBackup,diagnostics,repairWorkspace,restoreMigrationRecovery};
+  window.QuirePolish={search,memoryAnswer,buildSearchIndex,memoryTerms,downloadBackup,restoreBackup,diagnostics,repairWorkspace,restoreMigrationRecovery};
 })();
