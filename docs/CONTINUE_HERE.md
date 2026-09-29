@@ -142,6 +142,37 @@ Research journey: **Discover → Understand → Organise → Write → Review**
 - New intelligence remains heuristic and communicates uncertainty rather than claiming scientific validity.
 - Supabase was not activated or modified.
 
+## Steps 57–64 — research-first expansion implemented
+
+The user chose to continue frontend development now and defer hands-on browser testing until later. Step 56 therefore remains open; the items below are **code-level implemented and QA'd**, not a claim that live browser validation has passed.
+
+- **Step 57 — Living Gap Explorer.** Synthesis now treats gaps as testable hypotheses with statuses: Emerging, Being tested, Narrowed, Supported by current review, Challenged, or Set aside. Supporting/challenging papers and targeted searches remain traceable. There is deliberately no “confirmed gap” status.
+- **Step 58 — Gap → Search Iteration.** A possible gap can open a targeted search context in Search & Screening. Suggested terms come only from the researcher's recorded gap text; they are added as a separate search concept rather than overwriting the main search plan. Logged search runs can be linked back to the gap.
+- **Step 59 — Research Question Evolution.** Study Setup can record meaningful evidence-led question refinements with previous wording, new wording, rationale, literature basis and optional gap provenance. This is explicit researcher action, not a keystroke log.
+- **Step 60 — Working Contribution Builder.** Synthesis can articulate a provisional contribution from the researcher's tested gap, study response and intended significance. Quire structures supplied wording but does not certify novelty.
+- **Step 61 — Reading Contribution Checkpoint & Literature Maturity Trend.** Marking a paper reviewed can optionally record what it added: new concept, reinforcement, challenge, method/context insight, background, or little new. Once enough checkpoints exist, Literature Maturity is grounded in these researcher judgements rather than metadata heuristics alone.
+- **Step 62 — Research Decision Log.** Study Setup now records major scope, search, eligibility, methodology, analysis, supervision, ethics and structure decisions with rationale and evidence/trigger, including superseded decisions.
+- **Step 63 — Search Review Checkpoint.** Search & Screening can record a researcher decision to continue broad searching, move to targeted searches, pause broad searching, or complete the current search stage for now. It never claims universal search completeness or saturation.
+- **Step 64 — Supervisor Research Rationale Pack.** Supervision can build/download a research-rationale pack covering review progress, maturity, gap testing, targeted searches, question evolution, working contribution and major research decisions.
+
+### Step 57–64 reconciliation / QA
+
+- All new modules parse successfully.
+- All new modules are loaded by index.html.
+- No duplicate HTML IDs were found.
+- Challenged or set-aside gaps no longer unlock question refinement or writing recommendations.
+- PDF writing handoff requires a tested viable gap status (supported or narrowed) in addition to review/maturity/question conditions.
+- Contribution and supervisor-pack language explicitly does not certify novelty.
+- Search checkpoints explicitly do not certify search completeness or saturation.
+- Service-worker shell cache is now **v28** and includes the new modules.
+- Supabase remained untouched.
+
+### Current next value direction
+
+The next high-value research-first gap is **literature discovery from the search plan**. Quire can already plan/log searches and has claim-oriented Crossref discovery, but Search & Screening does not yet provide a batch scholarly-candidate discovery workflow. The next implementation should reuse existing Crossref/metadata primitives, clearly label results as discovery candidates, support multi-select import with DOI deduplication, and preserve search provenance.
+
+
+
 ## Step 56 — exact next work
 
 This gate **cannot honestly be completed by static code inspection alone**.
