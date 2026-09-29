@@ -258,7 +258,9 @@
       aiTailorMethod:true,aiMethodChecks:true,aiProtectVoice:true,aiEvidenceLinks:true,
       designDetails:{},createdAt:ts,updatedAt:ts
     });
+    state.objectives.push(...defaultObjectives(id));
     state.chapters.push(...defaultChapters(id));
+    state.themes.push(...defaultThemes(id));
     state.progressSnapshots.push({
       id:uid('progress'),projectId:id,snapshotDate:ts.slice(0,10),
       ...normalizeProgress({currentWords:0,wordsPerWeek:0,articlesTotal:0,articlesReviewed:0,chaptersTotal:6,chaptersDeveloped:0,milestonesTotal:0,milestonesComplete:0,highlights:0,notes:0}),
@@ -267,6 +269,44 @@
     state.activeProjectId=id;
     writeState(state);
     return clone(state.projects.find(p=>p.id===id));
+  }
+
+
+  function updateProject(projectId,patch={}){
+    const state=getState();
+    const project=state.projects.find(p=>p.id===projectId);
+    if(!project) return null;
+    const allowed=['title','degreeName','institutionName','supervisorName','researchQuestion','abstract','wordTarget','proposalWordTarget','startDate','finalDeadline','status'];
+    allowed.forEach(key=>{
+      if(Object.prototype.hasOwnProperty.call(patch,key)) project[key]=patch[key];
+    });
+    project.updatedAt=nowIso();
+    writeState(state);
+    return clone(project);
+  }
+
+  function archiveProject(projectId){
+    const state=getState();
+    const project=state.projects.find(p=>p.id===projectId);
+    if(!project) return false;
+    project.status='archived';
+    project.updatedAt=nowIso();
+    if(state.activeProjectId===projectId){
+      const next=state.projects.find(p=>p.id!==projectId && p.status!=='archived') || state.projects.find(p=>p.id!==projectId);
+      if(next) state.activeProjectId=next.id;
+    }
+    writeState(state);
+    return true;
+  }
+
+  function restoreProject(projectId){
+    return updateProject(projectId,{status:'active'});
+  }
+
+  function listProjects({includeArchived=true}={}){
+    const state=getState();
+    return clone(state.projects.filter(p=>includeArchived || p.status!=='archived')
+      .sort((a,b)=>(b.updatedAt||'').localeCompare(a.updatedAt||'')));
   }
 
   function setActiveProject(projectId){
@@ -755,6 +795,10 @@
     getActiveProject,
     getActiveProjectId:()=>getActiveProjectId(getState()),
     createProject,
+    updateProject,
+    archiveProject,
+    restoreProject,
+    listProjects,
     setActiveProject,
     getStudySetupData,
     saveStudySetupData,
