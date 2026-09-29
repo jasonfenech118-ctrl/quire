@@ -2333,3 +2333,12 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .screening-panel-head{align-items:flex-start;flex-direction:column}
   .screening-tools{width:100%;justify-content:space-between}
 }
+
+/* ---------- Step 25: integrity diagnostics ---------- */
+.integrity-actions{flex-wrap:wrap;gap:9px}
+.integrity-actions .text-btn{padding:4px 0}
+.integrity-actions .diagnostics-summary{margin-left:auto}
+@media(max-width:650px){
+  .integrity-actions{align-items:flex-start;flex-direction:column}
+  .integrity-actions .diagnostics-summary{margin-left:0}
+}
