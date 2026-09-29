@@ -2,62 +2,94 @@
 
 ## Current position
 
-**Steps 1–33 are implemented. Step 22 backend activation remains deliberately deferred.**
+**Steps 1–55 are implemented in the repository.**
+
+**Step 56 — Manual Frontend Validation Gate — pending.**
+
+Step 22 backend activation remains deliberately deferred. Do not activate Supabase or touch the separate Customer Roster project.
 
 Primary destinations: **Home → Research → Ideas → Thesis → Progress**
 
 Research journey: **Discover → Understand → Organise → Write → Review**
 
-## Step 33 completed and checked
+## What was completed in the autonomous implementation run
 
-**Claim-Aware Writing & Evidence Intelligence Foundation** is integrated into the existing Writing Companion.
+### Steps 33–44 — agreed intelligence/workflow backlog
+- Step 33 — Claim-Aware Writing & Evidence Intelligence Foundation
+- Step 34 — Transparent claim-level evidence confidence profiles
+- Step 35 — Grounded “Why do I care?” paper intelligence
+- Step 36 — Counter-evidence / possible disagreement synthesis
+- Step 37 — Critical Writing Coach
+- Step 38 — Selected-passage Reading Assistant
+- Step 39 — Provenance-aware Research Memory search
+- Step 40 — Persistent Ideas & provenance
+- Step 41 — Living Argument Map with arguments and claims
+- Step 42 — Supervisor Review Package
+- Step 43 — End-of-Session Checkpoint
+- Step 44 — Integrated code/UX audit
 
-- Separates obvious researcher framing/signposting from likely empirical/factual claims.
-- Does not force every sentence into a claim category.
-- Recognises obvious in-text citations.
-- Detects when related evidence is already linked to the active thesis section.
-- Searches saved highlights for possible existing evidence.
-- Opens the existing evidence-linking workflow for matching passages.
-- Uses cautious language when evidence may be missing; a heuristic flag is never presented as proof that a statement is false.
-- Reuses the established Step 14 Evidence Check primitives rather than creating a competing evidence model.
-- Empty and short-fragment states are guarded.
+### Steps 45–55 — added-value roadmap identified after Step 44
+- Step 45 — Proper Idea Capture + selected passage → Idea provenance
+- Step 46 — Research Memory answer builder
+- Step 47 — Personal Writing Growth Centre based only on accepted edits
+- Step 48 — Provenance Chain Inspector
+- Step 49 — Ctrl/Cmd+K contextual command palette
+- Step 50 — Frontend release code-level audit
+- Step 51 — In-app workflow diagnostics
+- Step 52 — Citation & source integrity preflight
+- Step 53 — Research-question drift reflection
+- Step 54 — Cross-chapter coherence review
+- Step 55 — Submission Pack export
 
-Code-level reconciliation passed: module loaded, UI mount present, all claim statuses represented, evidence-link workflow reused, and evidence-check primitives exported.
+## QA / reconciliation findings from this run
 
-## Automated milestone sequence
+- All 35 local JavaScript modules loaded by the app parsed successfully during the Step 50 audit.
+- No duplicate HTML IDs were found in the Step 50 audit.
+- Stale Home Copilot event wiring left after the earlier Home simplification was found and fixed.
+- Supervisor Review Package QA found a missing helper; it was fixed before Step 42 closed.
+- Objective-coverage QA found an incorrect overall-anchor comparison; it was corrected to objective-specific matching before Step 54 closed.
+- Provenance Trace QA found a modal lifecycle issue; it was fixed before Step 50 closed.
+- New intelligence remains heuristic and communicates uncertainty rather than claiming scientific validity.
+- Supabase was not activated or modified.
 
-Continue one numbered step at a time. Implement, inspect/test, reconcile documentation, then proceed.
+## Step 56 — exact next work
 
-- **Step 34 — Claim-level Evidence Confidence.** Build a transparent qualitative confidence profile from source passage match, direct section linkage, citation presence, appraisal context and possible contradiction. Never collapse this into a simplistic scientific-validity score.
-- **Step 35 — Structured “Why do I care?” Paper Intelligence.** Turn existing grounded article analysis into thesis-useful study/findings/limitations/relevance/destination/passage cards.
-- **Step 36 — Contradiction & Counter-Evidence Workspace.** Extend existing negation/direction checks across multiple saved sources and surface disagreements without claiming one source is correct.
-- **Step 37 — Critical Writing Coach.** Distinguish description, comparison, interpretation and critique; prompt for limitations, alternative explanations and cross-source synthesis.
-- **Step 38 — Reading Assistant for Selected Passages.** Explain selected text simply or academically and show relevance, limitations and relation to the research question using grounded source context.
-- **Step 39 — Research Memory & Natural-Language Recall.** Search papers, highlights, notes and prior ideas with provenance-preserving results.
-- **Step 40 — Idea Provenance.** Mark whether a thought originated as researcher idea, source-derived note/highlight, supervisor feedback, analysis memo or brainstorming item.
-- **Step 41 — Living Argument Map.** Maintain research question → objectives → themes → arguments → claims → supporting/counter evidence → thesis sections using existing graph relationships.
-- **Step 42 — Supervisor Review Package.** Assemble changes, unresolved questions, weak-evidence areas and revision actions from existing review/version data.
-- **Step 43 — End-of-Session Checkpoint.** Summarise completed work, unresolved questions and the best starting point next time, locally and non-destructively.
-- **Step 44 — Integrated Value & UX Audit.** Re-test the full Discover → Understand → Organise → Write → Review journey, accessibility and duplication; then identify additional high-value milestones before implementation.
+This gate **cannot honestly be completed by static code inspection alone**.
 
-## Development rules
+Perform real-browser/device validation:
+1. Desktop walkthrough of Home → Research → Ideas → Thesis → Progress.
+2. Mobile/responsive walkthrough.
+3. Keyboard-only navigation and Ctrl/Cmd+K command palette.
+4. Screen-reader smoke test of primary navigation, writing ribbon, companion and modals.
+5. Real PDF: selection → highlight, note, Explain, Idea; reopen provenance source/page.
+6. Image-only PDF OCR smoke test.
+7. Real thesis editing: companion, claim awareness, evidence linking, writing review, accepted edit → Writing Growth.
+8. Ideas: capture, status progression, Trace, thesis handoff.
+9. Thesis Map: seven-layer horizontal map, edge rendering, node selection and relationship filters.
+10. Supervision package and End-session checkpoint.
+11. Backup → restore smoke test and in-app Diagnostics.
+12. Word export visual inspection.
+13. Print / Save PDF visual inspection.
+14. Submission Pack content inspection.
 
-- The researcher remains the author.
-- Never silently rewrite manuscript text.
-- Never invent evidence or references.
-- Separate researcher interpretation from sourced claims.
+Only after those checks pass should Step 56 be marked complete and backend activation be reconsidered.
+
+## Product principles
+
+- Researcher remains the author.
+- No silent manuscript rewrites.
+- No invented evidence/references.
+- Researcher interpretation stays distinguishable from sourced claims.
 - Preserve source/page provenance.
-- Prefer precise natural academic English over ornamental wording.
-- Heuristics must communicate uncertainty.
-- Reuse existing models/workflows before adding screens.
+- Heuristics communicate uncertainty.
+- Clear academic English over ornamental vocabulary.
+- Reuse existing workflows before adding screens.
 - Quire should become simpler as it becomes more capable.
-- Keep work frontend-first/local.
-- **Do not activate Supabase, run SQL, or touch the separate Customer Roster project.**
 
 ## Recovery
 
-Read `README.md`, `docs/PROJECT_MASTER.md`, and this file, then inspect the current milestone implementation before changing it.
+Read `README.md`, `docs/PROJECT_MASTER.md`, and this file before changing the repository.
 
 Resume phrase:
 
-> “Continue Quire autonomously from docs/CONTINUE_HERE.md. Complete and QA each numbered frontend milestone before proceeding; do not activate Supabase.”
+> “Continue Quire Step 56 from docs/CONTINUE_HERE.md. Perform real-browser frontend validation; do not activate Supabase until the validation gate is reviewed.”
