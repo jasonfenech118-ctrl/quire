@@ -230,6 +230,9 @@
   }
 
   function importArticles(items=[]){
+    if(window.QuireStore?.upsertArticles){
+      return window.QuireStore.upsertArticles(items);
+    }
     const report={added:0,updated:0,skipped:0,total:items.length,articles:[]};
     for(const article of items){
       if(!article.title){report.skipped++;continue;}
