@@ -52,6 +52,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 50: Frontend Release Readiness — code-level audit complete; real browser/device QA remains a separate validation task.
 - Step 51: In-App Workflow Diagnostics — implemented.
 - Step 52: Citation & Source Integrity Preflight — implemented.
+- Step 53: Research Question Drift Monitor — implemented.
 
 ## Step 32 — implemented
 
@@ -182,7 +183,11 @@ Diagnostics now verifies availability of the guided research journey, Writing Co
 
 Submission Readiness now checks inline citation links, reference metadata, duplicates, unused library items, cited sources without a saved passage/highlight for traceability, and broken evidence-graph references. Unused library material is informational rather than treated as a defect.
 
-## Next value review — proposed Steps 53–56
+## Step 53 — implemented
+
+Submission Readiness now includes a research-question alignment reflection for ready arguments and substantive thesis sections. It uses key-term overlap only as a prompt and explicitly warns that different terminology can still be fully relevant.
+
+## Next value review — proposed Steps 54–56
 
 - **Step 51 — In-App Workflow Diagnostics.** Extend Diagnostics with checks for the guided journey, active section, evidence graph, Ideas provenance, writing companion modules and local checkpoint/growth stores so regressions can be detected from inside Quire.
 - **Step 52 — Citation & Source Integrity Preflight.** Before export, identify citations with missing article records, evidence links with missing source passages, uncited bibliography entries and cited sources absent from the bibliography.
