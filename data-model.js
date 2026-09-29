@@ -1394,6 +1394,25 @@
     return clone(thread);
   }
 
+
+  function getOrCreateProjectThread(mode='project'){
+    const state=getState();
+    const projectId=getActiveProjectId(state);
+    if(!projectId) throw new Error('No active thesis project.');
+    let thread=state.aiThreads.find(t=>t.projectId===projectId && !t.articleId && !t.sectionId && t.mode===mode);
+    if(!thread){
+      const ts=nowIso();
+      const project=state.projects.find(p=>p.id===projectId);
+      thread={
+        id:uid('thread'),projectId,articleId:null,sectionId:null,
+        mode,title:'Project Copilot · '+(project?.title||'Thesis'),createdAt:ts,updatedAt:ts
+      };
+      state.aiThreads.push(thread);
+      writeState(state);
+    }
+    return clone(thread);
+  }
+
   function addAiMessage(threadId,role,content,sourceRefs=[]){
     const state=getState();
     const thread=state.aiThreads.find(t=>t.id===threadId);
@@ -2058,6 +2077,7 @@
     removeEvidenceLink,
     listEvidenceLinks,
     getOrCreateArticleThread,
+    getOrCreateProjectThread,
     addAiMessage,
     listAiMessages,
     listReviewRounds,
