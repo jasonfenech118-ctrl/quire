@@ -676,6 +676,15 @@
             <div class="synthesis-table-wrap"><table id="synthesisMatrix" class="synthesis-matrix"></table></div>
             <div class="section-title compact-title"><div><span class="eyebrow">SYNTHESIS SIGNALS</span><h2>What to examine next</h2></div></div>
             <div id="synthesisInsights" class="synthesis-insights"></div>
+
+            <section class="gap-explorer-panel" aria-labelledby="gapExplorerTitle">
+              <div class="gap-explorer-head">
+                <div><span class="eyebrow">LIVING GAP EXPLORER</span><h2 id="gapExplorerTitle">Test what the literature may be missing.</h2><p>A gap stays provisional until you have deliberately searched for evidence that could support, narrow or challenge it.</p></div>
+                <button class="soft-btn" id="newGapFromSynthesisBtn" type="button">＋ Possible gap</button>
+              </div>
+              <div id="gapExplorerSummary" class="gap-explorer-summary"></div>
+              <div id="gapExplorerList" class="gap-explorer-list"></div>
+            </section>
           </div>
         </div>
       </section>
@@ -2192,6 +2201,7 @@
   <script src="appraisal.js"></script>
   <script src="analysis-workspace.js"></script>
   <script src="synthesis.js"></script>
+  <script src="gap-explorer.js"></script>
   <script src="methodology.js"></script>
   <script src="writing-review.js"></script>
   <script src="evidence-check.js"></script>
