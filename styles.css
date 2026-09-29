@@ -1133,3 +1133,40 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
   .live-chapter-layout{grid-template-columns:1fr}
   .chapter-tree{position:static}
 }
+
+
+/* ---------- Step 11: evidence-to-writing ---------- */
+.evidence-linker-btn{width:100%;margin:9px 0 12px}
+.section-evidence-card{
+  border:1px solid #47413c;background:#252320;border-radius:3px;padding:10px
+}
+.section-evidence-source{display:flex;justify-content:space-between;gap:8px;align-items:center}
+.section-evidence-source span{font-size:8px;color:#d8c5a5;font-weight:700}
+.section-evidence-source small{font-size:7px;color:#aaa196}
+.section-evidence-card>p{font-family:"Libre Caslon Text",serif;font-size:10px;line-height:1.45;color:#e4ddd3;margin:7px 0}
+.section-evidence-note{font-size:8px;line-height:1.45;color:#b6aea3;border-left:2px solid #7b927f;padding-left:7px}
+.section-evidence-actions{display:flex;gap:6px;flex-wrap:wrap;margin-top:9px}
+.section-evidence-actions button{
+  border:0;background:transparent;color:#cdb78f;font-size:7px;padding:2px 0
+}
+.section-evidence-actions button:last-child{margin-left:auto;color:#a97e78}
+.inline-citation{color:var(--burgundy);white-space:nowrap}
+.evidence-linker-modal{width:min(800px,96vw);max-height:88vh;overflow:auto}
+.evidence-linker-tools{display:grid;grid-template-columns:1fr 170px;gap:8px;margin:10px 0 14px}
+.evidence-linker-tools input,.evidence-linker-tools select{
+  border:1px solid var(--line);background:var(--sheet);border-radius:3px;padding:9px 10px;font-size:9px;color:var(--ink)
+}
+.evidence-linker-list{display:grid;gap:7px;max-height:560px;overflow:auto}
+.evidence-linker-row{
+  display:grid;grid-template-columns:1fr auto;gap:12px;align-items:start;
+  border:1px solid var(--line);background:#faf7f0;border-radius:3px;padding:11px
+}
+.evidence-linker-row div>span,.evidence-linker-row strong,.evidence-linker-row small{display:block}
+.evidence-linker-row div>span{font-size:7px;color:var(--forest);font-weight:700}
+.evidence-linker-row strong{font-family:"Libre Caslon Text",serif;font-size:11px;font-weight:400;line-height:1.4;margin-top:5px}
+.evidence-linker-row small{font-size:8px;color:var(--muted);line-height:1.4;margin-top:5px}
+.evidence-linker-row>button{
+  border:1px solid #bdc9bf;background:#eef3ee;color:var(--forest);font-size:8px;border-radius:3px;padding:7px 9px
+}
+.evidence-linker-row>button:disabled{opacity:.45;cursor:default}
+@media(max-width:700px){.evidence-linker-tools{grid-template-columns:1fr}}
