@@ -17,7 +17,8 @@ Quire currently includes:
 - BibTeX / RIS reference-manager import and export
 - Grounded article Copilot with real PDF text retrieval
 - Live thesis relationship map
-- Chapter planner and editor
+- Chapter planner and editor with writing-time reference insertion
+- Supervisor review, feedback and section version history
 - Brainstorm board
 - Writing and evidence review
 
@@ -126,6 +127,7 @@ See `docs/reference-manager.md`.
 - Step 17 — OCR for scanned PDFs ✅
 - Step 18 — Live Thesis Map ✅
 - Step 19 — Progress Intelligence ✅
+- Step 20 — Supervisor & Revision Workflow ✅
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -141,6 +143,14 @@ The map also includes a connection editor that writes directly into Quire's exis
 
 See `docs/thesis-map.md`.
 
+### Writing-time reference insertion
+
+The chapter editor can now search the active Research Library and insert a correctly formatted citation at the current cursor position. If the source is missing, DOI/title lookup can add and cite it directly without leaving the writing workflow.
+
+Inserted citations retain their source article ID and use a neutral `cites` relationship rather than being mislabelled as supporting evidence.
+
+See `docs/writing-references.md`.
+
 ### Step 19 — Progress Intelligence
 
 Prototype progress counters and manually entered writing pace have been replaced with metrics derived from the active project's real sections, article statuses, evidence links, chapter states and milestones.
@@ -148,6 +158,12 @@ Prototype progress counters and manually entered writing pace have been replaced
 Quire records one derived snapshot per project per day, learns writing velocity from dated history, shows a transparent weighted progress breakdown and only produces a completion forecast once enough real history exists.
 
 See `docs/progress-intelligence.md`.
+
+### Step 20 — Supervisor & Revision Workflow
+
+Quire now supports supervisor review rounds, structured revision feedback and section-level version history. Creating a review round snapshots the submitted draft, feedback stays separate from manuscript content, and restoring an older version automatically preserves the current draft first.
+
+See `docs/supervision-revisions.md`.
 
 ## Run locally
 
@@ -158,6 +174,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–19 are implemented. The next planned step is **Step 20 — Supervisor & Revision Workflow**, adding structured feedback, revision states and draft history without overwriting the researcher's writing.
+The original eight foundation steps and Phase 2 Steps 9–20 are implemented. The next planned step is **Step 21 — Thesis Export**, producing a structured Word/PDF-ready thesis package from the real project data.
 
 © Quire prototype.
