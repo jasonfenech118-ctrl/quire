@@ -3026,3 +3026,36 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
   .question-evolution-head .soft-btn{margin-top:10px}
   .question-evolution-entry{grid-template-columns:1fr}
 }
+
+
+/* ---------- Step 60: Working Contribution Builder ---------- */
+.contribution-builder-panel{margin-top:14px;border:1px solid var(--line);background:#f9f5ee;padding:18px}
+.contribution-builder-head{display:flex;justify-content:space-between;gap:18px;align-items:flex-start}
+.contribution-builder-head h2{font-family:"Libre Caslon Text",serif;font-size:21px;font-weight:400;margin:5px 0}
+.contribution-builder-head p{font-size:9px;line-height:1.55;color:var(--muted);margin:0;max-width:720px}
+.contribution-builder-status{margin-top:13px;border-left:2px solid var(--gold);background:#fff;padding:9px 11px}
+.contribution-builder-status strong,.contribution-builder-status small{display:block}
+.contribution-builder-status strong{font-size:8px}
+.contribution-builder-status small{font-size:7px;line-height:1.45;color:var(--muted);margin-top:3px}
+.contribution-builder-output{margin-top:10px}
+.contribution-empty{border:1px dashed var(--line);background:#fff;padding:13px;font-size:8px;color:var(--muted);line-height:1.5}
+.contribution-card{border:1px solid var(--line);background:#fff;padding:14px;border-left:3px solid var(--gold)}
+.contribution-card.readiness-current_support{border-left-color:var(--forest)}
+.contribution-card.readiness-caution{border-left-color:var(--burgundy)}
+.contribution-card-head{display:flex;justify-content:space-between;gap:12px}
+.contribution-card-head span{font-size:7px;font-weight:700;color:var(--forest)}
+.contribution-card-head small{font-size:7px;color:var(--muted)}
+.contribution-card blockquote{font-family:"Libre Caslon Text",serif;font-size:15px;line-height:1.55;margin:12px 0;padding-left:13px;border-left:2px solid var(--line-dark)}
+.contribution-details{border-top:1px solid #eee6dc;padding-top:8px}
+.contribution-details p{font-size:8px;line-height:1.5;margin:5px 0}
+.contribution-authorship-note{display:block;margin-top:9px;font-size:7px;color:var(--muted)}
+.contribution-builder-modal{width:min(790px,96vw)}
+.contribution-builder-intro{font-size:9px;line-height:1.55;color:var(--muted)}
+.contribution-draft-box{border:1px solid var(--line);background:#f8f4ed;padding:12px;margin-top:13px}
+.contribution-draft-box>div{display:flex;justify-content:space-between;gap:12px;align-items:center}
+.contribution-draft-box textarea{width:100%;border:1px solid var(--line);background:#fff;padding:10px;margin-top:8px;font:inherit;resize:vertical}
+.contribution-draft-box>small{display:block;font-size:7px;line-height:1.45;color:var(--muted);margin-top:5px}
+@media(max-width:700px){
+  .contribution-builder-head{display:block}
+  .contribution-builder-head .soft-btn{margin-top:10px}
+}
