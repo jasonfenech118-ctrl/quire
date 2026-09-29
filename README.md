@@ -19,6 +19,7 @@ Quire currently includes:
 - Live thesis relationship map
 - Chapter planner and editor with writing-time reference insertion
 - Supervisor review, feedback and section version history
+- Structured Word-compatible and print/PDF thesis export
 - Brainstorm board
 - Writing and evidence review
 
@@ -128,6 +129,7 @@ See `docs/reference-manager.md`.
 - Step 18 — Live Thesis Map ✅
 - Step 19 — Progress Intelligence ✅
 - Step 20 — Supervisor & Revision Workflow ✅
+- Step 21 — Thesis Export ✅
 
 ### Step 17 — OCR for scanned PDFs
 
@@ -165,6 +167,12 @@ Quire now supports supervisor review rounds, structured revision feedback and se
 
 See `docs/supervision-revisions.md`.
 
+### Step 21 — Thesis Export
+
+Quire can now assemble the active thesis from its real chapters, sections and cited references into a clean document preview. It supports whole-thesis or chapter export, Word-compatible `.doc` download and an A4 print layout for Save as PDF.
+
+See `docs/thesis-export.md`.
+
 ## Run locally
 
 1. Clone the repository.
@@ -174,6 +182,6 @@ For reliable authentication redirects and later PDF features, serving the app ov
 
 ## Build roadmap
 
-The original eight foundation steps and Phase 2 Steps 9–20 are implemented. The next planned step is **Step 21 — Thesis Export**, producing a structured Word/PDF-ready thesis package from the real project data.
+The original eight foundation steps and Phase 2 Steps 9–21 are implemented. The next planned step is **Step 22 — Real Cloud Backend Activation**. The code can be prepared now, but actual activation requires a Supabase project and its public project credentials.
 
 © Quire prototype.
