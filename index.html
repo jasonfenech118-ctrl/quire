@@ -306,7 +306,10 @@
             <h1>Your evidence, organised.</h1>
             <p>Upload papers, capture what matters and connect evidence to your thesis.</p>
           </div>
-          <button class="primary-btn" id="uploadArticleBtn">＋ Add article</button>
+          <div class="library-heading-actions">
+            <button class="soft-btn" id="openReferenceManager" type="button">⇄ References</button>
+            <button class="primary-btn" id="uploadArticleBtn">＋ Add article</button>
+          </div>
         </div>
 
         <div class="toolbar">
@@ -843,6 +846,7 @@
       <div class="new-grid">
         <button class="new-card" data-action="upload"><span>PDF</span><strong>Upload article</strong><small>Add a paper from your device</small></button>
         <button class="new-card" id="openMetadataImport" type="button"><span>DOI</span><strong>Add by DOI or title</strong><small>Retrieve scholarly metadata automatically</small></button>
+        <button class="new-card" id="openReferenceImportCard" type="button"><span>BIB</span><strong>Import references</strong><small>BibTeX or RIS from Zotero, Mendeley or EndNote</small></button>
         <button class="new-card" data-go-modal="brainstorm"><span>✦</span><strong>Capture an idea</strong><small>Save a thought before it disappears</small></button>
         <button class="new-card" data-go-modal="chapters"><span>§</span><strong>New thesis section</strong><small>Add to your chapter structure</small></button>
         <button class="new-card" data-go-modal="setup"><span>◈</span><strong>New thesis project</strong><small>Start by defining study design and targets</small></button>
@@ -853,6 +857,60 @@
 
 
 
+
+
+  <div id="referenceManagerModal" class="modal-backdrop" hidden>
+    <div class="modal reference-manager-modal">
+      <div class="modal-head">
+        <div><span class="eyebrow">REFERENCE MANAGER</span><h2>Move references in and out of Quire</h2></div>
+        <button id="closeReferenceManagerModal" type="button">×</button>
+      </div>
+
+      <div class="reference-manager-grid">
+        <section class="reference-panel">
+          <span class="eyebrow">IMPORT</span>
+          <h3>Bring in a reference library</h3>
+          <p>Import a BibTeX or RIS export. Quire checks DOI first and then title to avoid duplicate records.</p>
+          <button class="primary-btn" id="chooseReferenceFile" type="button">Choose .bib or .ris file</button>
+
+          <div id="referenceImportPreview" class="reference-import-preview" hidden>
+            <div class="reference-import-summary">
+              <div><span>File</span><strong id="referenceImportFile">—</strong></div>
+              <div><span>Format</span><strong id="referenceImportFormat">—</strong></div>
+              <div><span>Detected</span><strong id="referenceImportCount">—</strong></div>
+            </div>
+            <div id="referenceImportItems" class="reference-import-items"></div>
+            <button class="soft-btn" id="confirmReferenceImport" type="button" disabled>Import into this thesis</button>
+          </div>
+
+          <div id="referenceImportReport" class="reference-import-report" hidden></div>
+        </section>
+
+        <section class="reference-panel">
+          <span class="eyebrow">EXPORT</span>
+          <h3>Use your Quire library elsewhere</h3>
+          <p>Export all references in the active thesis. PDFs, highlights and Quire notes stay in Quire; bibliographic metadata travels with the reference file.</p>
+
+          <button class="reference-export-card" type="button" data-reference-export="bib">
+            <span>BIB</span>
+            <div><strong>Export BibTeX</strong><small>Best for Zotero, LaTeX and many citation managers</small></div>
+            <b>↓</b>
+          </button>
+
+          <button class="reference-export-card" type="button" data-reference-export="ris">
+            <span>RIS</span>
+            <div><strong>Export RIS</strong><small>Compatible with Zotero, Mendeley and EndNote</small></div>
+            <b>↓</b>
+          </button>
+
+          <div class="reference-compatibility">
+            <strong>Interoperable by design</strong>
+            <p>Quire preserves DOI, authors, journal, year, volume, issue, pages, abstract, URL, ISSN and keywords where those fields are available.</p>
+          </div>
+        </section>
+      </div>
+    </div>
+  </div>
 
   <div id="aiSettingsModal" class="modal-backdrop" hidden>
     <div class="modal ai-settings-modal">
@@ -1036,6 +1094,7 @@
   </div>
 
   <input id="fileInput" type="file" accept=".pdf" hidden />
+  <input id="referenceFileInput" type="file" accept=".bib,.ris,application/x-bibtex,application/x-research-info-systems,text/plain" hidden />
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="data-model.js"></script>
@@ -1043,6 +1102,7 @@
   <script src="pdf-reader.js"></script>
   <script src="metadata.js"></script>
   <script src="copilot.js"></script>
+  <script src="references.js"></script>
   <script src="app.js"></script>
 </body>
 </html>
