@@ -48,7 +48,8 @@
     searchRuns: [],
     screeningRecords: [],
     appraisals: [],
-    analysisItems: []
+    analysisItems: [],
+    submissionItems: []
   });
 
   function readJson(key, fallback=null){
@@ -1920,6 +1921,55 @@
     });
   }
 
+
+  function listSubmissionItems(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    return clone(state.submissionItems.filter(item=>item.projectId===projectId)
+      .sort((a,b)=>(a.createdAt||'').localeCompare(b.createdAt||'')));
+  }
+
+  function addSubmissionItem(data={}){
+    const state=getState();
+    const projectId=data.projectId||getActiveProjectId(state);
+    if(!projectId)throw new Error('No active thesis project.');
+    if(!String(data.title||'').trim())throw new Error('Enter a checklist item.');
+    const ts=nowIso();
+    const row={
+      id:uid('submission'),projectId,
+      title:String(data.title).trim(),
+      category:String(data.category||'Institution / local requirements'),
+      completed:Boolean(data.completed),
+      note:String(data.note||''),
+      createdAt:ts,updatedAt:ts
+    };
+    state.submissionItems.push(row);
+    writeState(state);
+    return clone(row);
+  }
+
+  function updateSubmissionItem(itemId,patch={}){
+    const state=getState();
+    const row=state.submissionItems.find(item=>item.id===itemId);
+    if(!row)return null;
+    if(Object.prototype.hasOwnProperty.call(patch,'title'))row.title=String(patch.title||'').trim()||row.title;
+    if(Object.prototype.hasOwnProperty.call(patch,'category'))row.category=String(patch.category||'Institution / local requirements');
+    if(Object.prototype.hasOwnProperty.call(patch,'completed'))row.completed=Boolean(patch.completed);
+    if(Object.prototype.hasOwnProperty.call(patch,'note'))row.note=String(patch.note||'');
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function removeSubmissionItem(itemId){
+    const state=getState();
+    const before=state.submissionItems.length;
+    state.submissionItems=state.submissionItems.filter(item=>item.id!==itemId);
+    if(state.submissionItems.length===before)return false;
+    writeState(state);
+    return true;
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -1947,7 +1997,8 @@
       searchRuns:byProject('searchRuns'),
       screeningRecords:byProject('screeningRecords'),
       appraisals:byProject('appraisals'),
-      analysisItems:byProject('analysisItems')
+      analysisItems:byProject('analysisItems'),
+      submissionItems:byProject('submissionItems')
     });
   }
 
@@ -2038,6 +2089,10 @@
     updateAnalysisItem,
     removeAnalysisItem,
     analysisSummary,
+    listSubmissionItems,
+    addSubmissionItem,
+    updateSubmissionItem,
+    removeSubmissionItem,
     getProjectBundle
   };
 
