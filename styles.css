@@ -1029,3 +1029,51 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
   .reference-import-summary>div:first-child{grid-column:1/-1}
   .library-heading-actions{width:100%}
 }
+
+
+/* ---------- Step 9: multi-project workspace ---------- */
+.nav-count{
+  margin-left:auto;min-width:19px;height:19px;border-radius:10px;background:#ece5da;
+  display:grid;place-items:center;font-size:7px;color:var(--muted);font-weight:700
+}
+.nav-item.active .nav-count{background:var(--gold-soft);color:var(--burgundy)}
+.projects-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.research-project-card,.new-project-card{
+  min-height:290px;border:1px solid var(--line);border-radius:4px;background:rgba(255,253,248,.82);
+  padding:20px;box-shadow:var(--shadow-soft)
+}
+.research-project-card.active{border-color:#9caea3;box-shadow:0 0 0 1px rgba(35,67,58,.12),var(--shadow-soft)}
+.project-card-top{display:flex;justify-content:space-between;align-items:center}
+.project-menu-btn{border:0;background:transparent;font-size:18px;color:var(--muted);padding:0 4px}
+.research-project-card h2{
+  font-family:"Libre Caslon Text",serif;font-size:23px;font-weight:400;line-height:1.25;margin:19px 0 9px
+}
+.research-project-card>p{font-size:10px;color:var(--muted);line-height:1.55;min-height:47px}
+.project-card-meta{display:flex;gap:6px;flex-wrap:wrap;margin:17px 0}
+.project-card-meta span{font-size:7px;border:1px solid var(--line);padding:4px 6px;border-radius:10px;color:var(--muted)}
+.project-card-progress{display:grid;grid-template-columns:1fr auto;gap:10px;align-items:center}
+.project-card-progress>div{height:3px;background:#e1dbd0}
+.project-card-progress>div span{display:block;height:100%;background:var(--forest)}
+.project-card-progress strong{font-size:9px}
+.project-card-actions{display:flex;gap:7px;margin-top:20px}
+.new-project-card{
+  border-style:dashed;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;color:var(--ink)
+}
+.new-project-card>span{font-family:"Libre Caslon Text",serif;font-size:32px;color:var(--forest)}
+.new-project-card strong{font-family:"Libre Caslon Text",serif;font-size:18px;font-weight:400;margin-top:7px}
+.new-project-card small{font-size:8px;color:var(--muted);max-width:230px;line-height:1.5;margin-top:5px}
+.archived-projects-wrap{margin-top:34px}
+.compact-title{margin:0 0 10px}
+.archived-projects{display:grid;gap:6px}
+.archived-project-row{
+  display:flex;align-items:center;justify-content:space-between;border-top:1px solid var(--line);padding:10px 2px
+}
+.archived-project-row strong,.archived-project-row small{display:block}
+.archived-project-row strong{font-size:10px}.archived-project-row small{font-size:7px;color:var(--muted);margin-top:2px}
+.archived-project-row button{border:0;background:transparent;color:var(--forest);font-size:8px}
+.empty-projects{font-size:8px;color:var(--muted)}
+.project-modal{width:min(700px,96vw)}
+.project-modal-actions{display:flex;justify-content:space-between;align-items:center;margin-top:18px}
+.project-modal-actions>div{display:flex;gap:8px}
+@media(max-width:1050px){.projects-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.projects-grid{grid-template-columns:1fr}.project-card-actions{flex-direction:column}}
