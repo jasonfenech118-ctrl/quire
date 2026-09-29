@@ -41,6 +41,7 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 - Step 39: Provenance-Aware Research Memory Search — implemented.
 - Step 40: Persistent Ideas & Provenance — implemented.
 - Step 41: Living Argument Map — implemented.
+- Step 42: Supervisor Review Package — implemented.
 
 ## Step 32 — implemented
 
@@ -125,7 +126,11 @@ The Ideas workspace is no longer only static prototype content. Ideas are persis
 
 The existing Thesis Map now includes persistent ready-for-thesis ideas as **Arguments** and likely empirical/factual sentences from real thesis sections as **Claims**. It connects themes → arguments → claims → evidence → writing where stored or cautiously derivable. Automatically inferred relationships are marked as derived rather than being presented as researcher-authored links.
 
-## Agreed future feature backlog — after Step 41
+## Step 42 — implemented
+
+Supervision can now build a review package from recorded project data: changes since the latest review round, unresolved feedback/questions, thesis sections with no recorded evidence link, and active revision actions. The package is downloadable and explicitly does not determine academic quality or supervisor priorities. QA caught and fixed a missing local helper before the step was closed.
+
+## Agreed future feature backlog — after Step 42
 
 Preserve these as approved product directions, but do not implement them as disconnected screens. They should appear contextually inside the five-stage flow.
 
