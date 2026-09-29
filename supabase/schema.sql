@@ -614,7 +614,7 @@ with check (
 );
 
 
--- Step 25: structured critical appraisal
+-- Step 27: structured critical appraisal
 create table if not exists public.critical_appraisals (
   id text primary key default gen_random_uuid()::text,
   project_id text not null references public.thesis_projects(id) on delete cascade,
