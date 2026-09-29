@@ -47,7 +47,8 @@
     searchPlans: [],
     searchRuns: [],
     screeningRecords: [],
-    appraisals: []
+    appraisals: [],
+    analysisItems: []
   });
 
   function readJson(key, fallback=null){
@@ -1309,6 +1310,7 @@
     state.aiThreads=state.aiThreads.filter(t=>!removedIds.has(t.sectionId));
     state.feedbackItems=state.feedbackItems.filter(f=>!removedIds.has(f.sectionId));
     state.sectionVersions=state.sectionVersions.filter(v=>!removedIds.has(v.sectionId));
+    state.analysisItems=state.analysisItems.map(item=>removedIds.has(item.sectionId)?{...item,sectionId:null,updatedAt:nowIso()}:item);
     state.sections=state.sections.filter(s=>!removedIds.has(s.id));
     writeState(state);return true;
   }
@@ -1824,6 +1826,85 @@
     });
   }
 
+
+  function listAnalysisItems(filters={}){
+    const state=getState();
+    const projectId=filters.projectId||getActiveProjectId(state);
+    return clone(state.analysisItems.filter(item=>{
+      if(item.projectId!==projectId)return false;
+      if(filters.kind&&item.kind!==filters.kind)return false;
+      if(filters.status&&item.status!==filters.status)return false;
+      if(filters.objectiveId&&item.objectiveId!==filters.objectiveId)return false;
+      if(filters.sectionId&&item.sectionId!==filters.sectionId)return false;
+      return true;
+    }).sort((a,b)=>(b.updatedAt||b.createdAt||'').localeCompare(a.updatedAt||a.createdAt||'')));
+  }
+
+  function getAnalysisItem(itemId){
+    const state=getState();
+    return clone(state.analysisItems.find(item=>item.id===itemId)||null);
+  }
+
+  function addAnalysisItem(data={}){
+    const state=getState();
+    const projectId=data.projectId||getActiveProjectId(state);
+    if(!projectId)throw new Error('No active thesis project.');
+    if(!String(data.title||'').trim())throw new Error('Give the analysis item a title.');
+    const ts=nowIso();
+    const row={
+      id:uid('analysis'),projectId,
+      kind:data.kind||'memo',
+      objectiveId:data.objectiveId||null,
+      sectionId:data.sectionId||null,
+      title:String(data.title).trim(),
+      payload:(data.payload&&typeof data.payload==='object')?clone(data.payload):{},
+      status:['draft','ready','verified'].includes(data.status)?data.status:'draft',
+      createdAt:ts,updatedAt:ts
+    };
+    state.analysisItems.push(row);
+    writeState(state);
+    return clone(row);
+  }
+
+  function updateAnalysisItem(itemId,patch={}){
+    const state=getState();
+    const row=state.analysisItems.find(item=>item.id===itemId);
+    if(!row)return null;
+    if(Object.prototype.hasOwnProperty.call(patch,'kind'))row.kind=patch.kind||row.kind;
+    if(Object.prototype.hasOwnProperty.call(patch,'objectiveId'))row.objectiveId=patch.objectiveId||null;
+    if(Object.prototype.hasOwnProperty.call(patch,'sectionId'))row.sectionId=patch.sectionId||null;
+    if(Object.prototype.hasOwnProperty.call(patch,'title'))row.title=String(patch.title||'').trim()||row.title;
+    if(Object.prototype.hasOwnProperty.call(patch,'payload'))row.payload=(patch.payload&&typeof patch.payload==='object')?clone(patch.payload):{};
+    if(Object.prototype.hasOwnProperty.call(patch,'status'))row.status=['draft','ready','verified'].includes(patch.status)?patch.status:row.status;
+    row.updatedAt=nowIso();
+    writeState(state);
+    return clone(row);
+  }
+
+  function removeAnalysisItem(itemId){
+    const state=getState();
+    const before=state.analysisItems.length;
+    state.analysisItems=state.analysisItems.filter(item=>item.id!==itemId);
+    if(state.analysisItems.length===before)return false;
+    writeState(state);
+    return true;
+  }
+
+  function analysisSummary(projectId){
+    const state=getState();
+    projectId=projectId||getActiveProjectId(state);
+    const rows=state.analysisItems.filter(item=>item.projectId===projectId);
+    const findings=rows.filter(item=>['qual_finding','quant_analysis','mixed_integration','review_outcome','synthesis_finding'].includes(item.kind));
+    return clone({
+      total:rows.length,
+      findings:findings.length,
+      ready:rows.filter(item=>item.status==='ready'||item.status==='verified').length,
+      verified:rows.filter(item=>item.status==='verified').length,
+      linkedObjectives:rows.filter(item=>item.objectiveId).length,
+      linkedSections:rows.filter(item=>item.sectionId).length
+    });
+  }
+
   function getProjectBundle(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -1850,7 +1931,8 @@
       searchPlans:byProject('searchPlans'),
       searchRuns:byProject('searchRuns'),
       screeningRecords:byProject('screeningRecords'),
-      appraisals:byProject('appraisals')
+      appraisals:byProject('appraisals'),
+      analysisItems:byProject('analysisItems')
     });
   }
 
@@ -1935,6 +2017,12 @@
     getAppraisal,
     saveAppraisal,
     appraisalSummary,
+    listAnalysisItems,
+    getAnalysisItem,
+    addAnalysisItem,
+    updateAnalysisItem,
+    removeAnalysisItem,
+    analysisSummary,
     getProjectBundle
   };
 
