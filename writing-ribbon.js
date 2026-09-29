@@ -73,7 +73,7 @@
       prompt,
       selectedText:selectedText(),
       paragraph:paragraphText(),
-      sectionId:window.QuireChapterEditor?.getCurrentSectionId?.()||null
+      sectionId:writingContext?.sectionId||window.QuireChapterEditor?.getActive?.().sectionId||null
     }}));
   }
 
@@ -82,10 +82,7 @@
     rememberWritingContext();
     const q=writingContext?.selection||writingContext?.paragraph||'';
     window.showView?.('library');
-    setTimeout(()=>{
-      const input=document.getElementById('librarySearch');
-      if(input&&q){input.value=q.slice(0,120);input.dispatchEvent(new Event('input',{bubbles:true}));input.focus();}
-    },60);
+    window.dispatchEvent(new CustomEvent('quire:writing-library-search',{detail:{query:q,sectionId:writingContext?.sectionId}}));
   }
 
   function findEvidence(){
