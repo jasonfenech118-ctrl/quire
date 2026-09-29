@@ -7,6 +7,9 @@
   const STORE_KEY = 'quire:v1';
   const LEGACY_SETUP_KEY = 'quireStudySetup';
   const LEGACY_PROGRESS_KEY = 'quireProjectProgress';
+  const CURRENT_SCHEMA_VERSION = 2;
+  const RECOVERY_KEY = 'quire:migration-recovery';
+  let statePrepared = false;
 
   const nowIso = () => new Date().toISOString();
   const uid = (prefix='id') => {
@@ -20,6 +23,8 @@
 
   const emptyState = () => ({
     version: 1,
+    schemaVersion: CURRENT_SCHEMA_VERSION,
+    migrationHistory: [],
     activeProjectId: null,
     projects: [],
     studySetups: [],
@@ -56,6 +61,8 @@
 
   function writeState(state, options={}){
     state.version = 1;
+    state.schemaVersion = CURRENT_SCHEMA_VERSION;
+    if(!Array.isArray(state.migrationHistory)) state.migrationHistory=[];
     localStorage.setItem(STORE_KEY, JSON.stringify(state));
     if(!options.silent){
       window.dispatchEvent(new CustomEvent('quire:store-changed',{detail:{activeProjectId:state.activeProjectId}}));
@@ -65,7 +72,11 @@
 
   function replaceState(nextState, options={}){
     if(!nextState || !Array.isArray(nextState.projects)) throw new Error('Invalid Quire state.');
-    return clone(writeState(clone(nextState), options));
+    const current=readJson(STORE_KEY,null);
+    if(current) saveRecoveryBackup(current,'before_workspace_replace');
+    const prepared=prepareState(nextState);
+    statePrepared=true;
+    return clone(writeState(prepared.state, options));
   }
 
   function defaultChapters(projectId){
@@ -231,16 +242,278 @@
     const collections=[
       'projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes',
       'articleThemes','evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages',
-      'reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals'
+      'reviewRounds','feedbackItems','sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals',
+      'migrationHistory'
     ];
     collections.forEach(key=>{if(!Array.isArray(state[key])) state[key]=[];});
+    if(!Number.isFinite(Number(state.schemaVersion))) state.schemaVersion=1;
     return state;
+  }
+
+  function saveRecoveryBackup(state,reason='migration'){
+    try{
+      const payload=JSON.stringify({createdAt:nowIso(),reason,state});
+      // Keep one emergency recovery copy, but avoid exhausting small localStorage quotas.
+      if(payload.length<=3500000) localStorage.setItem(RECOVERY_KEY,payload);
+      return payload.length<=3500000;
+    }catch(e){
+      return false;
+    }
+  }
+
+  function getRecoveryBackup(){
+    const row=readJson(RECOVERY_KEY,null);
+    return row&&row.state ? clone(row) : null;
+  }
+
+  function restoreRecoveryBackup(){
+    const row=getRecoveryBackup();
+    if(!row?.state) throw new Error('No migration recovery backup is available.');
+    const prepared=prepareState(row.state);
+    statePrepared=true;
+    writeState(prepared.state);
+    return clone(prepared.state);
+  }
+
+  function migrateState(input){
+    const state=normalizeStateShape(clone(input));
+    let from=Math.max(1,Number(state.schemaVersion)||1);
+    const history=state.migrationHistory;
+
+    if(from<2){
+      state.highlights.forEach(row=>{
+        if(!row.highlightedText && row.text) row.highlightedText=row.text;
+        if(!row.pdfAnchor || typeof row.pdfAnchor!=='object') row.pdfAnchor={};
+      });
+      state.notes.forEach(row=>{
+        if(!row.body) row.body=row.content||row.text||'';
+        if(!Array.isArray(row.tags)) row.tags=[];
+      });
+      state.sections.forEach(row=>{
+        row.content=String(row.content||'');
+        row.currentWordCount=Math.max(0,Number(row.currentWordCount)||0);
+        row.status=row.status||'not_started';
+      });
+      state.articles.forEach(row=>{
+        row.readingStatus=row.readingStatus||'unread';
+        if(!row.citationData || typeof row.citationData!=='object') row.citationData={};
+      });
+      history.push({from:1,to:2,migratedAt:nowIso(),reason:'Normalize newer workflow collections and record shapes'});
+      state.schemaVersion=2;
+      from=2;
+    }
+
+    state.schemaVersion=CURRENT_SCHEMA_VERSION;
+    return state;
+  }
+
+  function repairStateCopy(input){
+    const state=normalizeStateShape(clone(input));
+    const issues=[];
+    const issue=(collection,id,detail,action)=>issues.push({collection,id:id||null,detail,action});
+
+    function dedupeById(key){
+      const seen=new Map();
+      for(const row of state[key]){
+        if(!row?.id) continue;
+        const existing=seen.get(row.id);
+        if(!existing || String(row.updatedAt||row.createdAt||'')>String(existing.updatedAt||existing.createdAt||'')){
+          seen.set(row.id,row);
+        }
+      }
+      if(seen.size!==state[key].length){
+        issue(key,null,'Duplicate or missing record IDs were found.','Kept one canonical record per ID.');
+        state[key]=[...seen.values()];
+      }
+    }
+
+    [
+      'projects','studySetups','objectives','chapters','sections','articles','highlights','notes','themes',
+      'evidenceLinks','milestones','progressSnapshots','aiThreads','aiMessages','reviewRounds','feedbackItems',
+      'sectionVersions','searchPlans','searchRuns','screeningRecords','appraisals'
+    ].forEach(dedupeById);
+
+    const projectIds=new Set(state.projects.map(p=>p.id).filter(Boolean));
+    if(!projectIds.has(state.activeProjectId)){
+      issue('projects',state.activeProjectId,'The active project no longer exists.','Selected the first available project.');
+      state.activeProjectId=state.projects.find(p=>p.status!=='archived')?.id || state.projects[0]?.id || null;
+    }
+
+    const projectOwned=[
+      'studySetups','objectives','chapters','sections','articles','highlights','notes','themes','evidenceLinks',
+      'milestones','progressSnapshots','aiThreads','reviewRounds','feedbackItems','sectionVersions',
+      'searchPlans','searchRuns','screeningRecords','appraisals'
+    ];
+    projectOwned.forEach(key=>{
+      const before=state[key].length;
+      state[key]=state[key].filter(row=>projectIds.has(row.projectId));
+      if(state[key].length!==before) issue(key,null,'Records referenced projects that no longer exist.','Removed orphan project records.');
+    });
+
+    function keepLatestPer(key,field,label){
+      const map=new Map();
+      for(const row of state[key]){
+        const value=row[field];
+        if(!value) continue;
+        const prev=map.get(value);
+        if(!prev || String(row.updatedAt||row.createdAt||'')>String(prev.updatedAt||prev.createdAt||'')) map.set(value,row);
+      }
+      const passthrough=state[key].filter(row=>!row[field]);
+      const next=[...map.values(),...passthrough];
+      if(next.length!==state[key].length){
+        issue(key,null,'Multiple '+label+' records were found.','Kept the most recently updated record.');
+        state[key]=next;
+      }
+    }
+
+    keepLatestPer('studySetups','projectId','study setup');
+    keepLatestPer('searchPlans','projectId','search plan');
+
+    const chapterIds=new Set(state.chapters.map(x=>x.id));
+    const sectionBefore=state.sections.length;
+    state.sections=state.sections.filter(row=>chapterIds.has(row.chapterId) && state.chapters.some(c=>c.id===row.chapterId&&c.projectId===row.projectId));
+    if(state.sections.length!==sectionBefore) issue('sections',null,'Sections referenced missing or cross-project chapters.','Removed orphan sections.');
+    const sectionIds=new Set(state.sections.map(x=>x.id));
+    state.sections.forEach(row=>{
+      if(row.parentSectionId && (!sectionIds.has(row.parentSectionId) || !state.sections.some(s=>s.id===row.parentSectionId&&s.chapterId===row.chapterId))){
+        issue('sections',row.id,'A parent section reference was invalid.','Cleared the invalid parent reference.');
+        row.parentSectionId=null;
+      }
+    });
+
+    const articleIds=new Set(state.articles.map(x=>x.id));
+    const highlightBefore=state.highlights.length;
+    state.highlights=state.highlights.filter(row=>articleIds.has(row.articleId) && state.articles.some(a=>a.id===row.articleId&&a.projectId===row.projectId));
+    if(state.highlights.length!==highlightBefore) issue('highlights',null,'Highlights referenced missing or cross-project articles.','Removed orphan highlights.');
+    const highlightIds=new Set(state.highlights.map(x=>x.id));
+
+    const themeIds=new Set(state.themes.map(x=>x.id));
+    const objectiveIds=new Set(state.objectives.map(x=>x.id));
+    const reviewIds=new Set(state.reviewRounds.map(x=>x.id));
+    const noteIds=new Set(state.notes.map(x=>x.id));
+
+    state.notes.forEach(row=>{
+      if(row.articleId && !articleIds.has(row.articleId)){issue('notes',row.id,'A note referenced a missing article.','Cleared the article reference.');row.articleId=null;}
+      if(row.highlightId && !highlightIds.has(row.highlightId)){issue('notes',row.id,'A note referenced a missing highlight.','Cleared the highlight reference.');row.highlightId=null;}
+    });
+
+    const articleThemeBefore=state.articleThemes.length;
+    const seenArticleTheme=new Set();
+    state.articleThemes=state.articleThemes.filter(row=>{
+      const article=state.articles.find(a=>a.id===row.articleId);
+      const theme=state.themes.find(t=>t.id===row.themeId);
+      const key=row.articleId+'|'+row.themeId;
+      const valid=Boolean(article&&theme&&article.projectId===theme.projectId&&!seenArticleTheme.has(key));
+      if(valid) seenArticleTheme.add(key);
+      return valid;
+    });
+    if(state.articleThemes.length!==articleThemeBefore) issue('articleThemes',null,'Invalid or duplicate article/theme links were found.','Removed invalid links.');
+
+    state.evidenceLinks=state.evidenceLinks.filter(row=>{
+      const sameProject=(collection,id)=>!id || collection.some(x=>x.id===id&&x.projectId===row.projectId);
+      if(row.articleId&&!sameProject(state.articles,row.articleId)){issue('evidenceLinks',row.id,'Missing article reference.','Cleared invalid evidence source.');row.articleId=null;}
+      if(row.highlightId&&!sameProject(state.highlights,row.highlightId)){issue('evidenceLinks',row.id,'Missing highlight reference.','Cleared invalid evidence source.');row.highlightId=null;}
+      if(row.noteId&&!sameProject(state.notes,row.noteId)){issue('evidenceLinks',row.id,'Missing note reference.','Cleared invalid evidence source.');row.noteId=null;}
+      if(row.themeId&&!sameProject(state.themes,row.themeId)){issue('evidenceLinks',row.id,'Missing theme reference.','Cleared invalid target.');row.themeId=null;}
+      if(row.objectiveId&&!sameProject(state.objectives,row.objectiveId)){issue('evidenceLinks',row.id,'Missing objective reference.','Cleared invalid target.');row.objectiveId=null;}
+      if(row.chapterId&&!sameProject(state.chapters,row.chapterId)){issue('evidenceLinks',row.id,'Missing chapter reference.','Cleared invalid target.');row.chapterId=null;}
+      if(row.sectionId&&!sameProject(state.sections,row.sectionId)){issue('evidenceLinks',row.id,'Missing section reference.','Cleared invalid target.');row.sectionId=null;}
+      if(!row.articleId&&!row.highlightId&&!row.noteId){
+        issue('evidenceLinks',row.id,'No valid evidence source remained.','Removed the empty evidence link.');
+        return false;
+      }
+      return true;
+    });
+
+    state.aiThreads.forEach(row=>{
+      if(row.articleId&&!articleIds.has(row.articleId)){issue('aiThreads',row.id,'AI thread referenced a missing article.','Cleared article reference.');row.articleId=null;}
+      if(row.sectionId&&!sectionIds.has(row.sectionId)){issue('aiThreads',row.id,'AI thread referenced a missing section.','Cleared section reference.');row.sectionId=null;}
+    });
+    const threadIds=new Set(state.aiThreads.map(x=>x.id));
+    const messageBefore=state.aiMessages.length;
+    state.aiMessages=state.aiMessages.filter(row=>threadIds.has(row.threadId));
+    if(state.aiMessages.length!==messageBefore) issue('aiMessages',null,'AI messages referenced missing threads.','Removed orphan messages.');
+
+    state.feedbackItems.forEach(row=>{
+      if(row.reviewRoundId&&!reviewIds.has(row.reviewRoundId)){issue('feedbackItems',row.id,'Feedback referenced a missing review round.','Cleared review-round reference.');row.reviewRoundId=null;}
+      if(row.chapterId&&!chapterIds.has(row.chapterId)){issue('feedbackItems',row.id,'Feedback referenced a missing chapter.','Cleared chapter reference.');row.chapterId=null;}
+      if(row.sectionId&&!sectionIds.has(row.sectionId)){issue('feedbackItems',row.id,'Feedback referenced a missing section.','Cleared section reference.');row.sectionId=null;}
+    });
+
+    const versionBefore=state.sectionVersions.length;
+    state.sectionVersions=state.sectionVersions.filter(row=>sectionIds.has(row.sectionId));
+    if(state.sectionVersions.length!==versionBefore) issue('sectionVersions',null,'Section versions referenced deleted sections.','Removed orphan versions.');
+    state.sectionVersions.forEach(row=>{
+      if(row.reviewRoundId&&!reviewIds.has(row.reviewRoundId)){issue('sectionVersions',row.id,'A version referenced a missing review round.','Cleared review-round reference.');row.reviewRoundId=null;}
+    });
+
+    const planIds=new Set(state.searchPlans.map(x=>x.id));
+    state.searchRuns.forEach(row=>{
+      if(row.searchPlanId&&!planIds.has(row.searchPlanId)){issue('searchRuns',row.id,'Search run referenced a missing search plan.','Cleared plan reference.');row.searchPlanId=null;}
+    });
+
+    keepLatestPer('screeningRecords','articleId','screening record');
+    keepLatestPer('appraisals','articleId','critical appraisal');
+    const screenBefore=state.screeningRecords.length;
+    state.screeningRecords=state.screeningRecords.filter(row=>articleIds.has(row.articleId)&&state.articles.some(a=>a.id===row.articleId&&a.projectId===row.projectId));
+    if(state.screeningRecords.length!==screenBefore) issue('screeningRecords',null,'Screening records referenced missing articles.','Removed orphan screening records.');
+    const appraisalBefore=state.appraisals.length;
+    state.appraisals=state.appraisals.filter(row=>articleIds.has(row.articleId)&&state.articles.some(a=>a.id===row.articleId&&a.projectId===row.projectId));
+    if(state.appraisals.length!==appraisalBefore) issue('appraisals',null,'Appraisals referenced missing articles.','Removed orphan appraisals.');
+
+    return {state,issues};
+  }
+
+  function prepareState(input){
+    const migrated=migrateState(input);
+    const repaired=repairStateCopy(migrated);
+    repaired.state.schemaVersion=CURRENT_SCHEMA_VERSION;
+    return repaired;
+  }
+
+  function auditIntegrity(){
+    const state=getState();
+    const report=repairStateCopy(state);
+    return clone({
+      schemaVersion:Number(state.schemaVersion)||1,
+      currentSchemaVersion:CURRENT_SCHEMA_VERSION,
+      issues:report.issues,
+      issueCount:report.issues.length,
+      healthy:report.issues.length===0
+    });
+  }
+
+  function repairIntegrity(){
+    const current=getState();
+    const report=repairStateCopy(current);
+    if(report.issues.length){
+      saveRecoveryBackup(current,'before_integrity_repair');
+      writeState(report.state);
+    }
+    return clone({
+      schemaVersion:CURRENT_SCHEMA_VERSION,
+      issues:report.issues,
+      repaired:report.issues.length,
+      healthy:true
+    });
   }
 
   function getState(){
     const existing = readJson(STORE_KEY,null);
-    if(existing && existing.version === 1) return normalizeStateShape(existing);
-    return normalizeStateShape(createInitialState());
+    if(existing && existing.version === 1){
+      if(statePrepared && Number(existing.schemaVersion)===CURRENT_SCHEMA_VERSION) return normalizeStateShape(existing);
+      const prepared=prepareState(existing);
+      const changed=Number(existing.schemaVersion)!==CURRENT_SCHEMA_VERSION || prepared.issues.length>0;
+      if(changed){
+        saveRecoveryBackup(existing,Number(existing.schemaVersion)!==CURRENT_SCHEMA_VERSION?'automatic_schema_migration':'automatic_integrity_repair');
+        writeState(prepared.state,{silent:true});
+      }
+      statePrepared=true;
+      return prepared.state;
+    }
+    const created=normalizeStateShape(createInitialState());
+    statePrepared=true;
+    return created;
   }
 
   function getActiveProjectId(state=getState()){
@@ -1585,6 +1858,11 @@
     version:1,
     getState:()=>clone(getState()),
     replaceState,
+    schemaVersion:CURRENT_SCHEMA_VERSION,
+    auditIntegrity,
+    repairIntegrity,
+    getRecoveryBackup,
+    restoreRecoveryBackup,
     getActiveProject,
     getActiveProjectId:()=>getActiveProjectId(getState()),
     createProject,
