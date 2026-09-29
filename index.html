@@ -92,7 +92,7 @@
           <span id="connectivityStatus" class="connectivity-status" data-state="online">Online</span>
           <button class="icon-btn shortcuts-btn" id="openShortcutsBtn" type="button" title="Keyboard shortcuts" aria-label="Keyboard shortcuts">?</button>
           <button class="cloud-status-btn" id="cloudStatusBtn" type="button" title="Account & cloud sync"><span id="cloudStatusDot"></span><span id="cloudStatusLabel">Local</span></button>
-          <button class="primary-btn" id="newItemBtn">＋ New</button>
+          <button class="soft-btn capture-idea-top" id="captureResearchIdeaBtn" type="button">＋ Capture idea</button><button class="soft-btn quire-suggest-top" id="openQuireSuggestionsBtn" type="button">✦ Suggestions <b id="quireSuggestionCount"></b></button><button class="primary-btn" id="newItemBtn">＋ New</button>
         </div>
       </header>
 
@@ -1846,7 +1846,9 @@
   </div>
 
 
-  <div id="guidedLaunchModal" class="modal-backdrop" hidden>
+  <div id="captureIdeaModal" class="modal-backdrop" hidden><div class="modal capture-idea-modal"><div class="modal-head"><div><span class="eyebrow">CAPTURE WITHOUT LOSING YOUR PLACE</span><h2>Save a research thought</h2></div><button id="closeCaptureIdea" type="button">×</button></div><p class="capture-intro">Save it now. Decide later whether it belongs in the thesis.</p><div class="capture-kind-grid"><label><input type="radio" name="captureKind" value="emerging_objective" checked><span><strong>Possible objective</strong><small>An objective worth developing</small></span></label><label><input type="radio" name="captureKind" value="emerging_question"><span><strong>Possible research question</strong><small>A question or refinement to revisit</small></span></label><label><input type="radio" name="captureKind" value="gap_signal"><span><strong>Possible gap</strong><small>Something missing or uncertain to test</small></span></label><label><input type="radio" name="captureKind" value="research_idea"><span><strong>Idea / thought</strong><small>Your interpretation or connection</small></span></label><label><input type="radio" name="captureKind" value="investigate"><span><strong>Something to investigate</strong><small>A lead for further searching</small></span></label></div><label class="field wide"><span>Your idea</span><textarea id="captureIdeaText" rows="4" placeholder="Write it as it came to you."></textarea></label><label class="field wide"><span>Why it matters / what triggered it (optional)</span><textarea id="captureIdeaReason" rows="2" placeholder="Paper, finding, discussion, observation…"></textarea></label><small id="captureIdeaContext" class="capture-context"></small><div class="launch-actions"><button class="text-btn" id="cancelCaptureIdea" type="button">Cancel</button><button class="primary-btn" id="saveCaptureIdea" type="button">Save idea</button></div></div></div>
+<div id="quireSuggestionsModal" class="modal-backdrop" hidden><div class="modal quire-suggestions-modal"><div class="modal-head"><div><span class="eyebrow">QUIRE SUGGESTIONS</span><h2>Possibilities from your developing research</h2></div><button id="closeQuireSuggestions" type="button">×</button></div><p class="capture-intro">Suggestions are prompts to investigate, not conclusions. Quire shows why each one appeared and never changes your thesis automatically.</p><div class="suggestion-filter-row"><button class="active" data-suggestion-filter="all">All</button><button data-suggestion-filter="paper">Papers</button><button data-suggestion-filter="objective">Objectives</button><button data-suggestion-filter="question">Questions</button></div><div id="quireSuggestionsList" class="quire-suggestions-list"></div></div></div>
+<div id="guidedLaunchModal" class="modal-backdrop" hidden>
     <div class="modal guided-launch-modal thesis-wizard-modal">
       <div class="modal-head">
         <div><span class="eyebrow">GUIDED THESIS SETUP</span><h2>Build your thesis blueprint</h2></div>
@@ -2235,6 +2237,7 @@
   <script src="claim-awareness.js"></script>
   <script src="writing-growth.js"></script>
   <script src="evidence-discovery.js"></script>
+  <script src="research-suggestions.js"></script>
   <script src="thesis-map.js"></script>
   <script src="cloud.js"></script>
   <script src="pdf-reader.js"></script>
