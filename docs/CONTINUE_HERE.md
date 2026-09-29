@@ -17,14 +17,16 @@ The primary user-facing framework is **Home → Research → Ideas → Thesis �
 - Suggestions remain separate from manuscript content and never rewrite automatically.
 - **Review current paragraph** hands the paragraph to the existing Writing Review flow for a deeper optional review.
 - Existing evidence for the section remains directly below the companion so language help does not displace source awareness.
+- Deeper paragraph review is now separated into **Meaning understood**, **Language & grammar**, **Academic clarity**, **Vocabulary**, and **Evidence & claim caution**.
+- Conservative before/after wording proposals appear only when a straightforward local edit is available; applying one requires an explicit **Accept** action in Writing Review.
+- Recurring writing habits are tracked locally (for example long linked sentences or repeated “and”) and surfaced gently after enough samples; Quire deliberately does not assign an English score.
 
 ## Next exact work
 
-1. Improve deeper review so it explicitly separates **Meaning understood**, **Language/grammar**, **Academic clarity**, **Vocabulary**, and **Evidence/claim caution**.
-2. Add an optional before/after wording proposal that can be copied/applied only by explicit user action.
-3. Track recurring writing patterns locally so Quire can identify habits such as long linked sentences or repeated connectors — without giving a simplistic English score.
-4. Continue simplifying transitions around **Discover → Understand → Organise → Write → Review**.
-5. Keep Step 32 frontend-first and local. Do not activate Supabase.
+1. Refine the five-stage **Discover → Understand → Organise → Write → Review** flow so the Home/Research/Ideas/Thesis/Progress framework actively tells the researcher the next sensible action.
+2. Add clear “next step” handoffs after common actions (for example: paper understood → organise evidence; idea developed → move to thesis; paragraph reviewed → verify evidence).
+3. QA Step 32 on empty paragraphs, short notes and longer academic paragraphs, then decide whether the writing companion should be collapsible.
+4. Keep Step 32 frontend-first and local. Do not activate Supabase.
 
 ## Product principles to preserve
 
