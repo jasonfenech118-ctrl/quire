@@ -1,4 +1,4 @@
-const CACHE='quire-shell-v32';
+const CACHE='quire-shell-v33';
 const SHELL=[
   './','./index.html','./styles.css','./manifest.webmanifest','./quire-icon.svg',
   './data-model.js','./document-type.js','./guided-launch.js','./projects.js','./chapter-editor.js','./evidence-writing.js',
@@ -10,7 +10,7 @@ const SHELL=[
   './question-evolution.js','./contribution-builder.js','./paper-contribution.js','./research-decisions.js',
   './search-checkpoint.js','./research-rationale-pack.js','./methodology.js','./writing-review.js',
   './evidence-check.js','./supervision.js','./submission-readiness.js','./thesis-export.js',
-  './progress-intelligence.js','./app.js','./product-polish.js'
+  './progress-intelligence.js','./app.js','./product-polish.js','./desktop-context.js','./desktop-chatgpt.js'
 ]
 
 self.addEventListener('install',event=>{

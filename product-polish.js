@@ -582,7 +582,7 @@
 
   function registerServiceWorker(){
     if(!('serviceWorker' in navigator))return;
-    if(location.protocol==='file:')return;
+    if(location.protocol==='file:'||window.QuireDesktop)return;
     window.addEventListener('load',()=>{
       navigator.serviceWorker.register('./service-worker.js').catch(err=>console.warn('Quire offline cache unavailable',err));
     });

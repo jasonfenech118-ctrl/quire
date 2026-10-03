@@ -6,6 +6,12 @@
 
 **Step 56 — Manual Frontend Validation Gate — pending.**
 
+### Personal Windows ChatGPT test build — 3 October 2026
+
+An Electron Windows portable build now connects the existing article and writing workflows to OpenAI's official Sign in with ChatGPT SDK. It adds a project assistant with automatic requests, streaming drafts and saved completed replies. Credentials stay in protected native storage; article source IDs are validated against supplied passages, and automatically assembled context excludes clinical analysis datasets.
+
+See `docs/windows-chatgpt.md` for setup, migration, SDK provenance and remaining acceptance checks. Seven automated source/DOM tests passed and the Windows executable was cross-built. Live Windows launch, real account consent/eligibility and graphical PDF interactions remain unverified. This work does not complete Step 56 or activate Supabase.
+
 ### Live Step 56 status — updated during browser validation
 
 - **Step 56.1 Primary navigation:** PASSED by the user in the live GitHub Pages app.
