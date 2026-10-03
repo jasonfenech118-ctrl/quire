@@ -240,6 +240,13 @@
     }
 
     window.QuireStore.setActiveProject(project.id);
+    // The first idea goes into Ideas so it stays linked to the rest of the workflow.
+    if(input.researchProblem){
+      try{
+        window.QuireStore.addAnalysisItem({projectId:project.id,kind:'idea',title:input.researchProblem,
+          payload:{ideaStatus:'inbox',origin:'researcher',sourceLabel:'First idea · guided setup'}});
+      }catch(e){}
+    }
     window.dispatchEvent(new CustomEvent('quire:project-switched',{detail:{projectId:project.id}}));
     close();
     window.QuireProjects?.render?.();
@@ -475,7 +482,18 @@
     renderGuide();
   }
 
+  // An empty workspace opens straight into guided setup, once per browser session.
+  function autoOpenForEmptyWorkspace(){
+    const store=window.QuireStore;
+    const projectId=store?.getActiveProjectId?.();
+    if(!projectId||!store.isStarterProject?.(projectId))return;
+    if(localStorage.getItem('quire:guided-setup:'+projectId)==='complete')return;
+    try{if(sessionStorage.getItem('quire:guided-setup-shown'))return;sessionStorage.setItem('quire:guided-setup-shown','1');}catch(e){}
+    open();
+  }
+
   document.addEventListener('DOMContentLoaded',bind);
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(autoOpenForEmptyWorkspace,300));
   function renderThesisSetupGuide(){
     const store=window.QuireStore;if(!store)return;
     const pid=store.getActiveProjectId?.(),setup=store.getStudySetupData?.(pid)||{},project=store.getActiveProject?.()||{};

@@ -3358,3 +3358,4 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .launch-doc-types{grid-template-columns:repeat(3,1fr)}
 @media (max-width:700px){.launch-doc-types{grid-template-columns:1fr}}
 .assignment-details-grid{margin-bottom:16px}
+.launch-hint{display:block;color:var(--muted);font-size:10px;margin-top:4px}

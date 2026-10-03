@@ -617,6 +617,15 @@
     return clone(state.projects.find(p=>p.id===id) || null);
   }
 
+  // Early answers from guided setup that have no dedicated column yet.
+  function launchDetails(input={}){
+    const out={};
+    ['researchStage','researchProblem','researchAim','referenceStyle','universityRequirements'].forEach(key=>{
+      if(input[key]!==undefined)out[key]=String(input[key]||'');
+    });
+    return out;
+  }
+
   function createProject(input={}){
     const state=getState();
     const id=uid('project');
@@ -654,7 +663,7 @@
       proposalDeadline:input.proposalDeadline || '',
       ethicsDeadline:'',dataStart:'',dataEnd:'',draftDeadline:'',
       aiTailorMethod:true,aiMethodChecks:true,aiProtectVoice:true,aiEvidenceLinks:true,
-      designDetails:{},createdAt:ts,updatedAt:ts
+      designDetails:launchDetails(input),createdAt:ts,updatedAt:ts
     });
 
     const objectiveTitles=Array.isArray(input.objectives)
@@ -753,6 +762,7 @@
     setup.proposalDeadline=input.proposalDeadline||'';
     setup.updatedAt=ts;
     if(!setup.designDetails||typeof setup.designDetails!=='object')setup.designDetails={};
+    Object.assign(setup.designDetails,launchDetails(input));
 
     const objectiveTitles=Array.isArray(input.objectives)?input.objectives.map(v=>String(v||'').trim()).filter(Boolean):[];
     state.objectives=state.objectives.filter(row=>row.projectId!==projectId);
