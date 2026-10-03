@@ -178,18 +178,31 @@
     };
   }
 
-  function defaultObjectives(projectId){
-    return [
-      {id:uid('objective'),projectId,orderIndex:1,title:'Explore educational needs',description:'',status:'active',createdAt:nowIso(),updatedAt:nowIso()},
-      {id:uid('objective'),projectId,orderIndex:2,title:'Identify barriers to self-management',description:'',status:'active',createdAt:nowIso(),updatedAt:nowIso()},
-      {id:uid('objective'),projectId,orderIndex:3,title:'Evaluate specialist support',description:'',status:'active',createdAt:nowIso(),updatedAt:nowIso()}
-    ];
-  }
+  // Content the earlier prototype seeded into every new browser. Used only to recognise
+  // an untouched demo workspace so it can be cleared; it is never created any more.
+  const DEMO_SEED={
+    title:'Patient education and stoma self-management',
+    objectives:['Explore educational needs','Identify barriers to self-management','Evaluate specialist support'],
+    themes:['Patient education','Confidence','Follow-up','Quality of life'],
+    articles:[
+      'Living with a stoma: self-management needs and educational priorities',
+      'Supporting adaptation following ostomy surgery: a qualitative synthesis',
+      'Quality of life outcomes in adults after stoma formation'
+    ]
+  };
 
-  function defaultThemes(projectId){
-    return ['Patient education','Confidence','Follow-up','Quality of life'].map(name=>({
-      id:uid('theme'),projectId,name,description:'',createdAt:nowIso(),updatedAt:nowIso()
-    }));
+  function isUntouchedDemo(state){
+    if(state.projects.length!==1||state.projects[0].title!==DEMO_SEED.title)return false;
+    const subset=(rows,key,allowed)=>rows.every(row=>allowed.includes(row[key]));
+    if(!subset(state.objectives,'title',DEMO_SEED.objectives))return false;
+    if(!subset(state.themes,'name',DEMO_SEED.themes))return false;
+    if(!subset(state.articles,'title',DEMO_SEED.articles)||state.articles.some(a=>a.pdfPath))return false;
+    const userWork=['highlights','notes','evidenceLinks','articleThemes','aiMessages','reviewRounds','feedbackItems',
+      'sectionVersions','searchRuns','appraisals','analysisItems'];
+    if(userWork.some(key=>(state[key]||[]).length))return false;
+    // Screening rows are created automatically for each paper; only a recorded decision counts as work.
+    if(state.screeningRecords.some(r=>(r.titleAbstractDecision||'pending')!=='pending'||(r.fullTextDecision||'not_started')!=='not_started'||r.notes||r.exclusionReason))return false;
+    return !state.sections.some(row=>String(row.content||'').replace(/<[^>]+>/g,'').trim()||Number(row.currentWordCount)>0);
   }
 
   function normalizeProgress(input={}){
@@ -222,11 +235,11 @@
     state.activeProjectId = projectId;
     state.projects.push({
       id:projectId,
-      title:legacySetup.thesisTitle || 'Patient education and stoma self-management',
+      title:legacySetup.thesisTitle || 'Untitled thesis',
       degreeName:legacySetup.degreeName || '',
       institutionName:legacySetup.institutionName || '',
       supervisorName:'',
-      researchQuestion:legacySetup.researchQuestion || 'How can patient education support self-management after stoma formation?',
+      researchQuestion:legacySetup.researchQuestion || '',
       abstract:'',
       wordTarget:Number(legacySetup.wordCount) || null,
       proposalWordTarget:Number(legacySetup.proposalWordCount) || null,
@@ -283,23 +296,8 @@
       updatedAt:ts
     });
 
-    state.objectives.push(...defaultObjectives(projectId));
+    // A new workspace starts empty: no sample objectives, themes or papers.
     state.chapters.push(...defaultChapters(projectId));
-    state.themes.push(...defaultThemes(projectId));
-
-    // Seed only the papers currently represented in the prototype.
-    const articleSeeds = [
-      ['Living with a stoma: self-management needs and educational priorities','Andersson, P.; Clarke, M.; Patel, R.','Journal of Clinical Nursing',2025,'reviewed'],
-      ['Supporting adaptation following ostomy surgery: a qualitative synthesis','Reed, J. et al.','International Journal of Nursing Studies',2024,'reviewed'],
-      ['Quality of life outcomes in adults after stoma formation','Bianchi, L. et al.','Colorectal Disease',2023,'unread']
-    ];
-    articleSeeds.forEach(([title,authors,journal,year,status])=>{
-      state.articles.push({
-        id:uid('article'),projectId,title,authors,journal,year,doi:'',abstract:'',
-        pdfPath:'',readingStatus:status,aiProcessed:false,citationData:{},
-        createdAt:ts,updatedAt:ts
-      });
-    });
 
     state.progressSnapshots.push({
       id:uid('progress'),
@@ -590,6 +588,12 @@
     if(existing && existing.version === 1){
       if(statePrepared && Number(existing.schemaVersion)===CURRENT_SCHEMA_VERSION) return normalizeStateShape(existing);
       const prepared=prepareState(existing);
+      if(isUntouchedDemo(prepared.state)){
+        saveRecoveryBackup(existing,'untouched_demo_cleared');
+        const fresh=normalizeStateShape(createInitialState());
+        statePrepared=true;
+        return fresh;
+      }
       const changed=Number(existing.schemaVersion)!==CURRENT_SCHEMA_VERSION || prepared.issues.length>0;
       if(changed){
         saveRecoveryBackup(existing,Number(existing.schemaVersion)!==CURRENT_SCHEMA_VERSION?'automatic_schema_migration':'automatic_integrity_repair');

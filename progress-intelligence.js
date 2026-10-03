@@ -201,7 +201,7 @@
   function renderAchievements(ctx){
     const {project,setup,live}=ctx;
     const topic=String(project.title||'').trim();
-    const directionReady=Boolean(topic&&!['untitled thesis','research project'].includes(topic.toLowerCase()));
+    const directionReady=Boolean(topic&&!['untitled thesis','untitled paper','untitled assignment','research project'].includes(topic.toLowerCase()));
     setText('achievementQuestion',directionReady
       ? (setup.researchQuestion?'Working question recorded; keep refining it against the literature.':'Research area recorded; the working question can emerge as the literature develops.')
       : 'Start with a broad research area; the final question does not need to be fixed yet.');
