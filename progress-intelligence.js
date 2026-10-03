@@ -201,7 +201,7 @@
   function renderAchievements(ctx){
     const {project,setup,live}=ctx;
     const topic=String(project.title||'').trim();
-    const directionReady=Boolean(topic&&!['untitled thesis','research project'].includes(topic.toLowerCase()));
+    const directionReady=Boolean(topic&&!['untitled thesis','untitled paper','untitled assignment','research project'].includes(topic.toLowerCase()));
     setText('achievementQuestion',directionReady
       ? (setup.researchQuestion?'Working question recorded; keep refining it against the literature.':'Research area recorded; the working question can emerge as the literature develops.')
       : 'Start with a broad research area; the final question does not need to be fixed yet.');
@@ -322,7 +322,10 @@
     projectTitle.textContent=title;
     setText('sidebarThesisTitle',title);
 
-    const meta=[project.degreeName,project.institutionName,studyTypeLabel(setup.studyType),project.finalDeadline?'Submission '+prettyDate(project.finalDeadline):''].filter(Boolean);
+    const paperMeta=project.projectType==='paper'?['Research paper',project.paperDetails?.targetJournal]
+      :project.projectType==='assignment'?['Assignment',project.assignmentDetails?.moduleCode||project.assignmentDetails?.moduleName]
+      :[project.degreeName];
+    const meta=[...paperMeta,project.institutionName,studyTypeLabel(setup.studyType),project.finalDeadline?(project.projectType==='assignment'?'Due ':'Submission ')+prettyDate(project.finalDeadline):''].filter(Boolean);
     setText('projectMeta',meta.length?meta.join(' · '):'Study setup not yet completed');
 
     const overall=clamp(live.overallProgress||0);

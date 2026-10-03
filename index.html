@@ -29,7 +29,7 @@
         <button class="nav-item active" data-view="dashboard"><span>⌂</span> Home</button>
         <button class="nav-item" data-view="library"><span>▤</span> Research</button>
         <button class="nav-item" data-view="brainstorm"><span>✦</span> Ideas</button>
-        <button class="nav-item" data-view="chapters"><span>¶</span> Thesis</button>
+        <button class="nav-item" data-view="chapters" data-doc-thesis="Thesis" data-doc-paper="Paper" data-doc-assignment="Assignment"><span>¶</span> Thesis</button>
         <button class="nav-item" data-view="overview"><span>◈</span> Progress</button>
         <details class="nav-more">
           <summary><span>•••</span> More tools</summary>
@@ -47,13 +47,13 @@
             <div class="nav-tool-group"><small>UNDERSTAND & ORGANISE</small>
               <button class="nav-item" data-view="clinicaldata"><span>▥</span> Clinical Data</button><button class="nav-item" data-view="analysis"><span>∿</span> Data & Analysis</button>
               <button class="nav-item" data-view="synthesis"><span>≋</span> Synthesis</button>
-              <button class="nav-item" data-view="map"><span>⌘</span> Thesis Map</button>
+              <button class="nav-item" data-view="map" data-doc-thesis="Thesis Map" data-doc-paper="Paper Map" data-doc-assignment="Assignment Map"><span>⌘</span> Thesis Map</button>
             </div>
             <div class="nav-tool-group"><small>REVIEW & FINISH</small>
               <button class="nav-item" data-view="review"><span>✓</span> Writing Review</button>
               <button class="nav-item" data-view="supervision"><span>☷</span> Supervision</button>
               <button class="nav-item" data-view="readiness"><span>✓</span> Submission Check</button>
-              <button class="nav-item" data-view="export"><span>⇩</span> Thesis Export</button>
+              <button class="nav-item" data-view="export" data-doc-thesis="Thesis Export" data-doc-paper="Paper Export" data-doc-assignment="Assignment Export"><span>⇩</span> Thesis Export</button>
             </div>
           </div>
         </details>
@@ -197,12 +197,12 @@
       <section id="overview" class="view">
         <div class="project-kicker">
           <button class="project-back" data-go="dashboard">← All work</button>
-          <span>MASTER'S THESIS · ACTIVE PROJECT</span>
+          <span>ACTIVE PROJECT</span>
         </div>
 
         <div class="project-title-row">
           <div>
-            <h1 id="projectTitle">Patient education and stoma self-management</h1>
+            <h1 id="projectTitle">Untitled thesis</h1>
             <div class="project-meta" id="projectMeta">Study setup not yet completed</div>
           </div>
           <div class="project-actions">
@@ -930,13 +930,13 @@
 
       <section id="chapters" class="view">
         <div class="page-heading compact">
-          <div><span class="eyebrow">CHAPTERS</span><h1>Build the thesis, section by section.</h1><p>Write, find evidence, check claims and improve academic clarity without losing your place.</p></div>
+          <div><span class="eyebrow" data-doc-thesis="CHAPTERS" data-doc-paper="MANUSCRIPT" data-doc-assignment="ASSIGNMENT">CHAPTERS</span><h1 data-doc-thesis="Build the thesis, section by section." data-doc-paper="Build the paper, section by section." data-doc-assignment="Build the assignment, section by section.">Build the thesis, section by section.</h1><p>Write, find evidence, check claims and improve academic clarity without losing your place.</p></div>
           <button class="primary-btn" id="addChapterSectionBtn" type="button">＋ New section</button>
         </div>
 
         <div class="chapter-layout live-chapter-layout">
           <aside class="chapter-tree">
-            <div class="chapter-tree-head"><strong>Thesis outline</strong><button id="chapterTreeAddBtn" type="button">＋</button></div>
+            <div class="chapter-tree-head"><strong data-doc-thesis="Thesis outline" data-doc-paper="Paper outline" data-doc-assignment="Assignment outline">Thesis outline</strong><button id="chapterTreeAddBtn" type="button">＋</button></div>
             <div id="chapterTreeMount"></div>
           </aside>
 
@@ -1302,7 +1302,7 @@
           <div>
             <span class="eyebrow">STUDY SETUP</span>
             <h1>Define the shape of your research.</h1>
-            <p>Tell Quire what kind of thesis you are building. These choices will later tailor your chapter structure, milestones, methodology prompts, analysis guidance and AI support.</p>
+            <p>Tell Quire whether you are writing a thesis or a research paper, and how the study is designed. These choices will later tailor your chapter structure, milestones, methodology prompts, analysis guidance and AI support.</p>
           </div>
           <button class="primary-btn" id="saveStudySetup">Save setup</button>
         </div>
@@ -1322,7 +1322,8 @@
         <div class="setup-layout">
           <aside class="setup-index">
             <span class="eyebrow">SETUP SECTIONS</span>
-            <button class="setup-index-item active" data-setup-jump="study-design">01 · Study design</button>
+            <button class="setup-index-item active" data-setup-jump="document-type">00 · Document type & structure</button>
+            <button class="setup-index-item" data-setup-jump="study-design">01 · Study design</button>
             <button class="setup-index-item" data-setup-jump="scope-targets">02 · Scope & targets</button>
             <button class="setup-index-item" data-setup-jump="deadlines">03 · Deadlines</button>
             <button class="setup-index-item" data-setup-jump="methodology">04 · Methodology</button>
@@ -1332,6 +1333,84 @@
           </aside>
 
           <div class="setup-main">
+            <article class="setup-card" id="document-type">
+              <div class="setup-card-head">
+                <div><span class="setup-number">00</span><div><h2>Document type & structure</h2><p>Choose what you are writing. Research papers and assignments get their own details and section structure.</p></div></div>
+              </div>
+              <div class="design-grid document-type-grid">
+                <label class="design-choice">
+                  <input type="radio" name="projectType" value="thesis" checked>
+                  <span class="design-icon">¶</span>
+                  <strong>Thesis / dissertation</strong>
+                  <small>Chapters, degree requirements, supervisor and university rules.</small>
+                </label>
+                <label class="design-choice">
+                  <input type="radio" name="projectType" value="paper">
+                  <span class="design-icon">▭</span>
+                  <strong>Research paper</strong>
+                  <small>Journal manuscript with title, abstract, keywords, authors and IMRaD sections.</small>
+                </label>
+                <label class="design-choice">
+                  <input type="radio" name="projectType" value="assignment">
+                  <span class="design-icon">✎</span>
+                  <strong>Assignment</strong>
+                  <small>Coursework: essay, report, case study, reflection or proposal, set against a module brief.</small>
+                </label>
+              </div>
+
+              <div class="form-grid assignment-details-grid" data-setup-doc-only="assignment" hidden>
+                <label class="field"><span>Assignment type</span><select id="assignmentType">
+                  <option value="essay">Essay</option>
+                  <option value="report">Report</option>
+                  <option value="literature_review">Literature review</option>
+                  <option value="case_study">Case study</option>
+                  <option value="reflective">Reflective account</option>
+                  <option value="critical_appraisal">Critical appraisal</option>
+                  <option value="proposal">Research proposal</option>
+                </select></label>
+                <label class="field"><span>Module / course</span><input id="assignmentModuleName" type="text" placeholder="e.g. Evidence-Based Practice"></label>
+                <label class="field"><span>Module code</span><input id="assignmentModuleCode" type="text" placeholder="e.g. NUR5012"></label>
+                <label class="field"><span>Tutor / lecturer</span><input id="assignmentTutor" type="text"></label>
+                <label class="field"><span>Student ID / candidate number</span><input id="assignmentStudentId" type="text" placeholder="Used on the cover page"></label>
+                <label class="field"><span>Word count tolerance (±%)</span><input id="assignmentWordTolerance" type="number" min="0" max="50" step="1" placeholder="e.g. 10"></label>
+                <label class="field wide"><span>Assignment brief / question</span><textarea id="assignmentBrief" rows="3" placeholder="Paste the question or task exactly as set."></textarea></label>
+                <label class="field wide"><span>Marking criteria / learning outcomes</span><textarea id="assignmentMarkingCriteria" rows="4" placeholder="One criterion per line, e.g. Critical analysis of evidence (30%)"></textarea></label>
+              </div>
+
+              <div class="form-grid paper-details-grid" data-setup-doc-only="paper" hidden>
+                <label class="field"><span>Article type</span><select id="paperArticleType">
+                  <option value="original">Original research article</option>
+                  <option value="qualitative">Qualitative research article</option>
+                  <option value="systematic_review">Systematic review / meta-analysis</option>
+                  <option value="review">Narrative / scoping review</option>
+                  <option value="short">Short communication / brief report</option>
+                  <option value="case_report">Case report</option>
+                </select></label>
+                <label class="field"><span>Target journal</span><input id="paperTargetJournal" type="text" placeholder="e.g. Journal of Advanced Nursing"></label>
+                <label class="field wide"><span>Authors (in order)</span><input id="paperAuthors" type="text" placeholder="e.g. Jane Smith; Alex Brown; Sam Lee"></label>
+                <label class="field"><span>Corresponding author</span><input id="paperCorrespondingAuthor" type="text" placeholder="Name and email"></label>
+                <label class="field"><span>Affiliations</span><input id="paperAffiliations" type="text" placeholder="Department, institution, country"></label>
+                <label class="field"><span>Keywords</span><input id="paperKeywords" type="text" placeholder="3–6 keywords, separated by semicolons"></label>
+                <label class="field"><span>Reporting guideline</span><select id="paperReportingGuideline">
+                  <option value="">None / not decided</option><option>CONSORT</option><option>STROBE</option><option>COREQ</option><option>SRQR</option><option>PRISMA</option><option>PRISMA-ScR</option><option>CARE</option><option>STARD</option><option>Other</option>
+                </select></label>
+                <label class="field"><span>Abstract word limit</span><input id="paperAbstractWordLimit" type="number" min="0" step="10" placeholder="e.g. 250"></label>
+                <label class="field wide"><span>Abstract <small id="paperAbstractCount"></small></span><textarea id="paperAbstract" rows="5" placeholder="Background, methods, results and conclusions — or the journal's required headings."></textarea></label>
+              </div>
+
+              <div class="structure-card">
+                <div class="structure-card-head">
+                  <div><strong id="structureCardUnit">Thesis chapters</strong><small>Rename, reorder, add or remove parts. Parts that already contain writing are never deleted.</small></div>
+                  <div class="structure-template-row">
+                    <select id="structureTemplate" aria-label="Structure template"></select>
+                    <button class="soft-btn" id="loadStructureTemplate" type="button">Load template</button>
+                  </div>
+                </div>
+                <div id="setupStructureEditor" class="structure-editor"></div>
+                <div class="structure-card-actions"><small id="structureMessage" class="structure-message"></small><button class="primary-btn" id="applyStructureBtn" type="button">Apply structure</button></div>
+              </div>
+            </article>
+
             <article class="setup-card" id="study-design">
               <div class="setup-card-head">
                 <div><span class="setup-number">01</span><div><h2>Study design</h2><p>Select the overall research approach. You can change this later.</p></div></div>
@@ -1369,11 +1448,11 @@
                 <div><span class="setup-number">02</span><div><h2>Scope & writing targets</h2><p>Set the academic boundaries Quire should work within.</p></div></div>
               </div>
               <div class="form-grid">
-                <label class="field wide"><span>Working thesis title</span><input id="thesisTitle" type="text" placeholder="Enter your working title"></label>
-                <label class="field"><span>Total thesis word count</span><input id="wordCount" type="number" min="1000" step="500" placeholder="e.g. 20,000"></label>
-                <label class="field"><span>Proposal word count</span><input id="proposalWordCount" type="number" min="0" step="250" placeholder="e.g. 2,500"></label>
-                <label class="field"><span>Programme / degree</span><input id="degreeName" type="text" placeholder="e.g. MSc Advanced Nursing"></label>
-                <label class="field"><span>Institution</span><input id="institutionName" type="text" placeholder="University or institution"></label>
+                <label class="field wide"><span data-doc-thesis="Working thesis title" data-doc-paper="Working paper title" data-doc-assignment="Assignment title">Working thesis title</span><input id="thesisTitle" type="text" placeholder="Enter your working title"></label>
+                <label class="field"><span data-doc-thesis="Total thesis word count" data-doc-paper="Manuscript word limit" data-doc-assignment="Assignment word limit">Total thesis word count</span><input id="wordCount" type="number" min="1000" step="500" placeholder="e.g. 20,000"></label>
+                <label class="field" data-doc-only="thesis"><span>Proposal word count</span><input id="proposalWordCount" type="number" min="0" step="250" placeholder="e.g. 2,500"></label>
+                <label class="field" data-doc-only="thesis assignment"><span>Programme / degree</span><input id="degreeName" type="text" placeholder="e.g. MSc Advanced Nursing"></label>
+                <label class="field"><span data-doc-thesis="Institution" data-doc-paper="Lead institution" data-doc-assignment="Institution">Institution</span><input id="institutionName" type="text" placeholder="University or institution"></label>
                 <label class="field wide"><span>Current working research question</span><textarea id="researchQuestion" rows="3" placeholder="This can remain provisional while the literature develops."></textarea></label>
               </div>
 
@@ -1851,7 +1930,7 @@
 <div id="guidedLaunchModal" class="modal-backdrop" hidden>
     <div class="modal guided-launch-modal thesis-wizard-modal">
       <div class="modal-head">
-        <div><span class="eyebrow">GUIDED THESIS SETUP</span><h2>Build your thesis blueprint</h2></div>
+        <div><span class="eyebrow" data-launch-label="eyebrow">GUIDED THESIS SETUP</span><h2 data-launch-label="heading">Build your thesis blueprint</h2></div>
         <button id="closeGuidedLaunchModal" type="button">×</button>
       </div>
       <div class="launch-stepper">
@@ -1859,6 +1938,12 @@
         <div><i class="active" data-launch-dot="1">1</i><i data-launch-dot="2">2</i><i data-launch-dot="3">3</i><i data-launch-dot="4">4</i><i data-launch-dot="5">5</i><i data-launch-dot="6">6</i></div>
       </div>
       <section class="launch-step" data-launch-step="1">
+        <span class="eyebrow">WHAT ARE YOU WRITING?</span><h3>Choose the type of document.</h3>
+        <div class="launch-study-types launch-doc-types">
+          <label><input type="radio" name="launchDocType" value="thesis" checked><span><strong>Thesis / dissertation</strong><small>Chapters, degree requirements and university rules.</small></span></label>
+          <label><input type="radio" name="launchDocType" value="paper"><span><strong>Research paper</strong><small>Journal manuscript: title, abstract, authors, keywords and IMRaD sections.</small></span></label>
+          <label><input type="radio" name="launchDocType" value="assignment"><span><strong>Assignment</strong><small>Coursework set against a module brief, word limit and marking criteria.</small></span></label>
+        </div>
         <span class="eyebrow">WHERE ARE YOU NOW?</span><h3>What stage are you at?</h3>
         <p>This lets Quire guide you without pretending that decisions are final before you are ready.</p>
         <div class="launch-study-types thesis-stage-options">
@@ -1874,7 +1959,7 @@
         <p>Describe it naturally. A working title is enough; Quire should not force a final research gap at this stage.</p>
         <div class="form-grid">
           <label class="field wide"><span>Research area / working title *</span><input id="launchTitle" type="text" placeholder="e.g. Patient education and self-management after stoma formation"></label>
-          <label class="field wide"><span>What problem or issue interests you?</span><textarea id="launchProblem" rows="3" placeholder="Describe the problem in your own words."></textarea></label>
+          <label class="field wide"><span>Your first idea — what do you want to study?</span><textarea id="launchProblem" rows="3" placeholder="e.g. I want to study the behaviour of… / I am interested in why…"></textarea><small class="launch-hint">Write it in your own words. Quire saves it in Ideas so you can develop it later.</small></label>
           <label class="field"><span>Population / participants</span><input id="launchPopulation" type="text" placeholder="Who or what is involved?"></label>
           <label class="field"><span>Setting / context</span><input id="launchSetting" type="text" placeholder="Where or in what context?"></label>
         </div>
@@ -1883,7 +1968,7 @@
         <span class="eyebrow">WORKING DIRECTION</span><h3>What do you want to understand?</h3>
         <p>These can remain provisional while you read the literature. Quire will not treat a working question as a proven research gap.</p>
         <label class="field wide"><span>Working research question</span><textarea id="launchQuestion" rows="3" placeholder="Leave blank if you are not ready to define it."></textarea></label>
-        <label class="field wide"><span>Working aim</span><input id="launchAim" type="text" placeholder="What is the overall purpose of the thesis?"></label>
+        <label class="field wide"><span>Working aim</span><input id="launchAim" type="text" placeholder="What is the overall purpose of the thesis?" data-doc-ph-thesis="What is the overall purpose of the thesis?" data-doc-ph-paper="What is the overall purpose of the paper?" data-doc-ph-assignment="What does the assignment need to achieve?"></label>
         <div class="launch-objectives">
           <label class="field"><span>Working objective 1</span><input id="launchObjective1" type="text"></label>
           <label class="field"><span>Working objective 2</span><input id="launchObjective2" type="text"></label>
@@ -1891,7 +1976,9 @@
         </div>
       </section>
       <section class="launch-step" data-launch-step="4" hidden>
-        <span class="eyebrow">STUDY APPROACH</span><h3>What kind of thesis is this?</h3>
+        <span class="eyebrow">STUDY APPROACH</span><h3 data-launch-label="approach">What kind of thesis is this?</h3>
+        <label class="field wide" data-launch-only="paper" hidden><span>Article type</span><select id="launchArticleType"></select></label>
+        <label class="field wide" data-launch-only="assignment" hidden><span>Assignment type</span><select id="launchAssignmentType"></select></label>
         <p>Choose “Not decided yet” if your design still depends on what you discover.</p>
         <div class="launch-study-types">
           <label><input type="radio" name="launchStudyType" value="" checked><span><strong>Not decided yet</strong><small>Keep the workspace flexible.</small></span></label>
@@ -1902,9 +1989,30 @@
         </div>
       </section>
       <section class="launch-step" data-launch-step="5" hidden>
-        <span class="eyebrow">UNIVERSITY REQUIREMENTS</span><h3>What rules does your thesis need to follow?</h3>
+        <span class="eyebrow" data-launch-label="reqEyebrow">UNIVERSITY REQUIREMENTS</span><h3 data-launch-label="reqHeading">What rules does your thesis need to follow?</h3>
         <p>These parameters become Quire's working rules for planning, writing and final checks.</p>
-        <div class="form-grid">
+        <div class="form-grid" data-launch-only="paper" hidden>
+          <label class="field"><span>Target journal</span><input id="launchTargetJournal" type="text" placeholder="Leave blank if not chosen yet"></label>
+          <label class="field"><span>Authors (in order)</span><input id="launchAuthors" type="text" placeholder="e.g. Jane Smith; Alex Brown"></label>
+          <label class="field"><span>Corresponding author</span><input id="launchCorresponding" type="text"></label>
+          <label class="field"><span>Keywords</span><input id="launchKeywords" type="text" placeholder="Separated by semicolons"></label>
+          <label class="field"><span>Manuscript word limit</span><input id="launchPaperWordLimit" type="number" min="0" step="250" placeholder="e.g. 5000"></label>
+          <label class="field"><span>Abstract word limit</span><input id="launchAbstractLimit" type="number" min="0" step="10" placeholder="e.g. 250"></label>
+          <label class="field"><span>Referencing style</span><select id="launchPaperReferenceStyle"><option value="">Journal style / not decided</option><option>Harvard</option><option>APA 7th</option><option>Vancouver</option><option>Chicago</option><option>Other</option></select></label>
+          <label class="field"><span>Planned submission date</span><input id="launchPaperDeadline" type="date"></label>
+        </div>
+        <div class="form-grid" data-launch-only="assignment" hidden>
+          <label class="field"><span>Module / course</span><input id="launchModuleName" type="text"></label>
+          <label class="field"><span>Module code</span><input id="launchModuleCode" type="text"></label>
+          <label class="field"><span>Programme / degree</span><input id="launchAssignmentProgramme" type="text"></label>
+          <label class="field"><span>Tutor / lecturer</span><input id="launchTutor" type="text"></label>
+          <label class="field"><span>Word limit</span><input id="launchAssignmentWordLimit" type="number" min="0" step="250" placeholder="e.g. 3000"></label>
+          <label class="field"><span>Due date</span><input id="launchAssignmentDeadline" type="date"></label>
+          <label class="field"><span>Referencing style</span><select id="launchAssignmentReferenceStyle"><option value="">Not decided / not entered</option><option>Harvard</option><option>APA 7th</option><option>Vancouver</option><option>Chicago</option><option>Other</option></select></label>
+          <label class="field wide"><span>Assignment brief / question</span><textarea id="launchBrief" rows="3" placeholder="Paste the question or task exactly as set."></textarea></label>
+          <label class="field wide"><span>Marking criteria / learning outcomes</span><textarea id="launchMarkingCriteria" rows="3" placeholder="One criterion per line."></textarea></label>
+        </div>
+        <div class="form-grid" data-launch-only="thesis">
           <label class="field"><span>Degree / programme</span><input id="launchDegree" type="text"></label>
           <label class="field"><span>Institution</span><input id="launchInstitution" type="text"></label>
           <label class="field"><span>Supervisor</span><input id="launchSupervisor" type="text"></label>
@@ -1916,7 +2024,7 @@
         </div>
       </section>
       <section class="launch-step" data-launch-step="6" hidden>
-        <span class="eyebrow">YOUR THESIS BLUEPRINT</span><h3>Here is what Quire knows so far.</h3>
+        <span class="eyebrow" data-launch-label="blueprint">YOUR THESIS BLUEPRINT</span><h3>Here is what Quire knows so far.</h3>
         <p>Nothing here is locked. Working decisions can be refined as your understanding develops.</p>
         <div class="launch-final-grid">
           <div class="launch-blueprint">
@@ -1926,12 +2034,16 @@
             <div><span>Objectives</span><strong id="launchSummaryObjectives">0 working objectives</strong></div>
             <div><span>Requirements</span><strong id="launchSummaryTimeline">Still being defined</strong></div>
           </div>
-          <aside class="launch-summary-card"><span class="eyebrow">NEXT SENSIBLE STEP</span><strong id="launchNextStep">Begin exploring the literature</strong><p>Quire will use this blueprint to guide the research workflow without treating provisional decisions as final.</p><b id="launchSummaryStructure" hidden></b><div id="launchStructurePreview" hidden></div></aside>
+          <aside class="launch-summary-card"><span class="eyebrow">NEXT SENSIBLE STEP</span><strong id="launchNextStep">Begin exploring the literature</strong><p>Quire will use this blueprint to guide the research workflow without treating provisional decisions as final.</p></aside>
+        </div>
+        <div class="launch-structure">
+          <div class="structure-card-head"><div><strong id="launchSummaryStructure">Structure</strong><small>Rename, reorder, add or remove parts. You can change this later in Study Setup.</small></div></div>
+          <div id="launchStructurePreview" class="structure-editor"></div>
         </div>
         <input type="radio" name="launchTemplate" value="empirical" checked hidden>
       </section>
       <small id="launchMessage" class="launch-message"></small>
-      <div class="launch-actions"><button class="text-btn" id="cancelGuidedLaunch" type="button">Cancel</button><div><button class="soft-btn" id="launchBackBtn" type="button" hidden>← Back</button><button class="primary-btn" id="launchNextBtn" type="button">Continue →</button><button class="primary-btn" id="finishLaunchBtn" type="button" hidden>Save thesis blueprint</button></div></div>
+      <div class="launch-actions"><button class="text-btn" id="cancelGuidedLaunch" type="button">Cancel</button><div><button class="soft-btn" id="launchBackBtn" type="button" hidden>← Back</button><button class="primary-btn" id="launchNextBtn" type="button">Continue →</button><button class="primary-btn" id="finishLaunchBtn" type="button" hidden data-launch-label="finish">Save thesis blueprint</button></div></div>
     </div>
   </div>
 
@@ -2224,6 +2336,7 @@
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script src="https://cdn.jsdelivr.net/npm/pdfjs-dist@3.11.174/build/pdf.min.js"></script>
   <script src="data-model.js"></script>
+  <script src="document-type.js"></script>
   <script src="guided-launch.js"></script>
   <script src="projects.js"></script>
   <script src="chapter-editor.js"></script>

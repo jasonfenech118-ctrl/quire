@@ -1,7 +1,7 @@
-const CACHE='quire-shell-v28';
+const CACHE='quire-shell-v32';
 const SHELL=[
   './','./index.html','./styles.css','./manifest.webmanifest','./quire-icon.svg',
-  './data-model.js','./guided-launch.js','./projects.js','./chapter-editor.js','./evidence-writing.js',
+  './data-model.js','./document-type.js','./guided-launch.js','./projects.js','./chapter-editor.js','./evidence-writing.js',
   './research-journey.js','./research-foundation.js','./brainstorm.js','./session-checkpoint.js',
   './writing-ribbon.js','./writing-companion.js','./claim-awareness.js','./writing-growth.js',
   './evidence-discovery.js','./thesis-map.js','./cloud.js','./pdf-reader.js','./ocr.js','./metadata.js',
