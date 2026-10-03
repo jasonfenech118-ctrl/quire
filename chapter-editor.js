@@ -12,7 +12,7 @@
   function ensureSection(chapter){
     let sections=window.QuireStore.listSections(chapter.id);
     if(!sections.length){
-      const label=chapter.title==='Literature Review'?'Overview':'Chapter notes';
+      const label=chapter.title==='Literature Review'?'Overview':(window.QuireDocType?.partNoun?.(null,true)||'Chapter')+' notes';
       const created=window.QuireStore.addSection(chapter.id,{title:label,status:'in_progress'});
       sections=[created];
     }
@@ -68,7 +68,7 @@
     if(status) status.value=section.status||'not_started';
     if(target) target.value=section.targetWordCount||'';
 
-    document.getElementById('chapterEditorMeta').textContent='Chapter '+chapterNumber(chapter)+' · '+chapter.title;
+    document.getElementById('chapterEditorMeta').textContent=(window.QuireDocType?.partNoun?.(null,true)||'Chapter')+' '+chapterNumber(chapter)+' · '+chapter.title;
     updateWordStats(section,chapter);
     window.dispatchEvent(new CustomEvent('quire:section-opened',{detail:{chapterId:chapter.id,sectionId:section.id}}));
   }

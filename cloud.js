@@ -169,7 +169,7 @@
 
   function projectToDb(p,user){
     return {
-      id:p.id,user_id:user.id,title:p.title,degree_name:p.degreeName||null,institution_name:p.institutionName||null,
+      id:p.id,user_id:user.id,title:p.title,project_type:p.projectType==='paper'?'paper':'thesis',paper_details:p.paperDetails||{},degree_name:p.degreeName||null,institution_name:p.institutionName||null,
       supervisor_name:p.supervisorName||null,research_question:p.researchQuestion||null,abstract:p.abstract||null,
       word_target:p.wordTarget==null?null:Number(p.wordTarget),proposal_word_target:p.proposalWordTarget==null?null:Number(p.proposalWordTarget),
       start_date:p.startDate||null,final_deadline:p.finalDeadline||null,status:p.status||'active',
@@ -211,7 +211,12 @@
 
   async function upsert(table,rows,onConflict='id'){
     if(!rows.length) return;
-    const {error}=await client.from(table).upsert(rows,{onConflict});
+    let {error}=await client.from(table).upsert(rows,{onConflict});
+    // Databases that have not re-run schema.sql lack the research-paper columns; keep syncing the rest.
+    if(error&&table==='thesis_projects'&&/project_type|paper_details/.test(error.message||'')){
+      console.warn('Quire cloud: re-run supabase/schema.sql to sync research-paper settings.');
+      ({error}=await client.from(table).upsert(rows.map(({project_type,paper_details,...rest})=>rest),{onConflict}));
+    }
     if(error) throw new Error(table+': '+error.message);
   }
 
@@ -347,7 +352,7 @@
     return data||[];
   }
 
-  const fromProject=r=>({id:r.id,title:r.title,degreeName:r.degree_name||'',institutionName:r.institution_name||'',supervisorName:r.supervisor_name||'',researchQuestion:r.research_question||'',abstract:r.abstract||'',wordTarget:r.word_target,proposalWordTarget:r.proposal_word_target,startDate:r.start_date,finalDeadline:r.final_deadline,status:r.status,createdAt:r.created_at,updatedAt:r.updated_at});
+  const fromProject=r=>({id:r.id,title:r.title,projectType:r.project_type==='paper'?'paper':'thesis',paperDetails:r.paper_details||{},degreeName:r.degree_name||'',institutionName:r.institution_name||'',supervisorName:r.supervisor_name||'',researchQuestion:r.research_question||'',abstract:r.abstract||'',wordTarget:r.word_target,proposalWordTarget:r.proposal_word_target,startDate:r.start_date,finalDeadline:r.final_deadline,status:r.status,createdAt:r.created_at,updatedAt:r.updated_at});
   const fromSetup=r=>({id:r.id,projectId:r.project_id,studyType:r.study_type||'',population:r.population||'',studySetting:r.study_setting||'',methodNotes:r.method_notes||'',analysis:r.analysis||[],analysisSoftware:r.analysis_software||'',analysisRule:r.analysis_rule||'',analysisNotes:r.analysis_notes||'',proposalRequired:r.proposal_required,ethicsRequired:r.ethics_required,dataManagementRequired:r.data_management_required,protocolRegistration:r.protocol_registration,proposalRequirements:r.proposal_requirements||'',proposalDeadline:r.proposal_deadline||'',ethicsDeadline:r.ethics_deadline||'',dataStart:r.data_start||'',dataEnd:r.data_end||'',draftDeadline:r.draft_deadline||'',aiTailorMethod:r.ai_tailor_method,aiMethodChecks:r.ai_method_checks,aiProtectVoice:r.ai_protect_voice,aiEvidenceLinks:r.ai_evidence_links,designDetails:r.design_details||{},createdAt:r.created_at,updatedAt:r.updated_at});
   const fromObjective=r=>({id:r.id,projectId:r.project_id,orderIndex:r.order_index,title:r.title,description:r.description||'',status:r.status,createdAt:r.created_at,updatedAt:r.updated_at});
   const fromChapter=r=>({id:r.id,projectId:r.project_id,number:r.number||'',title:r.title,orderIndex:r.order_index,targetWordCount:r.target_word_count,currentWordCount:r.current_word_count,status:r.status,createdAt:r.created_at,updatedAt:r.updated_at});

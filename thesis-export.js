@@ -113,7 +113,23 @@
     const {project,settings,entries,totalWords,bibliography:refs}=contentModel();
     const style=window.QuireCitations?.getStyle?.()||'harvard';
 
-    mount.innerHTML=
+    const paper=project.projectType==='paper';
+    const pd=project.paperDetails||{};
+    mount.innerHTML=(paper?
+      '<article class="export-title-page export-paper-title-page">'+
+        '<div class="export-title-page-inner">'+
+          (pd.articleType&&window.QuireStore?.paperArticleTypes?.[pd.articleType]?'<p class="export-article-type">'+escapeHtml(window.QuireStore.paperArticleTypes[pd.articleType])+'</p>':'')+
+          '<h1>'+escapeHtml(project.title||'Untitled paper')+'</h1>'+
+          ((pd.authors||settings.authorName)?'<p class="export-author">'+escapeHtml(pd.authors||settings.authorName)+'</p>':'')+
+          ((pd.affiliations||project.institutionName)?'<p class="export-institution">'+escapeHtml(pd.affiliations||project.institutionName)+'</p>':'')+
+          (pd.correspondingAuthor?'<p class="export-supervisor">Corresponding author: '+escapeHtml(pd.correspondingAuthor)+'</p>':'')+
+          (pd.targetJournal?'<p class="export-degree">Manuscript prepared for '+escapeHtml(pd.targetJournal)+'</p>':'')+
+          (settings.submissionDate?'<p class="export-date">'+escapeHtml(prettyDate(settings.submissionDate))+'</p>':'')+
+        '</div>'+
+      '</article>'+
+      (settings.includeAbstract?'<section class="export-front-section page-break"><h1>Abstract</h1>'+(project.abstract?'<p>'+escapeHtml(project.abstract)+'</p>':'<p class="export-empty-text">Abstract not yet provided.</p>')+
+        (pd.keywords?'<p><strong>Keywords:</strong> '+escapeHtml(pd.keywords)+'</p>':'')+'</section>':'')
+    :
       '<article class="export-title-page">'+
         '<div class="export-title-page-inner">'+
           (project.institutionName?'<p class="export-institution">'+escapeHtml(project.institutionName)+'</p>':'')+
@@ -124,7 +140,7 @@
           (settings.submissionDate?'<p class="export-date">'+escapeHtml(prettyDate(settings.submissionDate))+'</p>':'')+
         '</div>'+
       '</article>'+
-      (settings.includeAbstract?'<section class="export-front-section page-break"><h1>Abstract</h1>'+(project.abstract?'<p>'+escapeHtml(project.abstract)+'</p>':'<p class="export-empty-text">Abstract not yet provided.</p>')+'</section>':'')+
+      (settings.includeAbstract?'<section class="export-front-section page-break"><h1>Abstract</h1>'+(project.abstract?'<p>'+escapeHtml(project.abstract)+'</p>':'<p class="export-empty-text">Abstract not yet provided.</p>')+'</section>':''))+
       (settings.includeToc?renderToc(entries):'')+
       entries.map((row,index)=>renderChapter(row,index,settings)).join('')+
       (settings.includeBibliography?renderBibliography(refs):'');
@@ -138,12 +154,25 @@
 
   function renderReadiness(project,settings,entries,refs){
     const issues=[];
-    if(!project.title)issues.push('Thesis title is missing.');
-    if(!settings.authorName)issues.push('Candidate / author name is missing.');
-    if(!project.institutionName)issues.push('Institution is not set.');
-    if(!project.degreeName)issues.push('Degree / programme is not set.');
+    if(project.projectType==='paper'){
+      const pd=project.paperDetails||{};
+      if(!project.title)issues.push('Paper title is missing.');
+      if(!pd.authors&&!settings.authorName)issues.push('Author list is missing.');
+      if(!pd.correspondingAuthor)issues.push('Corresponding author is not set.');
+      if(!pd.targetJournal)issues.push('Target journal is not set.');
+      if(!pd.keywords)issues.push('Keywords are not set.');
+      const abstractWords=(String(project.abstract||'').trim().match(/\S+/g)||[]).length;
+      if(pd.abstractWordLimit&&abstractWords>pd.abstractWordLimit)issues.push('Abstract is '+abstractWords+' words; the limit is '+pd.abstractWordLimit+'.');
+      const manuscriptWords=entries.reduce((sum,row)=>sum+row.sections.reduce((t,sec)=>t+(Number(sec.currentWordCount)||0),0),0);
+      if(project.wordTarget&&manuscriptWords>project.wordTarget)issues.push('Manuscript is '+manuscriptWords.toLocaleString()+' words; the limit is '+Number(project.wordTarget).toLocaleString()+'.');
+    }else{
+      if(!project.title)issues.push('Thesis title is missing.');
+      if(!settings.authorName)issues.push('Candidate / author name is missing.');
+      if(!project.institutionName)issues.push('Institution is not set.');
+      if(!project.degreeName)issues.push('Degree / programme is not set.');
+    }
     if(settings.includeAbstract&&!project.abstract)issues.push('Abstract is empty.');
-    if(entries.some(row=>!row.sections.length))issues.push('At least one exported chapter has no sections.');
+    if(entries.some(row=>!row.sections.length))issues.push('At least one exported '+(project.projectType==='paper'?'part':'chapter')+' has no sections.');
     const citationProblems=window.QuireCitations?.diagnostics?.().missing||[];
     if(settings.includeBibliography&&citationProblems.length)issues.push(citationProblems.length+' library reference(s) are missing core author/year metadata.');
 
@@ -176,6 +205,13 @@
     document.getElementById('exportAbstract').value=project.abstract||'';
     document.getElementById('exportCitationStyle').value=window.QuireCitations?.getStyle?.()||'harvard';
     renderPreview();
+  }
+
+  // The abstract can also be edited in Study Setup; keep this field current so persist() never writes a stale copy back.
+  function syncAbstractField(){
+    const field=document.getElementById('exportAbstract');
+    if(!field||document.activeElement===field)return;
+    field.value=window.QuireStore.getActiveProject()?.abstract||'';
   }
 
   function persist(){
@@ -282,7 +318,11 @@
     window.addEventListener('quire:project-switched',populate);
     window.addEventListener('quire:citation-style-changed',renderPreview);
     window.addEventListener('quire:store-changed',()=>{
+      syncAbstractField();
       if(document.getElementById('export')?.classList.contains('active'))renderPreview();
+    });
+    window.addEventListener('quire:view-changed',e=>{
+      if(e.detail?.viewId==='export'){syncAbstractField();renderPreview();}
     });
     populate();
   }

@@ -11,6 +11,7 @@ Quire currently includes:
 - Evidence-aware claim, opposing-evidence and interpretation checks
 
 - Thesis dashboard and project overview
+- Research paper projects: journal metadata, abstract, keywords and an editable IMRaD-style section structure (see `docs/research-papers.md`)
 - Adaptive study setup for qualitative, quantitative, mixed-methods and systematic review/meta-analysis projects
 - Live word-count, evidence, milestone and history-based progress intelligence
 - Research library

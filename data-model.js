@@ -104,6 +104,47 @@
     }));
   }
 
+  const DOCUMENT_TYPES={thesis:'Thesis',paper:'Research paper'};
+  const PAPER_ARTICLE_TYPES={
+    original:'Original research article',
+    qualitative:'Qualitative research article',
+    systematic_review:'Systematic review / meta-analysis',
+    review:'Narrative / scoping review',
+    short:'Short communication / brief report',
+    case_report:'Case report'
+  };
+  const DOCUMENT_TEMPLATES={
+    thesis:{
+      empirical:['Introduction','Literature Review','Methodology','Results / Findings','Discussion','Conclusion'],
+      review:['Introduction','Background / Literature Review','Review Methods','Results / Evidence Synthesis','Discussion','Conclusion'],
+      compact:['Introduction','Literature / Context','Main Study / Analysis','Discussion','Conclusion']
+    },
+    paper:{
+      original:['Introduction','Methods','Results','Discussion','Conclusion'],
+      qualitative:['Introduction','Methods','Findings','Discussion','Conclusion'],
+      systematic_review:['Introduction','Methods','Results','Discussion','Conclusion'],
+      review:['Introduction','Review Methods','Main Themes','Discussion','Conclusion'],
+      short:['Introduction','Methods','Results and Discussion','Conclusion'],
+      case_report:['Introduction','Case Presentation','Discussion','Conclusion']
+    }
+  };
+
+  function normalizeProjectType(value){return value==='paper'?'paper':'thesis';}
+
+  function normalizePaperDetails(input={}){
+    const d=input&&typeof input==='object'?input:{};
+    return {
+      articleType:PAPER_ARTICLE_TYPES[d.articleType]?d.articleType:'original',
+      targetJournal:String(d.targetJournal||''),
+      authors:String(d.authors||''),
+      correspondingAuthor:String(d.correspondingAuthor||''),
+      affiliations:String(d.affiliations||''),
+      keywords:String(d.keywords||''),
+      abstractWordLimit:Number(d.abstractWordLimit)||null,
+      reportingGuideline:String(d.reportingGuideline||'')
+    };
+  }
+
   function defaultObjectives(projectId){
     return [
       {id:uid('objective'),projectId,orderIndex:1,title:'Explore educational needs',description:'',status:'active',createdAt:nowIso(),updatedAt:nowIso()},
@@ -545,12 +586,14 @@
     const ts=nowIso();
     state.projects.push({
       id,
-      title:input.title || 'Untitled thesis',
+      title:input.title || (normalizeProjectType(input.projectType)==='paper'?'Untitled paper':'Untitled thesis'),
+      projectType:normalizeProjectType(input.projectType),
+      paperDetails:normalizePaperDetails(input.paperDetails),
       degreeName:input.degreeName || '',
       institutionName:input.institutionName || '',
       supervisorName:input.supervisorName || '',
       researchQuestion:input.researchQuestion || '',
-      abstract:'',
+      abstract:String(input.abstract||''),
       wordTarget:Number(input.wordTarget) || null,
       proposalWordTarget:Number(input.proposalWordTarget) || null,
       startDate:input.startDate || null,
@@ -623,7 +666,7 @@
     const project=state.projects.find(p=>p.id===projectId);
     if(!project)return false;
     const title=String(project.title||'').trim().toLowerCase();
-    const starterTitle=!title||title==='untitled thesis'||title==='research project';
+    const starterTitle=!title||title==='untitled thesis'||title==='untitled paper'||title==='research project';
     if(!starterTitle)return false;
     const owned=key=>(state[key]||[]).filter(row=>row.projectId===projectId);
     const hasResearch=owned('articles').length||owned('highlights').length||owned('notes').length||owned('evidenceLinks').length||owned('analysisItems').length||owned('feedbackItems').length||owned('reviewRounds').length;
@@ -645,7 +688,10 @@
     if(!project)return null;
     const ts=nowIso();
 
+    project.projectType=normalizeProjectType(input.projectType);
+    project.paperDetails=normalizePaperDetails(input.paperDetails);
     project.title=String(input.title||project.title||'Untitled thesis').trim()||'Untitled thesis';
+    if(input.abstract!==undefined)project.abstract=String(input.abstract||'');
     project.degreeName=String(input.degreeName||'');
     project.institutionName=String(input.institutionName||'');
     project.supervisorName=String(input.supervisorName||'');
@@ -717,6 +763,8 @@
     allowed.forEach(key=>{
       if(Object.prototype.hasOwnProperty.call(patch,key)) project[key]=patch[key];
     });
+    if(Object.prototype.hasOwnProperty.call(patch,'projectType')) project.projectType=normalizeProjectType(patch.projectType);
+    if(Object.prototype.hasOwnProperty.call(patch,'paperDetails')) project.paperDetails=normalizePaperDetails({...(project.paperDetails||{}),...(patch.paperDetails||{})});
     project.updatedAt=nowIso();
     if(Object.prototype.hasOwnProperty.call(patch,'finalDeadline')) syncMilestonesFromSetup(state,projectId);
     writeState(state);
@@ -755,6 +803,21 @@
     return true;
   }
 
+  function paperSetupFields(project){
+    const p=normalizePaperDetails(project.paperDetails);
+    return {
+      paperArticleType:p.articleType,
+      paperTargetJournal:p.targetJournal,
+      paperAuthors:p.authors,
+      paperCorrespondingAuthor:p.correspondingAuthor,
+      paperAffiliations:p.affiliations,
+      paperKeywords:p.keywords,
+      paperAbstractWordLimit:p.abstractWordLimit||'',
+      paperReportingGuideline:p.reportingGuideline,
+      paperAbstract:project.abstract||''
+    };
+  }
+
   function getStudySetupData(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -763,6 +826,8 @@
     const d=setup.designDetails || {};
     return clone({
       studyType:setup.studyType || '',
+      projectType:normalizeProjectType(project.projectType),
+      ...paperSetupFields(project),
       thesisTitle:project.title || '',
       wordCount:project.wordTarget || '',
       proposalWordCount:project.proposalWordTarget || '',
@@ -823,6 +888,15 @@
     project.institutionName=data.institutionName || '';
     project.researchQuestion=data.researchQuestion || '';
     project.finalDeadline=data.finalDeadline || null;
+    if(data.projectType!==undefined) project.projectType=normalizeProjectType(data.projectType);
+    if(data.paperArticleType!==undefined){
+      project.paperDetails=normalizePaperDetails({
+        articleType:data.paperArticleType,targetJournal:data.paperTargetJournal,authors:data.paperAuthors,
+        correspondingAuthor:data.paperCorrespondingAuthor,affiliations:data.paperAffiliations,keywords:data.paperKeywords,
+        abstractWordLimit:data.paperAbstractWordLimit,reportingGuideline:data.paperReportingGuideline
+      });
+    }
+    if(data.paperAbstract!==undefined&&normalizeProjectType(project.projectType)==='paper') project.abstract=String(data.paperAbstract||'');
     project.updatedAt=ts;
 
     let setup=state.studySetups.find(s=>s.projectId===projectId);
@@ -1516,6 +1590,56 @@
   function listChapters(projectId){
     const state=getState(); projectId=projectId||getActiveProjectId(state);
     return clone(state.chapters.filter(ch=>ch.projectId===projectId).sort((a,b)=>a.orderIndex-b.orderIndex));
+  }
+
+  function getProjectType(projectId){
+    const state=getState();projectId=projectId||getActiveProjectId(state);
+    return normalizeProjectType(state.projects.find(p=>p.id===projectId)?.projectType);
+  }
+
+  function chapterHasWriting(state,chapterId){
+    return state.sections.some(row=>row.chapterId===chapterId&&(String(row.content||'').replace(/<[^>]+>/g,'').trim()||Number(row.currentWordCount)>0));
+  }
+
+  // Rename, add, reorder and remove top-level parts (thesis chapters / paper sections).
+  // Parts that already contain writing are never removed; they are kept at the end and reported.
+  function setDocumentStructure(projectId,items=[]){
+    const state=getState();projectId=projectId||getActiveProjectId(state);
+    if(!state.projects.some(p=>p.id===projectId)) return null;
+    const ts=nowIso();
+    const wanted=(Array.isArray(items)?items:[])
+      .map(item=>typeof item==='string'?{title:item}:(item||{}))
+      .map(item=>({id:item.id||null,title:String(item.title||'').trim()}))
+      .filter(item=>item.title);
+    const existing=state.chapters.filter(c=>c.projectId===projectId);
+    const keptIds=new Set();
+    const ordered=wanted.map(item=>{
+      let row=item.id?existing.find(c=>c.id===item.id):null;
+      if(row){row.title=item.title;keptIds.add(row.id);}
+      else{
+        row={id:uid('chapter'),projectId,number:'',title:item.title,orderIndex:0,targetWordCount:null,currentWordCount:0,status:'not_started',createdAt:ts};
+        state.chapters.push(row);
+      }
+      return row;
+    });
+    const kept=[];
+    const removedIds=new Set();
+    existing.filter(c=>!keptIds.has(c.id)).forEach(c=>{
+      if(chapterHasWriting(state,c.id)){kept.push(c.title);ordered.push(c);}
+      else removedIds.add(c.id);
+    });
+    if(removedIds.size){
+      const sectionIds=new Set(state.sections.filter(s=>removedIds.has(s.chapterId)).map(s=>s.id));
+      state.sections=state.sections.filter(s=>!sectionIds.has(s.id));
+      state.evidenceLinks=state.evidenceLinks.filter(e=>!sectionIds.has(e.sectionId)).map(e=>removedIds.has(e.chapterId)?{...e,chapterId:null}:e);
+      state.aiThreads=state.aiThreads.filter(t=>!sectionIds.has(t.sectionId));
+      state.feedbackItems=state.feedbackItems.filter(f=>!sectionIds.has(f.sectionId));
+      state.sectionVersions=state.sectionVersions.filter(v=>!sectionIds.has(v.sectionId));
+      state.chapters=state.chapters.filter(c=>!removedIds.has(c.id));
+    }
+    ordered.forEach((row,index)=>{row.orderIndex=index+1;row.number=String(index+1);row.updatedAt=ts;});
+    writeState(state);
+    return {chapters:listChapters(projectId),kept};
   }
 
   function addEvidenceLink(data={}){
@@ -2356,6 +2480,11 @@
     listObjectives,
     updateChapter,
     listChapters,
+    getProjectType,
+    setDocumentStructure,
+    documentTypes:clone(DOCUMENT_TYPES),
+    paperArticleTypes:clone(PAPER_ARTICLE_TYPES),
+    documentTemplates:clone(DOCUMENT_TEMPLATES),
     listSections,
     addSection,
     updateSection,

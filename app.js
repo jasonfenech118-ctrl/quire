@@ -170,9 +170,23 @@ function checkedAnalysis(){
   return [...document.querySelectorAll('[data-analysis-panel="' + type + '"] input[type="checkbox"]:checked')].map(el => el.value);
 }
 
+function currentProjectType(){
+  return document.querySelector('input[name="projectType"]:checked')?.value || 'thesis';
+}
+
 function collectStudySetup(){
   return {
     studyType: currentStudyType(),
+    projectType: currentProjectType(),
+    paperArticleType: valueOf('paperArticleType') || 'original',
+    paperTargetJournal: valueOf('paperTargetJournal'),
+    paperAuthors: valueOf('paperAuthors'),
+    paperCorrespondingAuthor: valueOf('paperCorrespondingAuthor'),
+    paperAffiliations: valueOf('paperAffiliations'),
+    paperKeywords: valueOf('paperKeywords'),
+    paperAbstractWordLimit: valueOf('paperAbstractWordLimit'),
+    paperReportingGuideline: valueOf('paperReportingGuideline'),
+    paperAbstract: valueOf('paperAbstract'),
     thesisTitle: valueOf('thesisTitle'),
     wordCount: valueOf('wordCount'),
     proposalWordCount: valueOf('proposalWordCount'),
@@ -235,8 +249,11 @@ function restoreStudySetup(){
     if(radio) radio.checked = true;
   }
 
+  const typeRadio = document.querySelector('input[name="projectType"][value="' + (saved.projectType || 'thesis') + '"]');
+  if(typeRadio) typeRadio.checked = true;
+
   Object.keys(saved).forEach(key => {
-    if(['studyType','analysis'].includes(key)) return;
+    if(['studyType','analysis','projectType'].includes(key)) return;
     setIfPresent(key, saved[key]);
   });
 
@@ -248,6 +265,7 @@ function restoreStudySetup(){
     });
   }
   updateSetupSummary(saved);
+  window.QuireDocType?.refreshSetupCard?.();
 }
 
 function updateSetupCompletion(){
@@ -257,6 +275,7 @@ function updateSetupCompletion(){
     data.finalDeadline, data.population, data.studySetting,
     data.analysisSoftware, data.analysis.length ? 'yes' : ''
   ];
+  if(data.projectType === 'paper') essentials.push(data.paperAuthors, data.paperTargetJournal, data.paperAbstract);
   const complete = essentials.filter(Boolean).length;
   const percent = Math.round((complete / essentials.length) * 100);
   const pct = document.getElementById('setupPercent');
@@ -272,6 +291,8 @@ function updateSetupSummary(data){
   if(!title || !meta) return;
   title.textContent = data.thesisTitle || (profile ? profile.title : 'Not configured yet');
   const bits = [];
+  if(data.projectType === 'paper') bits.push(window.QuireStore?.paperArticleTypes?.[data.paperArticleType] || 'Research paper');
+  if(data.projectType === 'paper' && data.paperTargetJournal) bits.push('for ' + data.paperTargetJournal);
   if(profile) bits.push(profile.title);
   if(data.wordCount) bits.push(Number(data.wordCount).toLocaleString() + ' words');
   if(data.finalDeadline) bits.push('due ' + new Date(data.finalDeadline + 'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}));
@@ -283,6 +304,7 @@ document.getElementById('saveStudySetup')?.addEventListener('click', () => {
   window.QuireStore?.saveStudySetupData(data);
   updateSetupSummary(data);
   updateSetupCompletion();
+  window.QuireDocType?.applyLabels?.();
   showToast('Study setup saved');
 });
 
@@ -305,7 +327,7 @@ document.getElementById('generateTimeline')?.addEventListener('click', () => {
     ['Complete analysis', -80],
     ['Full results / findings draft', -60],
     ['Discussion draft', -42],
-    ['First full thesis draft', -28],
+    ['First full ' + (window.QuireDocType?.noun?.() || 'thesis') + ' draft', -28],
     ['Final editing and formatting', -10],
     ['Submission', 0]
   ];

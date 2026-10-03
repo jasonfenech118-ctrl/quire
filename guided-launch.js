@@ -3,31 +3,15 @@
   let step=1;
   let templateTouched=false;
 
-  const templates={
-    empirical:[
-      'Introduction',
-      'Literature Review',
-      'Methodology',
-      'Results / Findings',
-      'Discussion',
-      'Conclusion'
-    ],
-    review:[
-      'Introduction',
-      'Background / Literature Review',
-      'Review Methods',
-      'Results / Evidence Synthesis',
-      'Discussion',
-      'Conclusion'
-    ],
-    compact:[
-      'Introduction',
-      'Literature / Context',
-      'Main Study / Analysis',
-      'Discussion',
-      'Conclusion'
-    ]
+  let structureTouched=false;
+  let structureEditor=null;
+
+  const LAUNCH_LABELS={
+    thesis:{eyebrow:'GUIDED THESIS SETUP',heading:'Build your thesis blueprint',approach:'What kind of thesis is this?',reqEyebrow:'UNIVERSITY REQUIREMENTS',reqHeading:'What rules does your thesis need to follow?',blueprint:'YOUR THESIS BLUEPRINT',finish:'Save thesis blueprint'},
+    paper:{eyebrow:'GUIDED PAPER SETUP',heading:'Build your research paper blueprint',approach:'What kind of study does the paper report?',reqEyebrow:'JOURNAL & AUTHORSHIP',reqHeading:'Where is the paper going, and who is writing it?',blueprint:'YOUR PAPER BLUEPRINT',finish:'Save paper blueprint'}
   };
+
+  function templateSet(){return window.QuireStore?.documentTemplates?.[docType()]||{};}
 
   function el(id){return document.getElementById(id);}
   function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
@@ -36,18 +20,41 @@
     return document.querySelector('input[name="launchStudyType"]:checked')?.value||'';
   }
 
-  function selectedTemplate(){
-    return document.querySelector('input[name="launchTemplate"]:checked')?.value||'empirical';
+  function docType(){
+    return document.querySelector('input[name="launchDocType"]:checked')?.value==='paper'?'paper':'thesis';
   }
 
-  function templateForStudy(){
+  function articleTypeForStudy(){
+    const study=selectedStudyType();
+    return study==='meta'?'systematic_review':study==='qualitative'?'qualitative':'original';
+  }
+
+  function templateKey(){
+    if(docType()==='paper')return el('launchArticleType')?.value||'original';
     return selectedStudyType()==='meta'?'review':'empirical';
   }
 
-  function setTemplate(value){
-    const radio=document.querySelector('input[name="launchTemplate"][value="'+value+'"]');
-    if(radio)radio.checked=true;
-    renderStructurePreview();
+  function resetStructure(){
+    structureTouched=false;
+    const list=templateSet()[templateKey()]||[];
+    const unit=docType()==='paper'?'Section':'Chapter';
+    if(!structureEditor)structureEditor=window.QuireDocType?.structureEditor?.(el('launchStructurePreview'),{items:list,unit,onChange:()=>{structureTouched=true;updateSummary();}});
+    else structureEditor.set(list,{unit});
+  }
+
+  function applyDocType(){
+    const kind=docType();
+    const labels=LAUNCH_LABELS[kind];
+    document.querySelectorAll('#guidedLaunchModal [data-launch-label]').forEach(node=>{node.textContent=labels[node.dataset.launchLabel]||node.textContent;});
+    document.querySelectorAll('#guidedLaunchModal [data-launch-only]').forEach(node=>{node.hidden=node.dataset.launchOnly!==kind;});
+    document.querySelectorAll('#guidedLaunchModal [data-doc-ph-thesis][data-doc-ph-paper]').forEach(node=>{
+      node.setAttribute('placeholder',node.getAttribute(kind==='paper'?'data-doc-ph-paper':'data-doc-ph-thesis'));
+    });
+    const select=el('launchArticleType');
+    if(select&&!select.options.length){
+      const types=window.QuireStore?.paperArticleTypes||{};
+      select.innerHTML=Object.keys(types).map(key=>'<option value="'+key+'">'+escapeHtml(types[key])+'</option>').join('');
+    }
   }
 
   function reset(){
@@ -55,14 +62,19 @@
     [
       'launchTitle','launchDegree','launchInstitution','launchSupervisor','launchQuestion','launchProblem','launchAim','launchRequirements',
       'launchObjective1','launchObjective2','launchObjective3','launchPopulation','launchSetting',
-      'launchProposalDeadline','launchFinalDeadline','launchReferenceStyle'
+      'launchProposalDeadline','launchFinalDeadline','launchReferenceStyle',
+      'launchTargetJournal','launchAuthors','launchCorresponding','launchKeywords','launchPaperWordLimit','launchAbstractLimit','launchPaperReferenceStyle','launchPaperDeadline'
     ].forEach(id=>{if(el(id))el(id).value='';});
+    const thesisRadio=document.querySelector('input[name="launchDocType"][value="thesis"]');
+    if(thesisRadio)thesisRadio.checked=true;
+    applyDocType();
+    if(el('launchArticleType'))el('launchArticleType').value='original';
     if(el('launchWordTarget'))el('launchWordTarget').value='';
     document.querySelectorAll('input[name="launchStudyType"]').forEach(r=>r.checked=false);
     document.querySelector('input[name="launchStudyType"][value=""]')?.setAttribute('checked','checked');
     const undecided=document.querySelector('input[name="launchStudyType"][value=""]');
     if(undecided)undecided.checked=true;
-    setTemplate('empirical');
+    resetStructure();
     setMessage('');
     showStep(1);
   }
@@ -71,7 +83,7 @@
     reset();
     const modal=el('guidedLaunchModal');
     if(modal)modal.hidden=false;
-    setTimeout(()=>el('launchTitle')?.focus(),0);
+    setTimeout(()=>document.querySelector('input[name="launchDocType"]:checked')?.focus(),0);
   }
 
   function close(){
@@ -101,7 +113,7 @@
   }
 
   function validateStep(){
-    if(step===1&&!el('launchTitle').value.trim()){
+    if(step===2&&!el('launchTitle').value.trim()){
       setMessage('Give the project a working title before continuing.');
       el('launchTitle').focus();
       return false;
@@ -111,26 +123,16 @@
 
   function next(){
     if(!validateStep())return;
-    if(step===4&&!templateTouched)setTemplate(templateForStudy());
+    if(step===4&&!structureTouched)resetStructure();
     showStep(step+1);
   }
 
   function back(){showStep(step-1);}
 
-  function renderStructurePreview(){
-    const type=selectedTemplate();
-    const chapters=templates[type]||templates.empirical;
-    const mount=el('launchStructurePreview');
-    if(mount){
-      mount.innerHTML=chapters.map((title,index)=>
-        '<div><span>'+(index+1)+'</span><strong>'+escapeHtml(title)+'</strong></div>'
-      ).join('');
-    }
-  }
-
   function updateSummary(){
     if(step!==6)return;
-    const title=el('launchTitle').value.trim()||'Untitled thesis';
+    const paper=docType()==='paper';
+    const title=el('launchTitle').value.trim()||(paper?'Untitled paper':'Untitled thesis');
     const question=el('launchQuestion').value.trim()||'Research direction still open — the literature can refine it';
     const type=selectedStudyType();
     const typeLabel={
@@ -141,33 +143,47 @@
       '':'Not decided yet'
     }[type]||'Not decided yet';
     const objectiveCount=['launchObjective1','launchObjective2','launchObjective3'].filter(id=>el(id).value.trim()).length;
-    const deadline=el('launchFinalDeadline').value;
-    const chapters=templates[selectedTemplate()]||templates.empirical;
+    const deadline=paper?el('launchPaperDeadline').value:el('launchFinalDeadline').value;
+    const words=Number(paper?el('launchPaperWordLimit').value:el('launchWordTarget').value)||0;
+    const parts=chapters();
 
     el('launchSummaryTitle').textContent=title;
     el('launchSummaryQuestion').textContent=question;
-    el('launchSummaryType').textContent=typeLabel;
+    el('launchSummaryType').textContent=paper?(window.QuireStore?.paperArticleTypes?.[el('launchArticleType')?.value]||'Research paper')+' · '+typeLabel:typeLabel;
     el('launchSummaryObjectives').textContent=objectiveCount+' early line'+(objectiveCount===1?'':'s')+' of enquiry entered';
-    el('launchSummaryTimeline').textContent=(Number(el('launchWordTarget').value)||0).toLocaleString()+' word target'+(deadline?' · deadline '+deadline:' · no final deadline yet');
-    if(el('launchSummaryStructure'))el('launchSummaryStructure').textContent=chapters.length+' chapter structure';
+    const journal=paper&&el('launchTargetJournal').value.trim()?' · '+el('launchTargetJournal').value.trim():'';
+    el('launchSummaryTimeline').textContent=words.toLocaleString()+' word '+(paper?'limit':'target')+journal+(deadline?' · deadline '+deadline:' · no final deadline yet');
+    if(el('launchSummaryStructure'))el('launchSummaryStructure').textContent=parts.length+(paper?' section paper structure':' chapter thesis structure');
     const next=el('launchNextStep');if(next)next.textContent=type?'Continue with your research plan':'Begin exploring the literature';
   }
 
   function chapters(){
-    return (templates[selectedTemplate()]||templates.empirical).map((title,index)=>({
-      number:String(index+1),title
-    }));
+    const rows=structureEditor?structureEditor.get():(templateSet()[templateKey()]||[]).map(title=>({title}));
+    return rows.map((row,index)=>({number:String(index+1),title:row.title.trim()}));
   }
 
   function finish(){
     if(!el('launchTitle').value.trim()){
-      showStep(1);setMessage('Give the project a working title before creating it.');return;
+      showStep(2);setMessage('Give the project a working title before creating it.');return;
     }
 
     const objectives=['launchObjective1','launchObjective2','launchObjective3']
       .map(id=>el(id).value.trim()).filter(Boolean);
 
+    const paper=docType()==='paper';
+    if(!chapters().length){
+      setMessage('Keep at least one '+(paper?'section':'chapter')+' in the structure.');return;
+    }
     const input={
+      projectType:docType(),
+      paperDetails:paper?{
+        articleType:el('launchArticleType')?.value||'original',
+        targetJournal:el('launchTargetJournal').value.trim(),
+        authors:el('launchAuthors').value.trim(),
+        correspondingAuthor:el('launchCorresponding').value.trim(),
+        keywords:el('launchKeywords').value.trim(),
+        abstractWordLimit:Number(el('launchAbstractLimit').value)||null
+      }:{},
       title:el('launchTitle').value.trim(),
       degreeName:el('launchDegree').value.trim(),
       institutionName:el('launchInstitution').value.trim(),
@@ -179,14 +195,14 @@
       studyType:selectedStudyType(),
       population:el('launchPopulation').value.trim(),
       studySetting:el('launchSetting').value.trim(),
-      wordTarget:Number(el('launchWordTarget').value)||null,
+      wordTarget:Number(paper?el('launchPaperWordLimit').value:el('launchWordTarget').value)||null,
       researchStage:document.querySelector('input[name="launchStage"]:checked')?.value||'topic',
       researchProblem:el('launchProblem')?.value.trim()||'',
       researchAim:el('launchAim')?.value.trim()||'',
-      referenceStyle:el('launchReferenceStyle')?.value||'',
+      referenceStyle:(paper?el('launchPaperReferenceStyle'):el('launchReferenceStyle'))?.value||'',
       universityRequirements:el('launchRequirements')?.value.trim()||'',
       proposalDeadline:el('launchProposalDeadline').value||null,
-      finalDeadline:el('launchFinalDeadline').value||null,
+      finalDeadline:(paper?el('launchPaperDeadline'):el('launchFinalDeadline')).value||null,
       startDate:new Date().toISOString().slice(0,10)
     };
 
@@ -221,9 +237,15 @@
     const objectives=state.objectives.filter(o=>o.projectId===projectId&&o.status!=='archived');
     const chapters=state.chapters.filter(c=>c.projectId===projectId);
     const articles=state.articles.filter(a=>a.projectId===projectId);
+    const paper=project.projectType==='paper';
 
     const essentials=[
-      {
+      paper?{
+        key:'identity',label:'Paper identity',
+        detail:'Title, authors and target journal',
+        done:Boolean(project.title&&project.paperDetails?.authors&&project.paperDetails?.targetJournal),
+        view:'setup'
+      }:{
         key:'identity',label:'Project identity',
         detail:'Title, degree and institution',
         done:Boolean(project.title&&project.degreeName&&project.institutionName),
@@ -249,15 +271,15 @@
       },
       {
         key:'targets',label:'Target & submission date',
-        detail:'Word target and final deadline',
+        detail:paper?'Word limit and planned submission date':'Word target and final deadline',
         done:Boolean(project.wordTarget&&project.finalDeadline),
         view:'setup'
       },
       {
-        key:'structure',label:'Chapter structure',
-        detail:'Initial thesis chapters',
-        done:chapters.length>=4,
-        view:'chapters'
+        key:'structure',label:paper?'Paper structure':'Chapter structure',
+        detail:paper?'Manuscript sections (e.g. IMRaD)':'Initial thesis chapters',
+        done:chapters.length>=(paper?3:4),
+        view:paper?'setup':'chapters'
       }
     ];
 
@@ -310,7 +332,7 @@
     }).length;
     const gaps=(state.analysisItems||[]).filter(x=>x.projectId===projectId&&x.kind==='gap_signal');
     const viableGaps=gaps.filter(x=>!['set_aside','challenged'].includes(String(x.payload?.gapStatus||'emerging')));
-    const hasTopic=Boolean(String(project.title||'').trim()&&!['untitled thesis','research project'].includes(String(project.title||'').trim().toLowerCase()));
+    const hasTopic=Boolean(String(project.title||'').trim()&&!['untitled thesis','untitled paper','research project'].includes(String(project.title||'').trim().toLowerCase()));
 
     const tasks=[
       {id:'topic',label:'Define the research area',done:hasTopic,target:'setup',hint:'Start with the broad area you want to explore.'},
@@ -392,16 +414,22 @@
     });
 
     document.querySelectorAll('input[name="launchStudyType"]').forEach(r=>r.addEventListener('change',()=>{
-      if(!templateTouched)setTemplate(templateForStudy());
+      if(docType()==='paper'&&!templateTouched&&el('launchArticleType'))el('launchArticleType').value=articleTypeForStudy();
+      if(!structureTouched)resetStructure();
       updateSummary();
     }));
-    document.querySelectorAll('input[name="launchTemplate"]').forEach(r=>r.addEventListener('change',()=>{
-      templateTouched=true;renderStructurePreview();updateSummary();
+    document.querySelectorAll('input[name="launchDocType"]').forEach(r=>r.addEventListener('change',()=>{
+      applyDocType();resetStructure();updateSummary();
     }));
+    el('launchArticleType')?.addEventListener('change',()=>{
+      templateTouched=true;
+      if(!structureTouched||confirm('Replace the current structure with the template for this article type?'))resetStructure();
+      updateSummary();
+    });
 
     [
       'launchTitle','launchQuestion','launchObjective1','launchObjective2','launchObjective3',
-      'launchWordTarget','launchFinalDeadline'
+      'launchWordTarget','launchFinalDeadline','launchTargetJournal','launchPaperWordLimit','launchPaperDeadline'
     ].forEach(id=>el(id)?.addEventListener('input',updateSummary));
 
     window.addEventListener('quire:project-switched',()=>{renderReadiness();renderGuide();renderThesisSetupGuide();});
@@ -410,7 +438,8 @@
       renderGuide();renderThesisSetupGuide();
     });
 
-    renderStructurePreview();
+    applyDocType();
+    resetStructure();
     renderReadiness();
     renderThesisSetupGuide();
     renderGuide();
@@ -420,10 +449,14 @@
   function renderThesisSetupGuide(){
     const store=window.QuireStore;if(!store)return;
     const pid=store.getActiveProjectId?.(),setup=store.getStudySetupData?.(pid)||{},project=store.getActiveProject?.()||{};
-    const values=[project.title&&project.title!=='Untitled thesis',project.degreeName,project.institutionName,project.researchQuestion,setup.studyType,project.wordTarget,project.finalDeadline];
+    const paper=project.projectType==='paper';
+    const values=paper
+      ? [project.title&&project.title!=='Untitled paper',project.paperDetails?.authors,project.paperDetails?.targetJournal,project.researchQuestion,setup.studyType,project.wordTarget,project.abstract]
+      : [project.title&&project.title!=='Untitled thesis',project.degreeName,project.institutionName,project.researchQuestion,setup.studyType,project.wordTarget,project.finalDeadline];
+    const noun=paper?'Paper':'Thesis';
     const complete=values.filter(Boolean).length,pct=Math.round(complete/values.length*100);
     const bar=el('thesisSetupGuideBar');if(bar)bar.style.width=pct+'%';
-    const status=el('thesisSetupGuideStatus');if(status)status.textContent=pct>=85?'Thesis foundation is well defined':pct?'Thesis setup is in progress':'Thesis setup not completed';
+    const status=el('thesisSetupGuideStatus');if(status)status.textContent=pct>=85?noun+' foundation is well defined':pct?noun+' setup is in progress':noun+' setup not completed';
     const meta=el('thesisSetupGuideMeta');if(meta)meta.textContent=complete+' of '+values.length+' core parameters currently defined.';
     const btn=el('openThesisSetupGuideBtn');if(btn)btn.textContent=pct?'Continue guided setup →':'Start guided setup →';
   }

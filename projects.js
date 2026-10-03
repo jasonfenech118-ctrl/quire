@@ -24,16 +24,17 @@
       const articles=(window.QuireStore.getState().articles||[]).filter(a=>a.projectId===project.id).length;
       const chapters=(window.QuireStore.getState().chapters||[]).filter(c=>c.projectId===project.id).length;
       const percent=pct(project.id);
+      const paper=project.projectType==='paper';
       return '<article class="research-project-card '+(project.id===activeId?'active':'')+'" data-project-card="'+project.id+'">'+
-        '<div class="project-card-top"><span class="eyebrow">'+(project.id===activeId?'ACTIVE PROJECT':'THESIS PROJECT')+'</span><button type="button" class="project-menu-btn" data-project-edit="'+project.id+'">⋯</button></div>'+
-        '<h2>'+escapeHtml(project.title||'Untitled thesis')+'</h2>'+
+        '<div class="project-card-top"><span class="eyebrow">'+(project.id===activeId?'ACTIVE '+(paper?'PAPER':'THESIS'):(paper?'RESEARCH PAPER':'THESIS PROJECT'))+'</span><button type="button" class="project-menu-btn" data-project-edit="'+project.id+'">⋯</button></div>'+
+        '<h2>'+escapeHtml(project.title||(paper?'Untitled paper':'Untitled thesis'))+'</h2>'+
         '<p>'+escapeHtml(project.researchQuestion||'Research question not yet defined')+'</p>'+
-        '<div class="project-card-meta"><span>'+articles+' articles</span><span>'+chapters+' chapters</span><span>'+pretty(project.finalDeadline)+'</span></div>'+
+        '<div class="project-card-meta"><span>'+articles+' articles</span><span>'+chapters+(paper?' sections':' chapters')+'</span><span>'+pretty(project.finalDeadline)+'</span></div>'+
         '<div class="project-card-progress"><div><span style="width:'+percent+'%"></span></div><strong>'+percent+'%</strong></div>'+
         '<div class="project-card-actions"><button type="button" class="primary-btn" data-project-open="'+project.id+'">'+(project.id===activeId?'Open workspace':'Switch & open')+'</button><button type="button" class="soft-btn" data-project-setup="'+project.id+'">Study setup</button></div>'+
       '</article>';
     }).join('')+
-    '<button class="new-project-card" id="createProjectCard" type="button"><span>＋</span><strong>New research project</strong><small>Start another thesis, dissertation, review or study</small></button>';
+    '<button class="new-project-card" id="createProjectCard" type="button"><span>＋</span><strong>New research project</strong><small>Start another thesis, research paper, review or study</small></button>';
 
     if(archivedMount){
       archivedMount.innerHTML=archived.length?archived.map(p=>'<div class="archived-project-row"><div><strong>'+escapeHtml(p.title)+'</strong><small>Archived project</small></div><button type="button" data-project-restore="'+p.id+'">Restore</button></div>').join(''):'<p class="empty-projects">No archived projects.</p>';

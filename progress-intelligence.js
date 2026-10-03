@@ -322,7 +322,8 @@
     projectTitle.textContent=title;
     setText('sidebarThesisTitle',title);
 
-    const meta=[project.degreeName,project.institutionName,studyTypeLabel(setup.studyType),project.finalDeadline?'Submission '+prettyDate(project.finalDeadline):''].filter(Boolean);
+    const paperMeta=project.projectType==='paper'?['Research paper',project.paperDetails?.targetJournal]:[project.degreeName];
+    const meta=[...paperMeta,project.institutionName,studyTypeLabel(setup.studyType),project.finalDeadline?'Submission '+prettyDate(project.finalDeadline):''].filter(Boolean);
     setText('projectMeta',meta.length?meta.join(' · '):'Study setup not yet completed');
 
     const overall=clamp(live.overallProgress||0);
