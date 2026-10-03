@@ -11,6 +11,7 @@ Quire currently includes:
 - Evidence-aware claim, opposing-evidence and interpretation checks
 
 - Thesis dashboard and project overview
+- AI Assistant with ChatGPT, Claude, Gemini and Copilot (Azure OpenAI), side-by-side comparison and one-click saving into the project (setup: `docs/ai-assistant.md`)
 - Research paper and assignment projects alongside theses: journal or module details, editable section structures and type-specific export checks (see `docs/research-papers.md`)
 - Adaptive study setup for qualitative, quantitative, mixed-methods and systematic review/meta-analysis projects
 - Live word-count, evidence, milestone and history-based progress intelligence
