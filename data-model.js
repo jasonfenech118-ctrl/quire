@@ -1798,6 +1798,36 @@
     return clone(row);
   }
 
+  function clearAiThread(threadId){
+    const state=getState();
+    state.aiMessages=state.aiMessages.filter(m=>m.threadId!==threadId);
+    writeState(state);
+    return true;
+  }
+
+  function setResearchAim(text,projectId){
+    const state=getState();projectId=projectId||getActiveProjectId(state);
+    const setup=state.studySetups.find(s=>s.projectId===projectId);
+    if(!setup)return null;
+    if(!setup.designDetails||typeof setup.designDetails!=='object')setup.designDetails={};
+    setup.designDetails.researchAim=String(text||'').trim();
+    setup.updatedAt=nowIso();
+    writeState(state);
+    return setup.designDetails.researchAim;
+  }
+
+  function addObjective(data={},projectId){
+    const state=getState();projectId=projectId||getActiveProjectId(state);
+    const title=String(data.title||'').trim();
+    if(!projectId||!title)return null;
+    const ts=nowIso();
+    const order=state.objectives.filter(o=>o.projectId===projectId).length+1;
+    const row={id:uid('objective'),projectId,orderIndex:order,title,description:String(data.description||''),status:'active',createdAt:ts,updatedAt:ts};
+    state.objectives.push(row);
+    writeState(state);
+    return clone(row);
+  }
+
   function listAiMessages(threadId){
     const state=getState();
     return clone(state.aiMessages.filter(m=>m.threadId===threadId)
@@ -2550,6 +2580,9 @@
     updateNote,
     listThemes,
     listObjectives,
+    addObjective,
+    setResearchAim,
+    clearAiThread,
     updateChapter,
     listChapters,
     getProjectType,

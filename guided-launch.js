@@ -444,6 +444,25 @@
       open();
     }));
     el('dismissLaunchGuide')?.addEventListener('click',dismissGuide);
+    document.querySelectorAll('[data-launch-assistant]').forEach(btn=>btn.addEventListener('click',()=>{
+      const idea=el('launchProblem').value.trim();
+      window.QuireAI?.open?.({
+        prompt:idea&&btn.closest('[data-launch-step="2"]')?'Help me develop this idea into a research direction: '+idea:'',
+        wizard:{
+          read:()=>({title:el('launchTitle').value.trim(),idea:el('launchProblem').value.trim(),question:el('launchQuestion').value.trim()}),
+          write:(kind,text)=>{
+            if(kind==='idea')el('launchProblem').value=text;
+            else if(kind==='question')el('launchQuestion').value=text;
+            else if(kind==='aim')el('launchAim').value=text;
+            else if(kind==='objective'){
+              const slot=['launchObjective1','launchObjective2','launchObjective3'].map(el).find(input=>!input.value.trim())||el('launchObjective3');
+              slot.value=text;
+            }
+            updateSummary();
+          }
+        }
+      });
+    }));
     el('launchGuideNext')?.addEventListener('click',e=>{
       const target=e.currentTarget.dataset.launchTarget;
       if(target)window.showView?.(target);

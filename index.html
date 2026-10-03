@@ -92,7 +92,7 @@
           <span id="connectivityStatus" class="connectivity-status" data-state="online">Online</span>
           <button class="icon-btn shortcuts-btn" id="openShortcutsBtn" type="button" title="Keyboard shortcuts" aria-label="Keyboard shortcuts">?</button>
           <button class="cloud-status-btn" id="cloudStatusBtn" type="button" title="Account & cloud sync"><span id="cloudStatusDot"></span><span id="cloudStatusLabel">Local</span></button>
-          <button class="soft-btn capture-idea-top" id="captureResearchIdeaBtn" type="button">＋ Capture idea</button><button class="soft-btn quire-suggest-top" id="openQuireSuggestionsBtn" type="button">✦ Suggestions <b id="quireSuggestionCount"></b></button><button class="primary-btn" id="newItemBtn">＋ New</button>
+          <button class="soft-btn capture-idea-top" id="captureResearchIdeaBtn" type="button">＋ Capture idea</button><button class="soft-btn assistant-top" type="button" data-open-assistant>✦ AI Assistant</button><button class="soft-btn quire-suggest-top" id="openQuireSuggestionsBtn" type="button">✦ Suggestions <b id="quireSuggestionCount"></b></button><button class="primary-btn" id="newItemBtn">＋ New</button>
         </div>
       </header>
 
@@ -1048,7 +1048,7 @@
       <section id="brainstorm" class="view">
         <div class="page-heading compact">
           <div><span class="eyebrow">BRAINSTORM</span><h1>Think freely. Structure later.</h1><p>Capture rough thoughts, then let Quire help turn them into themes, questions and sections.</p></div>
-          <button class="primary-btn" id="newIdeaBtn">＋ New idea</button>
+          <div class="heading-actions"><button class="soft-btn" type="button" data-open-assistant>✦ Develop with AI</button><button class="primary-btn" id="newIdeaBtn">＋ New idea</button></div>
         </div>
         <div class="brainstorm-layout">
           <div class="idea-board" id="ideaBoard"></div>
@@ -1959,7 +1959,7 @@
         <p>Describe it naturally. A working title is enough; Quire should not force a final research gap at this stage.</p>
         <div class="form-grid">
           <label class="field wide"><span>Research area / working title *</span><input id="launchTitle" type="text" placeholder="e.g. Patient education and self-management after stoma formation"></label>
-          <label class="field wide"><span>Your first idea — what do you want to study?</span><textarea id="launchProblem" rows="3" placeholder="e.g. I want to study the behaviour of… / I am interested in why…"></textarea><small class="launch-hint">Write it in your own words. Quire saves it in Ideas so you can develop it later.</small></label>
+          <label class="field wide"><span>Your first idea — what do you want to study?</span><textarea id="launchProblem" rows="3" placeholder="e.g. I want to study the behaviour of… / I am interested in why…"></textarea><small class="launch-hint">Write it in your own words. Quire saves it in Ideas so you can develop it later.</small><button class="soft-btn launch-ai-btn" type="button" data-launch-assistant>✦ Develop this idea with AI</button></label>
           <label class="field"><span>Population / participants</span><input id="launchPopulation" type="text" placeholder="Who or what is involved?"></label>
           <label class="field"><span>Setting / context</span><input id="launchSetting" type="text" placeholder="Where or in what context?"></label>
         </div>
@@ -1973,6 +1973,7 @@
           <label class="field"><span>Working objective 1</span><input id="launchObjective1" type="text"></label>
           <label class="field"><span>Working objective 2</span><input id="launchObjective2" type="text"></label>
           <label class="field"><span>Working objective 3</span><input id="launchObjective3" type="text"></label>
+          <button class="soft-btn launch-ai-btn" type="button" data-launch-assistant>✦ Shape question, aim &amp; objectives with AI</button>
         </div>
       </section>
       <section class="launch-step" data-launch-step="4" hidden>
@@ -2130,6 +2131,15 @@
         <button id="closeAiSettingsModal" type="button">×</button>
       </div>
 
+      <section class="account-section ai-provider-section">
+        <span class="eyebrow">AI ASSISTANT</span>
+        <h3>ChatGPT, Claude, Gemini and Copilot</h3>
+        <p>Quire's AI runs through the <code>quire-ai</code> function in your own Supabase project, which keeps the API keys secret. Sign in under Account &amp; cloud, then the AIs you have added keys for appear here.</p>
+        <div id="aiProviderStatus" class="ai-provider-status"></div>
+        <label class="field"><span>Default AI</span><select id="aiDefaultProvider"></select></label>
+        <div class="account-button-row"><button class="soft-btn" id="aiCheckProviders" type="button">Check connection</button><button class="primary-btn" type="button" data-open-assistant>Open AI Assistant</button></div>
+      </section>
+
       <div class="ai-mode-card">
         <span class="eyebrow">LOCAL MODE</span>
         <h3>Claim-level grounding works without a backend</h3>
@@ -2137,8 +2147,8 @@
       </div>
 
       <section class="account-section">
-        <span class="eyebrow">OPTIONAL GENERATIVE AI</span>
-        <h3>Connect a secure server endpoint</h3>
+        <span class="eyebrow">ADVANCED · CUSTOM ENDPOINT</span>
+        <h3>Use your own server instead</h3>
         <p>For generative summaries and answers, connect Quire to your own HTTPS backend. The backend should hold the AI provider secret; never place a secret API key in the browser.</p>
         <label class="field"><span>AI endpoint URL</span><input id="aiEndpoint" type="url" placeholder="https://your-domain.com/api/quire-ai"></label>
         <p class="account-security-note">Quire sends only retrieved article passages with stable context IDs, plus the question, article metadata and study context. A compliant endpoint returns each generated claim with the context IDs that directly support it.</p>
@@ -2148,6 +2158,28 @@
           <button class="text-btn" id="clearAiSettings" type="button">Use local mode only</button>
         </div>
       </section>
+    </div>
+  </div>
+
+  <div id="assistantModal" class="modal-backdrop" hidden>
+    <div class="modal assistant-modal" role="dialog" aria-modal="true" aria-labelledby="assistantTitle">
+      <div class="modal-head">
+        <div><span class="eyebrow">QUIRE AI ASSISTANT</span><h2 id="assistantTitle">Develop your research with AI</h2><small id="assistantContextLabel" class="assistant-context"></small></div>
+        <button id="assistantClose" type="button" aria-label="Close">×</button>
+      </div>
+      <div class="assistant-toolbar">
+        <label><span>AI</span><select id="assistantProvider" aria-label="Choose AI"></select></label>
+        <button class="text-btn" id="assistantRefresh" type="button">Refresh</button>
+        <button class="text-btn" id="assistantClear" type="button">Clear conversation</button>
+      </div>
+      <div id="assistantSetup" class="assistant-setup" hidden></div>
+      <div id="assistantMessages" class="assistant-messages" aria-live="polite"></div>
+      <div class="assistant-compose">
+        <textarea id="assistantInput" rows="3" placeholder="e.g. I want to study the behaviour of… (Ctrl+Enter to send)"></textarea>
+        <button class="primary-btn" id="assistantSend" type="button">Send</button>
+      </div>
+      <small id="assistantStatus" class="assistant-status"></small>
+      <p class="assistant-note">AI can be wrong. It will not invent references on purpose, but always check claims against real sources. Nothing is added to your project unless you choose “Save”.</p>
     </div>
   </div>
 
@@ -2356,6 +2388,7 @@
   <script src="pdf-reader.js"></script>
   <script src="ocr.js"></script>
   <script src="metadata.js"></script>
+  <script src="ai-assistant.js"></script>
   <script src="copilot.js"></script>
   <script src="references.js"></script>
   <script src="citations.js"></script>
