@@ -3354,3 +3354,7 @@ button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-vis
 .launch-doc-types{margin-bottom:14px}
 .structure-card .soft-btn,.launch-structure .soft-btn{font-size:11px;padding:7px 12px}
 .structure-card .primary-btn{font-size:11px;padding:8px 14px}
+@media (min-width:900px){.document-type-grid{grid-template-columns:repeat(3,minmax(0,1fr))}}
+.launch-doc-types{grid-template-columns:repeat(3,1fr)}
+@media (max-width:700px){.launch-doc-types{grid-template-columns:1fr}}
+.assignment-details-grid{margin-bottom:16px}

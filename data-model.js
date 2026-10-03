@@ -104,7 +104,16 @@
     }));
   }
 
-  const DOCUMENT_TYPES={thesis:'Thesis',paper:'Research paper'};
+  const DOCUMENT_TYPES={thesis:'Thesis',paper:'Research paper',assignment:'Assignment'};
+  const ASSIGNMENT_TYPES={
+    essay:'Essay',
+    report:'Report',
+    literature_review:'Literature review',
+    case_study:'Case study',
+    reflective:'Reflective account',
+    critical_appraisal:'Critical appraisal',
+    proposal:'Research proposal'
+  };
   const PAPER_ARTICLE_TYPES={
     original:'Original research article',
     qualitative:'Qualitative research article',
@@ -126,10 +135,34 @@
       review:['Introduction','Review Methods','Main Themes','Discussion','Conclusion'],
       short:['Introduction','Methods','Results and Discussion','Conclusion'],
       case_report:['Introduction','Case Presentation','Discussion','Conclusion']
+    },
+    assignment:{
+      essay:['Introduction','Main Body','Conclusion'],
+      report:['Introduction','Background','Analysis','Recommendations','Conclusion'],
+      literature_review:['Introduction','Search Strategy','Review of the Literature','Discussion','Conclusion'],
+      case_study:['Introduction','Case Overview','Analysis','Discussion','Conclusion'],
+      reflective:['Introduction','Description','Reflection','Action Plan','Conclusion'],
+      critical_appraisal:['Introduction','Overview of the Study','Critical Appraisal','Implications for Practice','Conclusion'],
+      proposal:['Introduction','Background and Rationale','Aims and Objectives','Methodology','Ethical Considerations','Timeline']
     }
   };
 
-  function normalizeProjectType(value){return value==='paper'?'paper':'thesis';}
+  function normalizeProjectType(value){return DOCUMENT_TYPES[value]?value:'thesis';}
+  function untitledFor(type){return 'Untitled '+(normalizeProjectType(type)==='paper'?'paper':normalizeProjectType(type));}
+
+  function normalizeAssignmentDetails(input={}){
+    const d=input&&typeof input==='object'?input:{};
+    return {
+      assignmentType:ASSIGNMENT_TYPES[d.assignmentType]?d.assignmentType:'essay',
+      moduleName:String(d.moduleName||''),
+      moduleCode:String(d.moduleCode||''),
+      tutor:String(d.tutor||''),
+      studentId:String(d.studentId||''),
+      brief:String(d.brief||''),
+      markingCriteria:String(d.markingCriteria||''),
+      wordTolerance:Number.isFinite(Number(d.wordTolerance))&&d.wordTolerance!==''&&d.wordTolerance!=null?Number(d.wordTolerance):10
+    };
+  }
 
   function normalizePaperDetails(input={}){
     const d=input&&typeof input==='object'?input:{};
@@ -586,9 +619,10 @@
     const ts=nowIso();
     state.projects.push({
       id,
-      title:input.title || (normalizeProjectType(input.projectType)==='paper'?'Untitled paper':'Untitled thesis'),
+      title:input.title || untitledFor(input.projectType),
       projectType:normalizeProjectType(input.projectType),
       paperDetails:normalizePaperDetails(input.paperDetails),
+      assignmentDetails:normalizeAssignmentDetails(input.assignmentDetails),
       degreeName:input.degreeName || '',
       institutionName:input.institutionName || '',
       supervisorName:input.supervisorName || '',
@@ -666,7 +700,7 @@
     const project=state.projects.find(p=>p.id===projectId);
     if(!project)return false;
     const title=String(project.title||'').trim().toLowerCase();
-    const starterTitle=!title||title==='untitled thesis'||title==='untitled paper'||title==='research project';
+    const starterTitle=!title||title==='untitled thesis'||title==='untitled paper'||title==='untitled assignment'||title==='research project';
     if(!starterTitle)return false;
     const owned=key=>(state[key]||[]).filter(row=>row.projectId===projectId);
     const hasResearch=owned('articles').length||owned('highlights').length||owned('notes').length||owned('evidenceLinks').length||owned('analysisItems').length||owned('feedbackItems').length||owned('reviewRounds').length;
@@ -690,7 +724,8 @@
 
     project.projectType=normalizeProjectType(input.projectType);
     project.paperDetails=normalizePaperDetails(input.paperDetails);
-    project.title=String(input.title||project.title||'Untitled thesis').trim()||'Untitled thesis';
+    project.assignmentDetails=normalizeAssignmentDetails(input.assignmentDetails);
+    project.title=String(input.title||'').trim()||untitledFor(project.projectType);
     if(input.abstract!==undefined)project.abstract=String(input.abstract||'');
     project.degreeName=String(input.degreeName||'');
     project.institutionName=String(input.institutionName||'');
@@ -765,6 +800,7 @@
     });
     if(Object.prototype.hasOwnProperty.call(patch,'projectType')) project.projectType=normalizeProjectType(patch.projectType);
     if(Object.prototype.hasOwnProperty.call(patch,'paperDetails')) project.paperDetails=normalizePaperDetails({...(project.paperDetails||{}),...(patch.paperDetails||{})});
+    if(Object.prototype.hasOwnProperty.call(patch,'assignmentDetails')) project.assignmentDetails=normalizeAssignmentDetails({...(project.assignmentDetails||{}),...(patch.assignmentDetails||{})});
     project.updatedAt=nowIso();
     if(Object.prototype.hasOwnProperty.call(patch,'finalDeadline')) syncMilestonesFromSetup(state,projectId);
     writeState(state);
@@ -818,6 +854,20 @@
     };
   }
 
+  function assignmentSetupFields(project){
+    const a=normalizeAssignmentDetails(project.assignmentDetails);
+    return {
+      assignmentType:a.assignmentType,
+      assignmentModuleName:a.moduleName,
+      assignmentModuleCode:a.moduleCode,
+      assignmentTutor:a.tutor,
+      assignmentStudentId:a.studentId,
+      assignmentBrief:a.brief,
+      assignmentMarkingCriteria:a.markingCriteria,
+      assignmentWordTolerance:a.wordTolerance
+    };
+  }
+
   function getStudySetupData(projectId){
     const state=getState();
     projectId=projectId || getActiveProjectId(state);
@@ -828,6 +878,7 @@
       studyType:setup.studyType || '',
       projectType:normalizeProjectType(project.projectType),
       ...paperSetupFields(project),
+      ...assignmentSetupFields(project),
       thesisTitle:project.title || '',
       wordCount:project.wordTarget || '',
       proposalWordCount:project.proposalWordTarget || '',
@@ -897,6 +948,13 @@
       });
     }
     if(data.paperAbstract!==undefined&&normalizeProjectType(project.projectType)==='paper') project.abstract=String(data.paperAbstract||'');
+    if(data.assignmentType!==undefined){
+      project.assignmentDetails=normalizeAssignmentDetails({
+        assignmentType:data.assignmentType,moduleName:data.assignmentModuleName,moduleCode:data.assignmentModuleCode,
+        tutor:data.assignmentTutor,studentId:data.assignmentStudentId,brief:data.assignmentBrief,
+        markingCriteria:data.assignmentMarkingCriteria,wordTolerance:data.assignmentWordTolerance
+      });
+    }
     project.updatedAt=ts;
 
     let setup=state.studySetups.find(s=>s.projectId===projectId);
@@ -2484,6 +2542,7 @@
     setDocumentStructure,
     documentTypes:clone(DOCUMENT_TYPES),
     paperArticleTypes:clone(PAPER_ARTICLE_TYPES),
+    assignmentTypes:clone(ASSIGNMENT_TYPES),
     documentTemplates:clone(DOCUMENT_TEMPLATES),
     listSections,
     addSection,

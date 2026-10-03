@@ -1,4 +1,4 @@
-const CACHE='quire-shell-v29';
+const CACHE='quire-shell-v30';
 const SHELL=[
   './','./index.html','./styles.css','./manifest.webmanifest','./quire-icon.svg',
   './data-model.js','./document-type.js','./guided-launch.js','./projects.js','./chapter-editor.js','./evidence-writing.js',

@@ -162,11 +162,20 @@
       String(project.abstract||'').trim()?'An abstract is recorded.':'The project abstract is empty.','export','Thesis Export'));
     const paper=project.projectType==='paper';
     const pd=project.paperDetails||{};
-    const identity=paper
+    const assignment=project.projectType==='assignment';
+    const ad=project.assignmentDetails||{};
+    const identity=assignment
+      ? [!ad.moduleName&&!ad.moduleCode?'module':null,!ad.brief?'assignment brief':null,!ad.studentId?'student ID':null].filter(Boolean)
+      : paper
       ? [!pd.authors?'author list':null,!pd.correspondingAuthor?'corresponding author':null,!pd.targetJournal?'target journal':null,!pd.keywords?'keywords':null].filter(Boolean)
       : [!project.degreeName?'degree/programme':null,!project.institutionName?'institution':null].filter(Boolean);
     out.push(mk('identity','Export & final package','Title-page metadata',identity.length?'review':'clear',
-      identity.length?'Missing '+identity.join(', ')+'.':(paper?'Authors, corresponding author, journal and keywords are recorded.':'Degree/programme and institution are recorded.'),'setup','Study Setup'));
+      identity.length?'Missing '+identity.join(', ')+'.':(assignment?'Module, brief and student ID are recorded.':paper?'Authors, corresponding author, journal and keywords are recorded.':'Degree/programme and institution are recorded.'),'setup','Study Setup'));
+    if(assignment&&String(ad.markingCriteria||'').trim()){
+      const criteria=String(ad.markingCriteria).split(/\n+/).map(x=>x.trim()).filter(Boolean);
+      out.push(mk('criteria','Export & final package','Marking criteria','info',
+        'Check the draft against each of the '+plural(criteria.length,'marking criterion','marking criteria')+': '+criteria.slice(0,6).join('; ')+(criteria.length>6?'…':''),'setup','Study Setup'));
+    }
     let exportSettings={};try{exportSettings=JSON.parse(localStorage.getItem('quire:export:'+pid)||'{}')||{};}catch(e){}
     out.push(mk('author','Export & final package','Candidate / author name',String(exportSettings.authorName||'').trim()?'clear':'review',
       String(exportSettings.authorName||'').trim()?'Candidate/author name is set for export.':'Candidate/author name has not yet been set in Thesis Export.','export','Thesis Export'));

@@ -187,6 +187,14 @@ function collectStudySetup(){
     paperAbstractWordLimit: valueOf('paperAbstractWordLimit'),
     paperReportingGuideline: valueOf('paperReportingGuideline'),
     paperAbstract: valueOf('paperAbstract'),
+    assignmentType: valueOf('assignmentType') || 'essay',
+    assignmentModuleName: valueOf('assignmentModuleName'),
+    assignmentModuleCode: valueOf('assignmentModuleCode'),
+    assignmentTutor: valueOf('assignmentTutor'),
+    assignmentStudentId: valueOf('assignmentStudentId'),
+    assignmentBrief: valueOf('assignmentBrief'),
+    assignmentMarkingCriteria: valueOf('assignmentMarkingCriteria'),
+    assignmentWordTolerance: valueOf('assignmentWordTolerance'),
     thesisTitle: valueOf('thesisTitle'),
     wordCount: valueOf('wordCount'),
     proposalWordCount: valueOf('proposalWordCount'),
@@ -276,6 +284,7 @@ function updateSetupCompletion(){
     data.analysisSoftware, data.analysis.length ? 'yes' : ''
   ];
   if(data.projectType === 'paper') essentials.push(data.paperAuthors, data.paperTargetJournal, data.paperAbstract);
+  if(data.projectType === 'assignment') essentials.push(data.assignmentModuleName, data.assignmentBrief, data.assignmentMarkingCriteria);
   const complete = essentials.filter(Boolean).length;
   const percent = Math.round((complete / essentials.length) * 100);
   const pct = document.getElementById('setupPercent');
@@ -293,6 +302,8 @@ function updateSetupSummary(data){
   const bits = [];
   if(data.projectType === 'paper') bits.push(window.QuireStore?.paperArticleTypes?.[data.paperArticleType] || 'Research paper');
   if(data.projectType === 'paper' && data.paperTargetJournal) bits.push('for ' + data.paperTargetJournal);
+  if(data.projectType === 'assignment') bits.push(window.QuireStore?.assignmentTypes?.[data.assignmentType] || 'Assignment');
+  if(data.projectType === 'assignment' && (data.assignmentModuleCode || data.assignmentModuleName)) bits.push(data.assignmentModuleCode || data.assignmentModuleName);
   if(profile) bits.push(profile.title);
   if(data.wordCount) bits.push(Number(data.wordCount).toLocaleString() + ' words');
   if(data.finalDeadline) bits.push('due ' + new Date(data.finalDeadline + 'T00:00:00').toLocaleDateString(undefined,{day:'numeric',month:'short',year:'numeric'}));

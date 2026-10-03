@@ -115,7 +115,25 @@
 
     const paper=project.projectType==='paper';
     const pd=project.paperDetails||{};
-    mount.innerHTML=(paper?
+    const ad=project.assignmentDetails||{};
+    const assignmentType=window.QuireStore?.assignmentTypes?.[ad.assignmentType];
+    const moduleLine=[ad.moduleCode,ad.moduleName].filter(Boolean).join(' · ');
+    mount.innerHTML=(project.projectType==='assignment'?
+      '<article class="export-title-page export-assignment-title-page">'+
+        '<div class="export-title-page-inner">'+
+          (project.institutionName?'<p class="export-institution">'+escapeHtml(project.institutionName)+'</p>':'')+
+          (moduleLine?'<p class="export-degree">'+escapeHtml(moduleLine)+'</p>':'')+
+          (assignmentType?'<p class="export-article-type">'+escapeHtml(assignmentType)+'</p>':'')+
+          '<h1>'+escapeHtml(project.title||'Untitled assignment')+'</h1>'+
+          ((ad.studentId||settings.authorName)?'<p class="export-author">'+escapeHtml(ad.studentId?'Student ID: '+ad.studentId:settings.authorName)+'</p>':'')+
+          (project.degreeName?'<p class="export-degree">'+escapeHtml(project.degreeName)+'</p>':'')+
+          (ad.tutor?'<p class="export-supervisor">Tutor: '+escapeHtml(ad.tutor)+'</p>':'')+
+          '<p class="export-supervisor">Word count: '+totalWords.toLocaleString()+(project.wordTarget?' / '+Number(project.wordTarget).toLocaleString():'')+'</p>'+
+          (settings.submissionDate?'<p class="export-date">'+escapeHtml(prettyDate(settings.submissionDate))+'</p>':'')+
+        '</div>'+
+      '</article>'+
+      (settings.includeAbstract&&project.abstract?'<section class="export-front-section page-break"><h1>Abstract</h1><p>'+escapeHtml(project.abstract)+'</p></section>':'')
+    :paper?
       '<article class="export-title-page export-paper-title-page">'+
         '<div class="export-title-page-inner">'+
           (pd.articleType&&window.QuireStore?.paperArticleTypes?.[pd.articleType]?'<p class="export-article-type">'+escapeHtml(window.QuireStore.paperArticleTypes[pd.articleType])+'</p>':'')+
@@ -154,7 +172,18 @@
 
   function renderReadiness(project,settings,entries,refs){
     const issues=[];
-    if(project.projectType==='paper'){
+    const assignment=project.projectType==='assignment';
+    if(assignment){
+      const ad=project.assignmentDetails||{};
+      if(!project.title)issues.push('Assignment title is missing.');
+      if(!ad.moduleName&&!ad.moduleCode)issues.push('Module / course is not set.');
+      if(!ad.studentId&&!settings.authorName)issues.push('Student ID or name is missing.');
+      const words=entries.reduce((sum,row)=>sum+row.sections.reduce((t,sec)=>t+(Number(sec.currentWordCount)||0),0),0);
+      const limit=Number(project.wordTarget)||0;
+      const tolerance=Number.isFinite(Number(ad.wordTolerance))?Number(ad.wordTolerance):10;
+      if(limit&&words>limit*(1+tolerance/100))issues.push('Assignment is '+words.toLocaleString()+' words; the limit is '+limit.toLocaleString()+' (±'+tolerance+'%).');
+      if(limit&&words&&words<limit*(1-tolerance/100))issues.push('Assignment is '+words.toLocaleString()+' words, below the '+limit.toLocaleString()+'-word limit (±'+tolerance+'%).');
+    }else if(project.projectType==='paper'){
       const pd=project.paperDetails||{};
       if(!project.title)issues.push('Paper title is missing.');
       if(!pd.authors&&!settings.authorName)issues.push('Author list is missing.');
@@ -171,8 +200,8 @@
       if(!project.institutionName)issues.push('Institution is not set.');
       if(!project.degreeName)issues.push('Degree / programme is not set.');
     }
-    if(settings.includeAbstract&&!project.abstract)issues.push('Abstract is empty.');
-    if(entries.some(row=>!row.sections.length))issues.push('At least one exported '+(project.projectType==='paper'?'part':'chapter')+' has no sections.');
+    if(settings.includeAbstract&&!project.abstract&&!assignment)issues.push('Abstract is empty.');
+    if(entries.some(row=>!row.sections.length))issues.push('At least one exported '+(project.projectType==='thesis'||!project.projectType?'chapter':'part')+' has no sections.');
     const citationProblems=window.QuireCitations?.diagnostics?.().missing||[];
     if(settings.includeBibliography&&citationProblems.length)issues.push(citationProblems.length+' library reference(s) are missing core author/year metadata.');
 

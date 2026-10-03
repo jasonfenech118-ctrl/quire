@@ -1,20 +1,30 @@
-/* Quire Document Type — thesis or research paper */
+/* Quire Document Type — thesis, research paper or assignment */
 (function(){
   function escapeHtml(v){return String(v??'').replace(/[&<>"']/g,s=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[s]));}
   function el(id){return document.getElementById(id);}
 
   function type(projectId){return window.QuireStore?.getProjectType?.(projectId)||'thesis';}
   function isPaper(projectId){return type(projectId)==='paper';}
-  // noun('thesis') -> 'thesis' / 'paper'; capitalised when cap=true
-  function noun(kind,cap){
-    const word=(kind||type())==='paper'?'paper':'thesis';
-    return cap?word.charAt(0).toUpperCase()+word.slice(1):word;
+  function isAssignment(projectId){return type(projectId)==='assignment';}
+  function cap(word,yes){return yes?word.charAt(0).toUpperCase()+word.slice(1):word;}
+  // noun() -> 'thesis' / 'paper' / 'assignment'; capitalised when upper=true
+  function noun(kind,upper){
+    const k=kind||type();
+    return cap(k==='paper'?'paper':k==='assignment'?'assignment':'thesis',upper);
   }
-  function partNoun(kind,cap){
-    const word=(kind||type())==='paper'?'section':'chapter';
-    return cap?word.charAt(0).toUpperCase()+word.slice(1):word;
+  function partNoun(kind,upper){return cap((kind||type())==='thesis'?'chapter':'section',upper);}
+  function templates(kind){
+    const all=window.QuireStore?.documentTemplates||{};
+    return all[kind]||all.thesis||{};
   }
-  function templates(kind){return window.QuireStore?.documentTemplates?.[kind==='paper'?'paper':'thesis']||{};}
+  function typeOptions(kind){
+    const store=window.QuireStore||{};
+    if(kind==='paper')return store.paperArticleTypes||{};
+    if(kind==='assignment')return store.assignmentTypes||{};
+    return {empirical:'Empirical thesis',review:'Review-based thesis',compact:'Compact dissertation'};
+  }
+  // Pick data-doc-<kind>[-suffix] text, falling back to the thesis wording.
+  function pick(node,prefix,kind){return node.getAttribute(prefix+kind)??node.getAttribute(prefix+'thesis');}
 
   // Replace the trailing text of an element without touching icon spans or counters.
   function setLabel(node,text){
@@ -26,13 +36,9 @@
   function applyLabels(){
     const kind=type();
     document.body?.setAttribute('data-doc-type',kind);
-    document.querySelectorAll('[data-doc-thesis][data-doc-paper]').forEach(node=>{
-      setLabel(node,node.getAttribute(kind==='paper'?'data-doc-paper':'data-doc-thesis'));
-    });
-    document.querySelectorAll('[data-doc-ph-thesis][data-doc-ph-paper]').forEach(node=>{
-      node.setAttribute('placeholder',node.getAttribute(kind==='paper'?'data-doc-ph-paper':'data-doc-ph-thesis'));
-    });
-    document.querySelectorAll('[data-doc-only]').forEach(node=>{node.hidden=node.dataset.docOnly!==kind;});
+    document.querySelectorAll('[data-doc-thesis]').forEach(node=>setLabel(node,pick(node,'data-doc-',kind)));
+    document.querySelectorAll('[data-doc-ph-thesis]').forEach(node=>node.setAttribute('placeholder',pick(node,'data-doc-ph-',kind)));
+    document.querySelectorAll('[data-doc-only]').forEach(node=>{node.hidden=!node.dataset.docOnly.split(/\s+/).includes(kind);});
   }
 
   /* ---------- Structure editor (shared by guided setup and Study Setup) ---------- */
@@ -89,17 +95,17 @@
     const select=el('structureTemplate');
     if(!select)return;
     const kind=currentSetupType();
-    const articleTypes=window.QuireStore?.paperArticleTypes||{};
-    const labels=kind==='paper'?articleTypes:{empirical:'Empirical thesis',review:'Review-based thesis',compact:'Compact dissertation'};
+    const labels=typeOptions(kind);
     select.innerHTML=Object.keys(templates(kind)).map(key=>'<option value="'+key+'">'+escapeHtml(labels[key]||key)+'</option>').join('');
     if(kind==='paper'&&el('paperArticleType')?.value)select.value=el('paperArticleType').value;
+    if(kind==='assignment'&&el('assignmentType')?.value)select.value=el('assignmentType').value;
   }
 
   function refreshSetupCard(){
     const kind=currentSetupType();
-    document.querySelectorAll('[data-setup-doc-only]').forEach(node=>{node.hidden=node.dataset.setupDocOnly!==kind;});
+    document.querySelectorAll('[data-setup-doc-only]').forEach(node=>{node.hidden=!node.dataset.setupDocOnly.split(/\s+/).includes(kind);});
     const unit=partNoun(kind,true);
-    if(el('structureCardUnit'))el('structureCardUnit').textContent=kind==='paper'?'Paper sections':'Thesis chapters';
+    if(el('structureCardUnit'))el('structureCardUnit').textContent=kind==='thesis'?'Thesis chapters':noun(kind,true)+' sections';
     renderTemplateOptions();
     if(!setupEditor)setupEditor=structureEditor(el('setupStructureEditor'),{items:[],unit});
     const chapters=window.QuireStore?.listChapters?.()||[];
@@ -152,6 +158,7 @@
     el('paperAbstractWordLimit')?.addEventListener('input',updateAbstractCount);
     document.querySelectorAll('input[name="projectType"]').forEach(r=>r.addEventListener('change',refreshSetupCard));
     el('paperArticleType')?.addEventListener('change',()=>{const s=el('structureTemplate');if(s)s.value=el('paperArticleType').value;});
+    el('assignmentType')?.addEventListener('change',()=>{const s=el('structureTemplate');if(s)s.value=el('assignmentType').value;});
     el('loadStructureTemplate')?.addEventListener('click',loadTemplate);
     el('applyStructureBtn')?.addEventListener('click',applyStructure);
     window.addEventListener('quire:project-switched',()=>{applyLabels();refreshSetupCard();});
@@ -161,5 +168,5 @@
   }
 
   document.addEventListener('DOMContentLoaded',bind);
-  window.QuireDocType={type,isPaper,noun,partNoun,templates,applyLabels,structureEditor,refreshSetupCard};
+  window.QuireDocType={type,isPaper,isAssignment,noun,partNoun,templates,typeOptions,applyLabels,structureEditor,refreshSetupCard};
 })();

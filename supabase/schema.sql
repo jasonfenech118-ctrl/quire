@@ -216,8 +216,9 @@ create table if not exists public.progress_snapshots (
 
 alter table public.thesis_projects add column if not exists project_type text not null default 'thesis';
 alter table public.thesis_projects drop constraint if exists thesis_projects_project_type_check;
-alter table public.thesis_projects add constraint thesis_projects_project_type_check check (project_type in ('thesis','paper'));
+alter table public.thesis_projects add constraint thesis_projects_project_type_check check (project_type in ('thesis','paper','assignment'));
 alter table public.thesis_projects add column if not exists paper_details jsonb not null default '{}'::jsonb;
+alter table public.thesis_projects add column if not exists assignment_details jsonb not null default '{}'::jsonb;
 
 alter table public.progress_snapshots add column if not exists evidence_links integer not null default 0;
 alter table public.progress_snapshots add column if not exists sections_total integer not null default 0;
