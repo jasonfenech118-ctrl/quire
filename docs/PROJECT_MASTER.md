@@ -12,6 +12,12 @@ Quire is currently **frontend-first**. Continue building and testing the local/b
 
 Do not execute SQL or connect Quire to an external Supabase project as part of ordinary frontend steps.
 
+## Personal Windows ChatGPT support — 3 October 2026
+
+Quire now has an optional personal Electron Windows build using the official Sign in with ChatGPT SDK, automatic project/article requests, persistent completed replies and separate writing suggestions. The browser app retains its existing AI configuration. Protected native credentials, trusted main-window IPC, completed-response enforcement, supplied source-ID validation and bounded project context are implemented. See `docs/windows-chatgpt.md`.
+
+Seven automated source/DOM checks passed and Windows packaging succeeded. Real Windows execution and account eligibility/consent require testing by the signed-in user. Step 56 remains pending and backend activation remains deferred.
+
 ## Reconciled roadmap
 
 - Steps 1–8: research/data/PDF foundation — implemented.

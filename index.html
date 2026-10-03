@@ -61,6 +61,8 @@
 
       <div class="sidebar-spacer"></div>
 
+      <button id="chatgptSupportBtn" class="soft-btn chatgpt-support-button" type="button" hidden><strong>ChatGPT assistant</strong><small id="chatgptPlanStatus">Connect ChatGPT</small></button>
+
       <button class="thesis-mini thesis-mini-button" data-go="overview">
         <span class="eyebrow">CURRENT THESIS</span>
         <strong id="sidebarThesisTitle">Untitled research project</strong>
@@ -2130,13 +2132,30 @@
         <button id="closeAiSettingsModal" type="button">×</button>
       </div>
 
-      <div class="ai-mode-card">
+      <section id="chatgptDesktopConnection" class="account-section" hidden>
+        <span class="eyebrow">YOUR CHATGPT PLAN</span>
+        <h3>Connect ChatGPT to Quire</h3>
+        <p>Use your existing ChatGPT account for automatic article answers and research support inside Quire.</p>
+        <strong id="chatgptConnectionState"></strong>
+        <p id="chatgptConnectionMessage" role="status"></p>
+        <label id="chatgptProfilesField" class="field" hidden><span>ChatGPT account</span><select id="chatgptProfiles"></select></label>
+        <label id="chatgptModelsField" class="field" hidden><span>Model available with your account</span><select id="chatgptModels"></select></label>
+        <div class="account-button-row">
+          <button id="chatgptSignIn" class="primary-btn" type="button">Continue with ChatGPT</button>
+          <button id="chatgptCancelSignIn" class="text-btn" type="button" hidden>Cancel sign-in</button>
+          <button id="chatgptAddAccount" class="text-btn" type="button">Add account</button>
+          <button id="chatgptDisconnect" class="text-btn" type="button" hidden>Disconnect</button>
+          <button id="chatgptManageUsage" class="text-btn" type="button">Manage ChatGPT usage</button>
+        </div>
+      </section>
+
+      <div id="aiLocalModeCard" class="ai-mode-card">
         <span class="eyebrow">LOCAL MODE</span>
         <h3>Claim-level grounding works without a backend</h3>
         <p>Quire extracts the article page-by-page, preserves passage positions, and attaches the exact supporting passage to each claim. This mode is extractive rather than generative.</p>
       </div>
 
-      <section class="account-section">
+      <section id="aiEndpointSection" class="account-section">
         <span class="eyebrow">OPTIONAL GENERATIVE AI</span>
         <h3>Connect a secure server endpoint</h3>
         <p>For generative summaries and answers, connect Quire to your own HTTPS backend. The backend should hold the AI provider secret; never place a secret API key in the browser.</p>
@@ -2149,6 +2168,19 @@
         </div>
       </section>
     </div>
+  </div>
+
+  <div id="chatgptAssistantModal" class="modal-backdrop" hidden>
+    <section class="modal chatgpt-assistant-modal" role="dialog" aria-modal="true" aria-labelledby="chatgptAssistantTitle">
+      <div class="modal-head"><div><span class="eyebrow">QUIRE RESEARCH SUPPORT</span><h2 id="chatgptAssistantTitle">ChatGPT assistant</h2></div><button id="closeChatgptAssistant" type="button" aria-label="Close ChatGPT assistant">×</button></div>
+      <div class="chatgpt-assistant-tools"><span id="chatgptAssistantContext">Current project</span><button id="chatgptAssistantSettings" class="text-btn" type="button">Connection &amp; model</button></div>
+      <div id="chatgptConversation" class="chatgpt-conversation" aria-label="Saved ChatGPT conversation"></div>
+      <form id="chatgptAskForm">
+        <label class="field"><span>Ask about your research or writing</span><textarea id="chatgptQuestion" rows="3" maxlength="16000" placeholder="Help me compare the evidence, refine an objective, or review this paragraph…"></textarea></label>
+        <label class="chatgpt-context-option"><input id="chatgptIncludeNotes" type="checkbox" checked> Include saved research notes and highlights</label>
+        <div class="account-button-row"><button id="chatgptAsk" class="primary-btn" type="submit" disabled>Ask ChatGPT</button><button id="chatgptStop" class="text-btn" type="button" hidden>Stop</button><small id="chatgptAssistantStatus" role="status">Connect ChatGPT to start.</small></div>
+      </form>
+    </section>
   </div>
 
   <div id="metadataModal" class="modal-backdrop" hidden>
@@ -2384,5 +2416,7 @@
   <script src="progress-intelligence.js"></script>
   <script src="app.js"></script>
   <script src="product-polish.js"></script>
+  <script src="desktop-context.js"></script>
+  <script src="desktop-chatgpt.js"></script>
 </body>
 </html>

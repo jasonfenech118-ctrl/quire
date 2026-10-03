@@ -30,6 +30,8 @@ Quire currently includes:
 
 The article Copilot now works in a local grounded-analysis mode using text extracted from the real PDF. An optional secure server endpoint can provide generative AI synthesis; no provider secret is stored in the browser.
 
+The personal Windows test build adds **Sign in with ChatGPT**, automatic research/writing replies, and article answers linked to supplied PDF passages. See [Windows setup and validation](docs/windows-chatgpt.md). The browser version continues to use its existing AI settings.
+
 ## Step 1 — Data model ✅
 
 Quire has a canonical project-centric data model in `data-model.js`, with a matching PostgreSQL/Supabase schema in `supabase/schema.sql`.

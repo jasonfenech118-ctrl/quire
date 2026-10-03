@@ -1,0 +1,5 @@
+node_modules/
+desktop-release/
+desktop/vendor/siwc-local/dist/
+desktop/test-results/
+*.log

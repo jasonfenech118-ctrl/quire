@@ -169,6 +169,7 @@
   }
 
   function handleWritingCopilot(detail={}){
+    if(window.QuireChatGPT?.available)return window.QuireChatGPT.reviewWriting(detail);
     if(detail.sectionId) activeSectionId=detail.sectionId;
     renderSelector();renderDocument();
     const section=sections().find(s=>s.id===activeSectionId);

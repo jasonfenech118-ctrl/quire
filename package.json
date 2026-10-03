@@ -1,0 +1,65 @@
+{
+  "name": "quire-desktop",
+  "productName": "Quire",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Quire for Windows with personal ChatGPT plan support",
+  "author": "Jason Fenech",
+  "type": "module",
+  "main": "desktop/main.mjs",
+  "workspaces": [
+    "desktop/vendor/siwc-local"
+  ],
+  "scripts": {
+    "build:sdk": "tsc -p desktop/vendor/siwc-local/tsconfig.json",
+    "start": "npm run build:sdk && electron .",
+    "test": "npm run build:sdk && node --test desktop/test/*.test.mjs",
+    "build:win": "npm run build:sdk && electron-builder --win portable --x64",
+    "build:dir": "npm run build:sdk && electron-builder --dir"
+  },
+  "dependencies": {
+    "@siwc/local": "file:desktop/vendor/siwc-local"
+  },
+  "devDependencies": {
+    "@types/node": "24.6.0",
+    "@types/proper-lockfile": "4.1.4",
+    "electron": "44.5.1",
+    "electron-builder": "26.15.3",
+    "jsdom": "30.1.1",
+    "typescript": "7.0.2"
+  },
+  "build": {
+    "appId": "mt.quire.research",
+    "productName": "Quire",
+    "asar": true,
+    "directories": {
+      "output": "desktop-release"
+    },
+    "files": [
+      "*.html",
+      "*.css",
+      "*.js",
+      "*.svg",
+      "*.webmanifest",
+      "desktop/*.mjs",
+      "desktop/*.cjs",
+      "desktop/vendor/siwc-local/LICENSE",
+      "desktop/vendor/siwc-local/UPSTREAM.md",
+      "package.json"
+    ],
+    "win": {
+      "target": [
+        {
+          "target": "portable",
+          "arch": [
+            "x64"
+          ]
+        }
+      ],
+      "signAndEditExecutable": false
+    },
+    "portable": {
+      "artifactName": "Quire-Windows-${version}.exe"
+    }
+  }
+}

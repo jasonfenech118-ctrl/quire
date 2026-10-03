@@ -69,6 +69,19 @@ button:focus-visible,input:focus-visible,select:focus-visible,[contenteditable]:
 .nav-item.active:before{content:"";position:absolute;left:-18px;top:5px;bottom:5px;width:2px;background:var(--burgundy)}
 .nav-item.active span{color:var(--burgundy)}
 .sidebar-spacer{flex:1}
+.chatgpt-support-button{display:flex;flex-direction:column;align-items:flex-start;gap:5px;margin:0 0 12px;text-align:left}
+.chatgpt-support-button small{font-size:11px;font-weight:400}
+.chatgpt-support-button[hidden],#chatgptDesktopConnection[hidden],#aiEndpointSection[hidden],#aiLocalModeCard[hidden]{display:none}
+.chatgpt-assistant-modal{width:min(840px,96vw);max-height:90vh;display:flex;flex-direction:column}
+.chatgpt-assistant-tools{display:flex;align-items:center;justify-content:space-between;gap:16px;color:var(--muted);font-size:12px}
+.chatgpt-conversation{flex:1;overflow:auto;min-height:150px;max-height:46vh;padding:15px 0}
+.chatgpt-message{padding:14px 16px;margin:10px 0;border-radius:8px;background:var(--sage-light)}
+.chatgpt-message.user{background:#f4f0e9;margin-left:40px}
+.chatgpt-message strong{font-size:12px;color:var(--forest)}
+.chatgpt-message p,.chatgpt-message#chatgptDraft{white-space:pre-wrap;overflow-wrap:anywhere;font-size:14px;line-height:1.6}
+.chatgpt-empty{padding:28px 12px;color:var(--muted);font-size:14px;line-height:1.6}
+.chatgpt-context-option{display:flex;gap:8px;align-items:center;font-size:12px;color:var(--muted);margin:8px 0}
+#chatgptAssistantStatus{font-size:12px;color:var(--muted);overflow-wrap:anywhere}
 .thesis-mini{
   padding:16px 14px;border:1px solid var(--line);border-radius:3px;
   background:rgba(255,253,248,.72);margin-bottom:14px;position:relative;overflow:hidden
