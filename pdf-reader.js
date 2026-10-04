@@ -56,14 +56,40 @@
   const PdfStore={
     async save(articleId,file){
       const blob=file instanceof Blob ? file : new Blob([file],{type:'application/pdf'});
+      if(window.QuireDesktop?.savePdf)return window.QuireDesktop.savePdf(articleId,new Uint8Array(await blob.arrayBuffer()),file.name||'document.pdf');
       return transact('readwrite',store=>store.put({
         articleId,blob,name:file.name||'document.pdf',type:blob.type||'application/pdf',
         size:blob.size,updatedAt:new Date().toISOString()
       }));
     },
-    async get(articleId){return transact('readonly',store=>store.get(articleId));},
-    async has(articleId){return Boolean((await this.get(articleId))?.blob);},
-    async remove(articleId){return transact('readwrite',store=>store.delete(articleId));},
+    async get(articleId){
+      if(window.QuireDesktop?.getPdf){
+        const stored=await window.QuireDesktop.getPdf(articleId);
+        if(stored)return {...stored,blob:new Blob([stored.bytes],{type:'application/pdf'})};
+        // Preserve PDFs saved by the first Windows test build and migrate on read.
+        const legacy=await transact('readonly',store=>store.get(articleId)).catch(()=>null);
+        if(legacy?.blob)await window.QuireDesktop.savePdf(articleId,new Uint8Array(await legacy.blob.arrayBuffer()),legacy.name||'document.pdf');
+        return legacy;
+      }
+      return transact('readonly',store=>store.get(articleId));
+    },
+    async has(articleId){
+      if(window.QuireDesktop?.hasPdf&&await window.QuireDesktop.hasPdf(articleId))return true;
+      return Boolean((await this.get(articleId))?.blob);
+    },
+    async remove(articleId){
+      if(window.QuireDesktop?.removePdf)await window.QuireDesktop.removePdf(articleId);
+      return transact('readwrite',store=>store.delete(articleId)).catch(error=>{if(!window.QuireDesktop)throw error;});
+    },
+    async migrateLegacy(){
+      if(!window.QuireDesktop?.savePdf)return;
+      const ids=await transact('readonly',store=>store.getAllKeys()).catch(()=>[]);
+      for(const id of ids){
+        if(await window.QuireDesktop.hasPdf(id))continue;
+        const legacy=await transact('readonly',store=>store.get(id));
+        if(legacy?.blob)await window.QuireDesktop.savePdf(id,new Uint8Array(await legacy.blob.arrayBuffer()),legacy.name||'document.pdf');
+      }
+    },
     async saveTextIndex(articleId,pages){
       const db=await openDb();
       return new Promise((resolve,reject)=>{

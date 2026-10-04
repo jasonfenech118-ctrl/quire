@@ -14,6 +14,8 @@ Do not execute SQL or connect Quire to an external Supabase project as part of o
 
 ## Personal Windows ChatGPT support — 3 October 2026
 
+Version 0.1.1 (4 October) adds an automatic three-stage Windows welcome guide and native article-file storage. A PC copy is always kept; an optional selected folder receives PDF copies and can supply matching article IDs after a workspace restore. Pending copies retry while the app is open; existing desktop PDF caches migrate without deletion. Seventeen automated source/DOM/filesystem checks passed. Live Windows, account and physical USB acceptance checks remain pending.
+
 Quire now has an optional personal Electron Windows build using the official Sign in with ChatGPT SDK, automatic project/article requests, persistent completed replies and separate writing suggestions. The browser app retains its existing AI configuration. Protected native credentials, trusted main-window IPC, completed-response enforcement, supplied source-ID validation and bounded project context are implemented. See `docs/windows-chatgpt.md`.
 
 Seven automated source/DOM checks passed and Windows packaging succeeded. Real Windows execution and account eligibility/consent require testing by the signed-in user. Step 56 remains pending and backend activation remains deferred.

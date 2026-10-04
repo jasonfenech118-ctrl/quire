@@ -4,6 +4,7 @@ import {dirname, join} from 'node:path';
 import {fileURLToPath} from 'node:url';
 import {createChatGPT, ChatGPTError, CHATGPT_USAGE_URL} from '@siwc/local';
 import {prepareRequest, parseGroundedResponse, isQuireSender} from './ai-contract.mjs';
+import {PdfLibrary, PdfLibraryError} from './pdf-library.mjs';
 
 const root = join(dirname(fileURLToPath(import.meta.url)), '..');
 const appUrl = 'quire://app/';
@@ -15,9 +16,12 @@ if (!singleInstance) app.quit();
 
 let window;
 let chatgpt;
+let pdfLibrary;
+let storageDialogOpen=false;
+let storageSyncBusy=false;
 let state = {session: {status: 'disconnected', sharing: false}, profiles: [], models: [], selectedModel: '', accountBusy: false, notice: ''};
 const requests = new Map();
-const safeError = error => error instanceof ChatGPTError ? error.toJSON() : {
+const safeError = error => error instanceof ChatGPTError ? error.toJSON() : error instanceof PdfLibraryError ? {code:error.code,message:error.message,retryable:true} : {
   code: 'quire_error',
   message: String(error?.message || '').startsWith('invalid_answer:') ? error.message.slice(15) :
     String(error?.message || '').startsWith('invalid_request:') ? 'This request is too large or has an unsupported format. Use a smaller selection.' :
@@ -27,6 +31,7 @@ function publish() {
   if (window && !window.isDestroyed()) window.webContents.send('quire:state-changed', structuredClone(state));
 }
 function abortRequests() { for (const request of requests.values()) request.abort(); }
+async function updateStorage(){state.library=await pdfLibrary.getState();publish();return structuredClone(state.library);}
 function handle(name, action) {
   ipcMain.handle('quire:' + name, async (event, ...args) => {
     if (!isQuireSender(event, window)) return {ok: false, error: {code: 'invalid_sender', message: 'This action is available only inside Quire.'}};
@@ -61,7 +66,10 @@ function registerIPC() {
   handle('state', () => structuredClone(state));
   handle('sign-in', options => {
     if (options && (typeof options !== 'object' || Object.keys(options).some(k => !['newProfile', 'reconsent'].includes(k)) || Object.values(options).some(v => typeof v !== 'boolean'))) throw new Error('invalid_request:sign-in');
-    return accountAction(() => chatgpt.signIn(options || {}));
+    return accountAction(async () => {
+      await chatgpt.signIn(options || {});
+      if (window && !window.isDestroyed()) { if (window.isMinimized()) window.restore(); window.show(); window.focus(); }
+    });
   });
   handle('cancel-sign-in', () => chatgpt.cancelSignIn());
   handle('disconnect', () => accountAction(() => chatgpt.disconnect()));
@@ -74,6 +82,27 @@ function registerIPC() {
     state.selectedModel = slug; publish(); return structuredClone(state);
   });
   handle('usage', () => shell.openExternal(CHATGPT_USAGE_URL));
+  handle('library-state',()=>pdfLibrary.getState());
+  handle('library-folder',async()=>{
+    if(storageDialogOpen)throw new PdfLibraryError('folder_busy','Finish choosing the article folder first.');
+    storageDialogOpen=true;
+    try{
+      const result=await dialog.showOpenDialog(window,{title:'Choose a PC or pen-drive folder for article copies',properties:['openDirectory']});
+      if(!result.canceled&&result.filePaths[0])await pdfLibrary.setCopyFolder(result.filePaths[0]);
+      return updateStorage();
+    }finally{storageDialogOpen=false;}
+  });
+  handle('library-sync',async()=>{await pdfLibrary.sync();return updateStorage();});
+  handle('library-stop-copy',async()=>{await pdfLibrary.stopCopy();return updateStorage();});
+  handle('library-open',kind=>{
+    const folder=kind==='pc'?pdfLibrary.primaryFolder:kind==='copy'?pdfLibrary.copyFolder:null;
+    if(!folder)throw new PdfLibraryError('invalid_folder','Choose an article copy folder first.');
+    return shell.openPath(folder);
+  });
+  handle('pdf-save',async(id,bytes,name)=>{await pdfLibrary.save(id,bytes,name);return updateStorage();});
+  handle('pdf-get',async id=>{const result=await pdfLibrary.get(id);await updateStorage();return result;});
+  handle('pdf-has',id=>pdfLibrary.has(id));
+  handle('pdf-remove',async id=>{await pdfLibrary.remove(id);await updateStorage();});
   handle('cancel-request', id => requests.get(requestId(id))?.abort());
   handle('request', async (id, payload) => {
     id = requestId(id);
@@ -131,6 +160,7 @@ function createWindow() {
 app.on('second-instance', () => { if (window) { if (window.isMinimized()) window.restore(); window.show(); window.focus(); } });
 app.on('window-all-closed', () => app.quit());
 if (singleInstance) app.whenReady().then(async () => {
+  pdfLibrary=new PdfLibrary(app.getPath('userData'));state.library=await pdfLibrary.init();
   chatgpt = createChatGPT({
     appName: 'Quire', appId: 'quire', redirectPort: 0, sendHostId: true, storageDir: join(app.getPath('userData'), 'chatgpt'),
     credentialEncryption: {
@@ -143,6 +173,14 @@ if (singleInstance) app.whenReady().then(async () => {
   chatgpt.subscribe(session => { state.session = session; publish(); });
   await setupAssets(); registerIPC(); createWindow();
   try { await updateState(); } catch (error) { state.notice = safeError(error).message; publish(); }
+  async function syncStorage(){
+    if(storageSyncBusy)return;
+    storageSyncBusy=true;
+    try{await pdfLibrary.sync();await updateStorage();}catch{ /* The next check retries without interrupting research. */ }
+    finally{storageSyncBusy=false;}
+  }
+  void syncStorage();
+  setInterval(()=>void syncStorage(),30000).unref();
 }).catch(() => {
   dialog.showErrorBox('Quire could not start', 'Close Quire and try opening it again. If the problem continues, keep your Quire backups and report that the Windows app failed during startup.');
   app.quit();

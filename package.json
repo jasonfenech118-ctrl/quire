@@ -1,7 +1,7 @@
 {
   "name": "quire-desktop",
   "productName": "Quire",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "private": true,
   "description": "Quire for Windows with personal ChatGPT plan support",
   "author": "Jason Fenech",
@@ -25,6 +25,7 @@
     "@types/proper-lockfile": "4.1.4",
     "electron": "44.5.1",
     "electron-builder": "26.15.3",
+    "fake-indexeddb": "6.2.5",
     "jsdom": "30.1.1",
     "typescript": "7.0.2"
   },

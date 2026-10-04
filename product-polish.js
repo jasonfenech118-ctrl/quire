@@ -375,20 +375,23 @@
   }
 
   async function restoreBackup(file){
-    if(!file)return;
+    if(!file)return false;
     const raw=await file.text();
     let parsed;
     try{parsed=JSON.parse(raw);}catch(e){throw new Error('The selected file is not valid JSON.');}
     const rawState=parsed?.format==='quire-workspace-backup'?parsed.state:parsed;
     const state=sanitizeBackupState(rawState);
-    if(!confirm('Restore this Quire backup? Your current structured workspace will be replaced. Local PDFs stored on this device are not deleted.'))return;
+    if(!confirm('Restore this Quire backup? Your current structured workspace will be replaced. Local PDFs stored on this device are not deleted.'))return false;
     const restored=window.QuireStore.replaceState(state);
     window.dispatchEvent(new CustomEvent('quire:project-switched',{detail:{projectId:restored.activeProjectId}}));
     announce('Quire workspace restored');
+    return true;
   }
 
   async function resetWorkspace(){
-    const first=confirm('Start fresh in Quire? This will permanently remove the research, writing, ideas, feedback, progress and locally stored PDFs saved by Quire in this browser. The Quire app and GitHub files are not changed.');
+    const first=confirm(window.QuireDesktop
+      ? 'Start fresh in Quire? This will remove the research, writing, ideas, feedback and progress from this workspace. Saved article-folder files are kept. The Quire app and GitHub files are not changed.'
+      : 'Start fresh in Quire? This will permanently remove the research, writing, ideas, feedback, progress and locally stored PDFs saved by Quire in this browser. The Quire app and GitHub files are not changed.');
     if(!first)return;
     const typed=prompt('To confirm, type START FRESH');
     if(String(typed||'').trim().toUpperCase()!=='START FRESH'){
