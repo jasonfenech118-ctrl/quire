@@ -271,6 +271,10 @@
     });
     if(!response.ok) throw new Error('AI endpoint returned '+response.status+'.');
     const json=await response.json();
+    return mapGeneratedResult(json,contexts);
+  }
+
+  function mapGeneratedResult(json,contexts){
     const map=contextMap(contexts);
 
     if(Array.isArray(json?.claims)){
@@ -330,7 +334,13 @@
     const endpoint=config().endpoint;
     let result;
 
-    if(endpoint){
+    if(window.QuireChatGPT?.available){
+      const contexts=buildContexts(index,mode,question);
+      if(!contexts.length) throw new Error('Quire could not retrieve supporting passages for this request.');
+      setBusy(true,'Asking ChatGPT…');
+      result=mapGeneratedResult(await window.QuireChatGPT.grounded(buildPayload(mode,question,article,contexts)),contexts);
+      result.provider='chatgpt-plan';
+    }else if(endpoint){
       const contexts=buildContexts(index,mode,question);
       if(!contexts.length) throw new Error('Quire could not retrieve supporting passages for this request.');
       setBusy(true,'Asking grounded AI…');
@@ -427,13 +437,13 @@
   function setBusy(busy,label='Working…'){
     document.querySelectorAll('[data-ai],#readerAsk').forEach(btn=>btn.disabled=busy);
     const status=document.getElementById('copilotStatusLabel');
-    if(status) status.textContent=busy?label:(config().endpoint?'Claim-linked AI connected':'Local claim-level mode');
+    if(status) status.textContent=busy?label:(window.QuireChatGPT?.statusLabel?.()||(config().endpoint?'Claim-linked AI connected':'Local claim-level mode'));
     document.getElementById('copilotStatus')?.classList.toggle('working',busy);
   }
 
   function updateStatus(){
     const label=document.getElementById('copilotStatusLabel');
-    if(label) label.textContent=config().endpoint?'Claim-linked AI connected':'Local claim-level mode';
+    if(label) label.textContent=window.QuireChatGPT?.statusLabel?.()||(config().endpoint?'Claim-linked AI connected':'Local claim-level mode');
     const endpoint=document.getElementById('aiEndpoint');
     if(endpoint&&document.activeElement!==endpoint) endpoint.value=config().endpoint||'';
   }
@@ -449,6 +459,15 @@
     if(!text)return;
     const articleId=detail.articleId||window.QuirePdfReader?.getCurrentArticleId?.();
     const article=window.QuireStore.getArticle(articleId);
+    if(window.QuireChatGPT?.available){
+      const contexts=[{context_id:'selection',page:Number(detail.pageNumber)||1,text,rects:detail.pdfAnchor?.rects||[]}];
+      setBusy(true,'Explaining with ChatGPT…');
+      try{
+        const request=buildPayload('explain','Explain the supplied passage in plain language, without adding unsupported facts.',article||{},contexts);
+        const result=mapGeneratedResult(await window.QuireChatGPT.grounded(request),contexts);
+        persistConversation(articleId,text,result);renderResult(result);return result;
+      }finally{setBusy(false);}
+    }
     const setup=window.QuireStore?.getStudySetupData?.()||{};
     const rq=setup.researchQuestion||'your research question';
     const claims=[
@@ -507,7 +526,9 @@
       const m=document.getElementById('aiSettingsMessage');if(m)m.textContent='AI endpoint removed. Quire will use local claim-level mode.';
     });
 
-    window.addEventListener('quire:explain-passage',e=>explainPassage(e.detail||{}));
+    window.addEventListener('quire:explain-passage',e=>explainPassage(e.detail||{}).catch(err=>{
+      setBusy(false);renderResult({title:'Could not explain this passage',intro:err.message,claims:[]});
+    }));
     window.addEventListener('quire:text-index-progress',e=>{
       const current=window.QuirePdfReader?.getCurrentArticleId?.();
       if(e.detail?.articleId===current) setBusy(true,'Indexing page '+e.detail.page+' / '+e.detail.total);

@@ -484,6 +484,7 @@
 
   // An empty workspace opens straight into guided setup, once per browser session.
   function autoOpenForEmptyWorkspace(){
+    if(window.QuireDesktop)return; // The Windows welcome guide starts this flow.
     const store=window.QuireStore;
     const projectId=store?.getActiveProjectId?.();
     if(!projectId||!store.isStarterProject?.(projectId))return;
